@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.service;
 
+import com.example.harmony.domain.gallery.dto.ImageRemoveRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
@@ -36,5 +37,20 @@ public class ImageService {
                 .collect(Collectors.toList());
         gallery.addImages(images);
         imageRepository.saveAll(images);
+    }
+
+    public void removeImages(Long galleryId, ImageRemoveRequest imageRemoveRequest, User user) {
+        Gallery gallery = galleryRepository.findById(galleryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
+        if (gallery.getFamily() != user.getFamily()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 사진 삭제 권한이 없습니다");
+        }
+        List<Image> images = imageRepository.findAllById(imageRemoveRequest.getImageIds());
+        // TODO: 이미지들이 모두 같은 갤러리에 속해 있는지 검사 ?
+        gallery.removeImages(images);
+        imageRepository.deleteAllById(imageRemoveRequest.getImageIds());
+        s3Service.deleteFiles(images.stream()
+                .map(Image::getFilename)
+                .collect(Collectors.toList()));
     }
 }

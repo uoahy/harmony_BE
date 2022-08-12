@@ -35,4 +35,8 @@ public class Gallery {
             image.setGallery(this);
         }
     }
+
+    public void removeImages(List<Image> images) {
+        this.images.removeAll(images);
+    }
 }
