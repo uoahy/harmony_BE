@@ -33,4 +33,8 @@ public class GalleryComment extends TimeStamp {
     public void setGallery(Gallery gallery) {
         this.gallery = gallery;
     }
+
+    public void edit(GalleryCommentRequest galleryCommentRequest) {
+        this.content = galleryCommentRequest.getContent();
+    }
 }
