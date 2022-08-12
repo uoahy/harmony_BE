@@ -39,4 +39,13 @@ public class GalleryCommentService {
         galleryComment.edit(galleryCommentRequest);
         galleryCommentRepository.save(galleryComment);
     }
+
+    public void deleteGalleryComment(Long galleryCommentId, User user) {
+        GalleryComment galleryComment = galleryCommentRepository.findById(galleryCommentId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리 댓글을 찾을 수 없습니다"));
+        if (galleryComment.getUser() != user) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 삭제 권한이 없습니다");
+        }
+        galleryCommentRepository.deleteById(galleryCommentId);
+    }
 }
