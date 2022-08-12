@@ -9,7 +9,9 @@ import com.example.harmony.domain.schedule.repository.ScheduleRepository;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
@@ -41,5 +43,23 @@ public class ScheduleService {
                 .map(x -> new Participation(schedule, x))
                 .collect(Collectors.toList());
         participationRepository.saveAll(participations);
+    }
+
+    @Transactional
+    public void modifySchedule(Long scheduleId, ScheduleRequest scheduleRequest, User user) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
+        if (schedule.getFamily() != user.getFamily()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 수정 권한이 없습니다");
+        }
+        if (!schedule.isDone()) {
+            List<User> participants = userRepository.findAllById(scheduleRequest.getMemberIds());
+            List<Participation> participations = participants.stream()
+                    .map(x -> new Participation(schedule, x))
+                    .collect(Collectors.toList());
+            schedule.modify(scheduleRequest, participations);
+        } else {
+            schedule.modify(scheduleRequest, null);
+        }
     }
 }

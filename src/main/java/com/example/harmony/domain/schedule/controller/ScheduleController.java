@@ -32,4 +32,14 @@ public class ScheduleController {
         scheduleService.registerSchedule(request, userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.CREATED, "일정 등록 성공"), HttpStatus.CREATED);
     }
+
+    @PutMapping("/api/schedules/{scheduleId}")
+    public ResponseEntity<SuccessResponse> putSchedule(
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleRequest request,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        scheduleService.modifySchedule(scheduleId, request, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 수정 성공"), HttpStatus.OK);
+    }
 }

@@ -51,4 +51,15 @@ public class Schedule {
         this.gallery = null;
         this.family = family;
     }
+
+    public void modify(ScheduleRequest scheduleRequest, List<Participation> participations) {
+        this.category = scheduleRequest.getCategory();
+        this.title = scheduleRequest.getTitle();
+        if (!done) {
+            this.startDate = scheduleRequest.getStartDate();
+            this.endDate = scheduleRequest.getEndDate();
+            this.participations = participations;
+            this.content = scheduleRequest.getContent();
+        }
+    }
 }
