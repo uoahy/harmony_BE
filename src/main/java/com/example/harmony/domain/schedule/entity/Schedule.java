@@ -28,7 +28,7 @@ public class Schedule {
 
     private LocalDate endDate;
 
-    @OneToMany(mappedBy = "schedule")
+    @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE)
     private List<Participation> participations;
 
     private String content;

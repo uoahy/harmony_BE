@@ -42,4 +42,13 @@ public class ScheduleController {
         scheduleService.modifySchedule(scheduleId, request, userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 수정 성공"), HttpStatus.OK);
     }
+
+    @DeleteMapping("/api/schedules/{scheduleId}")
+    public ResponseEntity<SuccessResponse> deleteSchedule(
+            @PathVariable Long scheduleId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        scheduleService.deleteSchedule(scheduleId, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 삭제 성공"), HttpStatus.OK);
+    }
 }

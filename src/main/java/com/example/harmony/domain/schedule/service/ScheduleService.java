@@ -62,4 +62,18 @@ public class ScheduleService {
             schedule.modify(scheduleRequest, null);
         }
     }
+
+    @Transactional
+    public void deleteSchedule(Long scheduleId, User user) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
+        if (schedule.getFamily() != user.getFamily()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 삭제 권한이 없습니다");
+        }
+        scheduleRepository.deleteById(scheduleId);
+
+        if (schedule.isDone() && schedule.getParticipations().size() >= 2) {
+            user.getFamily().minusScore(10);
+        }
+    }
 }
