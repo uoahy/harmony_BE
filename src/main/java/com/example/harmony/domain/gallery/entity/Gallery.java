@@ -28,4 +28,11 @@ public class Gallery {
 
     @ManyToOne
     private Family family;
+
+    public void addImages(List<Image> images) {
+        this.images.addAll(images);
+        for (Image image : images) {
+            image.setGallery(this);
+        }
+    }
 }
