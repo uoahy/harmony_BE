@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -25,6 +26,9 @@ public class Schedule {
     private LocalDate startDate;
 
     private LocalDate endDate;
+
+    @OneToMany(mappedBy = "schedule")
+    private List<Participation> participants;
 
     private String content;
 
