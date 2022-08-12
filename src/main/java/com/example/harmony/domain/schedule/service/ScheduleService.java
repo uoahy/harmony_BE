@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.service;
 
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
+import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.entity.Participation;
 import com.example.harmony.domain.schedule.entity.Schedule;
@@ -75,5 +76,15 @@ public class ScheduleService {
         if (schedule.isDone() && schedule.getParticipations().size() >= 2) {
             user.getFamily().minusScore(10);
         }
+    }
+
+    @Transactional
+    public void setScheduleDone(Long scheduleId, ScheduleDoneRequest scheduleDoneRequest, User user) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
+        if (schedule.getFamily() != user.getFamily()) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 완료여부 설정 권한이 없습니다");
+        }
+        schedule.setDone(scheduleDoneRequest);
     }
 }

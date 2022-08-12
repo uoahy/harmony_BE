@@ -35,6 +35,10 @@ public class Family {
         this.familyCode = familyCode;
     }
 
+    public void plusScore(int score) {
+        this.score += score;
+    }
+
     public void minusScore(int score) {
         this.score -= score;
     }

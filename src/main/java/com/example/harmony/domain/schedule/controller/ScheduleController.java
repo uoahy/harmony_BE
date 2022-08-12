@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.controller;
 
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
+import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.service.ScheduleService;
 import com.example.harmony.global.common.SuccessResponse;
@@ -50,5 +51,15 @@ public class ScheduleController {
     ) {
         scheduleService.deleteSchedule(scheduleId, userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 삭제 성공"), HttpStatus.OK);
+    }
+
+    @PutMapping("/api/schedules/{scheduleId}/done")
+    public ResponseEntity<SuccessResponse> putScheduleDone(
+            @PathVariable Long scheduleId,
+            @RequestBody ScheduleDoneRequest scheduleDoneRequest,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        scheduleService.setScheduleDone(scheduleId, scheduleDoneRequest, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 완료여부 설정 성공"), HttpStatus.OK);
     }
 }

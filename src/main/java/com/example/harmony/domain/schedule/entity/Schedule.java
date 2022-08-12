@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.entity;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
+import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.user.entity.Family;
 import lombok.Getter;
@@ -60,6 +61,18 @@ public class Schedule {
             this.endDate = scheduleRequest.getEndDate();
             this.participations = participations;
             this.content = scheduleRequest.getContent();
+        }
+    }
+
+    public void setDone(ScheduleDoneRequest scheduleDoneRequest) {
+        this.done = scheduleDoneRequest.isDone();
+
+        if (participations.size() >= 2) {
+            if (done) {
+                family.plusScore(10);
+            } else {
+                family.minusScore(10);
+            }
         }
     }
 }
