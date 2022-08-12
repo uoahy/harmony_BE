@@ -19,5 +19,10 @@ public class Participation {
     private Schedule schedule;
 
     @ManyToOne
-    private User user;
+    private User participant;
+
+    public Participation(Schedule schedule, User participant) {
+        this.schedule = schedule;
+        this.participant = participant;
+    }
 }

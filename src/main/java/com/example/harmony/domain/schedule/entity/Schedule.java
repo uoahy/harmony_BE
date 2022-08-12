@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.entity;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
+import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.user.entity.Family;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class Schedule {
     private LocalDate endDate;
 
     @OneToMany(mappedBy = "schedule")
-    private List<Participation> participants;
+    private List<Participation> participations;
 
     private String content;
 
@@ -39,4 +40,15 @@ public class Schedule {
 
     @ManyToOne
     private Family family;
+
+    public Schedule(ScheduleRequest scheduleRequest, Family family) {
+        this.category = scheduleRequest.getCategory();
+        this.title = scheduleRequest.getTitle();
+        this.startDate = scheduleRequest.getStartDate();
+        this.endDate = scheduleRequest.getEndDate();
+        this.content = scheduleRequest.getContent();
+        this.done = false;
+        this.gallery = null;
+        this.family = family;
+    }
 }
