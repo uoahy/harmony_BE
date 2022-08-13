@@ -18,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +50,22 @@ public class VoiceMailService {
     }
 
     @Transactional
-    public void deleteVoiceMail()
+    public void deleteVoiceMail(Long voiceMailId, User user){
+
+        VoiceMail deleteVoiceMail= voiceMailRepository.findById(voiceMailId)
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않은 소리샘입니다."));
+        User userId = userRepository.findById(user.getId())
+                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"등록되지 않은 사용자입니다."));
+        String deleteVoiceMailSoundUrl=deleteVoiceMail.getSoundFileName();
+
+        if(!deleteVoiceMail.getUser().getId().equals(userId)) {
+            new ResponseStatusException(HttpStatus.FORBIDDEN,"소리샘 삭제 권한이 없습니다");
+        } else {
+            voiceMailRepository.deleteById(voiceMailId);
+            s3Service.deleteFiles(Collections.singletonList(deleteVoiceMailSoundUrl));
+        }
+
+    }
 
 
 }

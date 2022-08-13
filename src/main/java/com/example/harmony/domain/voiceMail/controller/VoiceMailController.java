@@ -42,10 +42,9 @@ public class VoiceMailController {
 
     @DeleteMapping("/api/voice-mails/{voiceMailId}")//삭제
     public ResponseEntity<SuccessResponse> deleteVoiceMail(@AuthenticationPrincipal UserDetailsImpl userDetails,
-                                                           @PathVariable Long voiceMailId,
-                                                           @RequestBody Map<String, String>){
+                                                           @PathVariable Long voiceMailId /*, */){
         User user = userDetails.getUser();
-
+        voiceMailService.deleteVoiceMail(voiceMailId,user);
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK,"소리샘 삭제 성공"),HttpStatus.OK);
     }
 }

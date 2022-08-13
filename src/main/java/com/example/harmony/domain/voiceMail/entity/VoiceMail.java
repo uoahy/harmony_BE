@@ -27,7 +27,7 @@ public class VoiceMail extends TimeStamp {
 
     private String soundUrl;
 
-    private String soundFilename;
+    private String soundFileName;
 
     @ManyToOne
     private User user;
@@ -42,6 +42,6 @@ public class VoiceMail extends TimeStamp {
         this.from= voiceMailRequest.getFrom();
         this.to= voiceMailRequest.getTo();
         this.soundUrl= uploadResponse.getUrl();
-        this.soundFilename= uploadResponse.getFilename();
+        this.soundFileName= uploadResponse.getFilename();
     }
 }
