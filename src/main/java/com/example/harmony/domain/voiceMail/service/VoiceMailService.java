@@ -31,14 +31,14 @@ public class VoiceMailService {
     private final FamilyRepository familyRepository;
     private final S3Service s3Service;
 
-    public AllVoiceMailsResponse allVoiceMails(User user){//소리샘 목록
-
+    public AllVoiceMailsResponse allVoiceMails(User user){
+    //소리샘 목록
         List<VoiceMail> VoiceMails=voiceMailRepository.FindAllByFamilyIdByCreatedAtDesc(user.getFamily().getId());
         return new AllVoiceMailsResponse((VoiceMail) VoiceMails);
     }
     @Transactional
     public void createVoiceMail(VoiceMailRequest voiceMailRequest, MultipartFile soundFile, User user){
-
+    //생성
         User userId = userRepository.findById(user.getId())
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"등록되지 않은 사용자입니다."));
         Family familyId= familyRepository.findById(user.getFamily().getId())
@@ -51,7 +51,7 @@ public class VoiceMailService {
 
     @Transactional
     public void deleteVoiceMail(Long voiceMailId, User user){
-
+    //삭제
         VoiceMail deleteVoiceMail= voiceMailRepository.findById(voiceMailId)
                 .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않은 소리샘입니다."));
         User userId = userRepository.findById(user.getId())
