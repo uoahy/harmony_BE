@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Map;
+import javax.validation.constraints.Email;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,26 +22,20 @@ public class UserController {
     // 회원가입
     @PostMapping("/api/signup")
     public ResponseEntity<?> signup(@RequestBody @Valid SignupRequest request) {
-        String msg = "회원가입을 성공하였습니다";
         userService.signup(request);
-                return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg));
+                return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK,"회원가입을 성공하였습니다."));
     }
 
     // 이메일 중복체크
     @PostMapping("/api/email-check")
-    public ResponseEntity<?> emailChk(@RequestBody Map<String,String> email) {
-        String msg = "이메일 중복체크 결과를 확인해주세요.";
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg,userService.emailChk(email.get("email"))));
+    public ResponseEntity<?> emailChk(@RequestBody String email) {
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK,"이메일 중복체크를 성공하였습니다.",userService.emailChk(email)));
     }
 
     // 닉네임 중복체크
     @PostMapping("/api/nickname-check")
-    public ResponseEntity<?> nicknameChk(@RequestBody Map<String,String> nickname) {
-        String msg = "닉네임 중복체크 결과를 확인해주세요.";
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg,userService.nicknameChk(nickname.get("nickname"))));
+    public ResponseEntity<?> nicknameChk(@RequestBody String nickname) {
+        return ResponseEntity.ok(new SuccessResponse(HttpStatus.OK,"닉네임 중복체크를 성공하였습니다.",userService.nicknameChk(nickname)));
     }
-
-//    // 역할 수정
-//    @PutMapping("/api/user/role")
 
 }
