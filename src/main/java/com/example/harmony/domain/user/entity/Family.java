@@ -11,12 +11,15 @@ import java.util.List;
 @Entity
 public class Family {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String familyName;
 
     private String familyCode;
+
+    private int score;
 
     private int monthlyScore;
 
@@ -30,5 +33,13 @@ public class Family {
     public Family(String familyName, String familyCode) {
         this.familyName = familyName;
         this.familyCode = familyCode;
+    }
+
+    public void plusScore(int score) {
+        this.score += score;
+    }
+
+    public void minusScore(int score) {
+        this.score -= score;
     }
 }
