@@ -6,6 +6,8 @@ import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.user.entity.Family;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -65,6 +67,10 @@ public class Schedule {
     }
 
     public void setDone(ScheduleDoneRequest scheduleDoneRequest) {
+        if (scheduleDoneRequest.isDone() && endDate.isAfter(LocalDate.now())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "종료일이 현재 이전인 일정만 완료할 수 있습니다");
+        }
+        
         this.done = scheduleDoneRequest.isDone();
 
         if (participations.size() >= 2) {
