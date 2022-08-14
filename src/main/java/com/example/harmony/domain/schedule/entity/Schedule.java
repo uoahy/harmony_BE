@@ -48,7 +48,7 @@ public class Schedule {
         this.startDate = scheduleRequest.getStartDate();
         this.endDate = scheduleRequest.getEndDate();
         this.content = scheduleRequest.getContent();
-        this.done = false;
+        this.done = endDate.isBefore(LocalDate.now());
         this.gallery = null;
         this.family = family;
     }
