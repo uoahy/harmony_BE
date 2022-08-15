@@ -1,6 +1,6 @@
 package com.example.harmony.domain.schedule.dto;
 
-import com.example.harmony.domain.schedule.entity.Schedule;
+import com.example.harmony.domain.schedule.model.Schedule;
 import lombok.Getter;
 
 import java.time.LocalDate;
@@ -12,7 +12,6 @@ public class ScheduleResponse {
 
     private Long scheduleId;
 
-    // TODO: enum? String?
     private String category;
 
     private String title;
@@ -31,15 +30,17 @@ public class ScheduleResponse {
 
     public ScheduleResponse(Schedule schedule) {
         this.scheduleId = schedule.getId();
-        this.category = schedule.getCategory();
+        this.category = schedule.getCategory().getTitle();
         this.title = schedule.getTitle();
         this.startDate = schedule.getStartDate();
         this.endDate = schedule.getEndDate();
         this.members = schedule.getParticipations().stream()
-                .map((x) -> x.getParticipant().getName())
+                .map((x) -> x.getParticipant().getRole().getRole())
                 .collect(Collectors.toList());
         this.content = schedule.getContent();
-        this.galleryId = schedule.getGallery().getId();
+        if (schedule.getGallery() != null) {
+            this.galleryId = schedule.getGallery().getId();
+        }
         this.done = schedule.isDone();
     }
 }

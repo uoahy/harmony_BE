@@ -1,4 +1,4 @@
-package com.example.harmony.domain.schedule.entity;
+package com.example.harmony.domain.schedule.model;
 
 import com.example.harmony.domain.user.entity.User;
 import lombok.Getter;
