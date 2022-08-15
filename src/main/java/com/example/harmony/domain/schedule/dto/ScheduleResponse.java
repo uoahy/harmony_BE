@@ -39,7 +39,9 @@ public class ScheduleResponse {
                 .map((x) -> x.getParticipant().getName())
                 .collect(Collectors.toList());
         this.content = schedule.getContent();
-        this.galleryId = schedule.getGallery().getId();
+        if (schedule.getGallery() != null) {
+            this.galleryId = schedule.getGallery().getId();
+        }
         this.done = schedule.isDone();
     }
 }
