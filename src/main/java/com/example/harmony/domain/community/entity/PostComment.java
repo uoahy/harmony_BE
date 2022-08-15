@@ -23,4 +23,14 @@ public class PostComment extends TimeStamp {
 
     @ManyToOne
     private User user;
+
+    public PostComment(String content, Post post, User user) {
+        this.content = content;
+        this.post = post;
+        this.user = user;
+    }
+
+    public void putComment(String content) {
+        this.content = content;
+    }
 }
