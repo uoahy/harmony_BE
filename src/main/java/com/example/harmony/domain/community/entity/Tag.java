@@ -14,8 +14,14 @@ public class Tag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String title;
+    private String tag;
 
     @ManyToOne
     private Post post;
+
+    public Tag(String tag, Post post) {
+        this.tag = tag;
+        this.post = post;
+    }
+
 }

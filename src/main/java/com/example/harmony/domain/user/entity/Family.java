@@ -29,6 +29,8 @@ public class Family {
 
     private boolean flower;
 
+    private int level;
+
     @OneToMany(mappedBy = "family", fetch = FetchType.EAGER)
     private List<User> members;
 
