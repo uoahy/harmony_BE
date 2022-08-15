@@ -36,7 +36,7 @@ public class ScheduleResponse {
         this.startDate = schedule.getStartDate();
         this.endDate = schedule.getEndDate();
         this.members = schedule.getParticipations().stream()
-                .map((x) -> x.getParticipant().getName())
+                .map((x) -> x.getParticipant().getRole().getRole())
                 .collect(Collectors.toList());
         this.content = schedule.getContent();
         if (schedule.getGallery() != null) {
