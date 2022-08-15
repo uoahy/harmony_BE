@@ -1,4 +1,4 @@
-package com.example.harmony.domain.schedule.entity;
+package com.example.harmony.domain.schedule.model;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
@@ -22,8 +22,8 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // TODO: enum? String?
-    private String category;
+    @Enumerated(EnumType.STRING)
+    private Category category;
 
     private String title;
 
@@ -34,6 +34,7 @@ public class Schedule {
     @OneToMany(mappedBy = "schedule", cascade = CascadeType.REMOVE)
     private List<Participation> participations;
 
+    @Lob
     private String content;
 
     private boolean done;
@@ -45,7 +46,8 @@ public class Schedule {
     private Family family;
 
     public Schedule(ScheduleRequest scheduleRequest, Family family) {
-        this.category = scheduleRequest.getCategory();
+        validateDates(scheduleRequest.getStartDate(), scheduleRequest.getEndDate());
+        this.category = Category.valueOf(scheduleRequest.getCategory());
         this.title = scheduleRequest.getTitle();
         this.startDate = scheduleRequest.getStartDate();
         this.endDate = scheduleRequest.getEndDate();
@@ -56,9 +58,10 @@ public class Schedule {
     }
 
     public void modify(ScheduleRequest scheduleRequest, List<Participation> participations) {
-        this.category = scheduleRequest.getCategory();
+        this.category = Category.valueOf(scheduleRequest.getCategory());
         this.title = scheduleRequest.getTitle();
         if (!done) {
+            validateDates(scheduleRequest.getStartDate(), scheduleRequest.getEndDate());
             this.startDate = scheduleRequest.getStartDate();
             this.endDate = scheduleRequest.getEndDate();
             this.participations = participations;
@@ -70,7 +73,7 @@ public class Schedule {
         if (scheduleDoneRequest.isDone() && endDate.isAfter(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "종료일이 현재 이전인 일정만 완료할 수 있습니다");
         }
-        
+
         this.done = scheduleDoneRequest.isDone();
 
         if (participations.size() >= 2) {
@@ -79,6 +82,12 @@ public class Schedule {
             } else {
                 family.minusScore(10);
             }
+        }
+    }
+
+    public void validateDates(LocalDate startDate, LocalDate endDate) {
+        if (endDate.isBefore(startDate)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "종료일은 시작일 이후여야 합니다");
         }
     }
 }

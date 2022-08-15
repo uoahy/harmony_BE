@@ -3,8 +3,8 @@ package com.example.harmony.domain.schedule.service;
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
-import com.example.harmony.domain.schedule.entity.Participation;
-import com.example.harmony.domain.schedule.entity.Schedule;
+import com.example.harmony.domain.schedule.model.Participation;
+import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ParticipationRepository;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
 import com.example.harmony.domain.user.entity.User;
@@ -16,8 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -40,9 +40,13 @@ public class ScheduleService {
     public void registerSchedule(ScheduleRequest scheduleRequest, User user) {
         Schedule schedule = scheduleRepository.save(new Schedule(scheduleRequest, user.getFamily()));
         List<User> participants = userRepository.findAllById(scheduleRequest.getMemberIds());
-        List<Participation> participations = participants.stream()
-                .map(x -> new Participation(schedule, x))
-                .collect(Collectors.toList());
+        List<Participation> participations = new ArrayList<>();
+        for (User participant : participants) {
+            if (participant.getFamily() != user.getFamily()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가족 구성원만 일정에 참여할 수 있습니다");
+            }
+            participations.add(new Participation(schedule, participant));
+        }
         participationRepository.saveAll(participations);
     }
 
@@ -55,9 +59,13 @@ public class ScheduleService {
         }
         if (!schedule.isDone()) {
             List<User> participants = userRepository.findAllById(scheduleRequest.getMemberIds());
-            List<Participation> participations = participants.stream()
-                    .map(x -> new Participation(schedule, x))
-                    .collect(Collectors.toList());
+            List<Participation> participations = new ArrayList<>();
+            for (User participant : participants) {
+                if (participant.getFamily() != user.getFamily()) {
+                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가족 구성원만 일정에 참여할 수 있습니다");
+                }
+                participations.add(new Participation(schedule, participant));
+            }
             schedule.modify(scheduleRequest, participations);
         } else {
             schedule.modify(scheduleRequest, null);

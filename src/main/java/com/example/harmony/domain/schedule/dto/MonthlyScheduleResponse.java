@@ -1,6 +1,6 @@
 package com.example.harmony.domain.schedule.dto;
 
-import com.example.harmony.domain.schedule.entity.Schedule;
+import com.example.harmony.domain.schedule.model.Schedule;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -29,13 +29,13 @@ public class MonthlyScheduleResponse {
         for (Schedule schedule : schedules) {
             this.schedules.add(new ScheduleResponse(schedule));
             switch (schedule.getCategory()) {
-                case "eat":
+                case EAT_OUT:
                     this.eatCount++;
-                case "trip":
+                case TRIP:
                     this.tripCount++;
-                case "cook":
+                case COOK:
                     this.cookCount++;
-                case "clean":
+                case CLEAN:
                     this.cleanCount++;
             }
         }
