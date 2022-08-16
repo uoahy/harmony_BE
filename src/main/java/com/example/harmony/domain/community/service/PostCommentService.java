@@ -35,9 +35,7 @@ public class PostCommentService {
 
         // 댓글 작성자 여부
         User writer = postComment.getUser();
-        if(!user.equals(writer)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"댓글 작성자가 아닙니다.");
-        }
+        getAuthority(writer,user);
 
         postComment.putComment(content);
         postCommentRepository.save(postComment);
@@ -50,11 +48,17 @@ public class PostCommentService {
         );
 
         // 댓글 작성자 여부
-        if(!user.equals(postComment.getUser())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "댓글 작성자가 아닙니다.");
-        }
+        User writer = postComment.getUser();
+        getAuthority(writer, user);
 
         postCommentRepository.deleteById(commentId);
+    }
+
+    // 작성자 일치 여부
+    public void getAuthority(User writer, User user) {
+        if(!writer.getId().equals(user.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글에 대한 권한이 없습니다.");
+        }
     }
 
 
