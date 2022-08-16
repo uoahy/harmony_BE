@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ScheduleServiceTest {
 
+    @InjectMocks
     ScheduleService scheduleService;
 
     @Mock
@@ -95,8 +97,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findAllByFamilyIdAndStartDateBeforeAndEndDateAfter(familyId, to, from))
                         .thenReturn(schedules);
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 MonthlyScheduleResponse monthlyScheduleResponse = scheduleService.getMonthlySchedule(year, month, user);
 
@@ -132,8 +132,6 @@ class ScheduleServiceTest {
                 User user = User.builder()
                         .family(family)
                         .build();
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.registerSchedule(scheduleRequest, user));
@@ -171,8 +169,6 @@ class ScheduleServiceTest {
 
                 when(userRepository.findAllById(scheduleRequest.getMemberIds()))
                         .thenReturn(new ArrayList<>(Arrays.asList(user1, user2)));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.registerSchedule(scheduleRequest, user1));
@@ -216,8 +212,6 @@ class ScheduleServiceTest {
                 when(userRepository.findAllById(scheduleRequest.getMemberIds()))
                         .thenReturn(new ArrayList<>(Arrays.asList(user1, user2)));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.registerSchedule(scheduleRequest, user1));
 
@@ -255,8 +249,6 @@ class ScheduleServiceTest {
                 when(userRepository.findAllById(scheduleRequest.getMemberIds()))
                         .thenReturn(new ArrayList<>(Arrays.asList(user1, user2)));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.registerSchedule(scheduleRequest, user1));
 
@@ -287,8 +279,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.empty());
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user));
 
@@ -318,8 +308,6 @@ class ScheduleServiceTest {
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user));
@@ -358,8 +346,6 @@ class ScheduleServiceTest {
                 when(userRepository.findAllById(scheduleRequest.getMemberIds()))
                         .thenReturn(new ArrayList<>(Arrays.asList(user1, user2)));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user1));
 
@@ -394,8 +380,6 @@ class ScheduleServiceTest {
 
                 when(userRepository.findAllById(scheduleRequest.getMemberIds()))
                         .thenReturn(new ArrayList<>(Arrays.asList(user)));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user));
@@ -444,8 +428,6 @@ class ScheduleServiceTest {
                 when(userRepository.findAllById(scheduleRequest.getMemberIds()))
                         .thenReturn(new ArrayList<>(Arrays.asList(user1, user2)));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user1));
 
@@ -478,8 +460,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.empty());
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.deleteSchedule(scheduleId, user));
 
@@ -507,8 +487,6 @@ class ScheduleServiceTest {
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.deleteSchedule(scheduleId, user));
@@ -553,8 +531,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.deleteSchedule(scheduleId, user));
 
@@ -594,8 +570,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.deleteSchedule(scheduleId, user));
 
@@ -632,8 +606,6 @@ class ScheduleServiceTest {
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 assertDoesNotThrow(() -> scheduleService.deleteSchedule(scheduleId, user));
@@ -672,8 +644,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.deleteSchedule(scheduleId, user1));
 
@@ -703,8 +673,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.empty());
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.setScheduleDone(scheduleId, user));
 
@@ -732,8 +700,6 @@ class ScheduleServiceTest {
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.setScheduleDone(scheduleId, user));
@@ -763,8 +729,6 @@ class ScheduleServiceTest {
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.setScheduleDone(scheduleId, user));
@@ -810,8 +774,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
 
@@ -852,8 +814,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
 
@@ -893,8 +853,6 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
-
                 // when
                 assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
 
@@ -932,8 +890,6 @@ class ScheduleServiceTest {
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
-
-                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
 
                 // when
                 assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user1));
