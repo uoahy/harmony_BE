@@ -15,7 +15,9 @@ import java.util.stream.Collectors;
 
 @Getter
 @Setter
-public class PostResponse {
+public class PostListResponse {
+
+    private Long postId;
 
     private String title;
 
@@ -27,29 +29,24 @@ public class PostResponse {
 
     private Map<String,Object> poster;
 
-    private boolean isPoster;
-
     private LocalDateTime createdAt;
 
-    private List<PostCommentResponse> comments;
+    private int commentCount;
 
     private int likeCount;
 
-    private boolean like;
-
-    public PostResponse(Post post, boolean isPoster, List<PostCommentResponse> comments, boolean like) {
-      this.title = post.getTitle();
-      this.content = post.getContent();
-      this.tags = post.getTags().stream()
-              .map(Tag::getTag)
-              .collect(Collectors.toList());
-      this.imageUrl = post.getImageUrl();
-      this.poster= userInfo(post.getUser(),post.getUser().getFamily());
-      this.isPoster = isPoster;
-      this.createdAt = post.getCreatedAt();
-      this.comments = comments;
-      this.likeCount = post.getLikes().size();
-      this.like = like;
+    public PostListResponse(Post post) {
+        this.postId = post.getId();
+        this.title = post.getTitle();
+        this.content = post.getContent();
+        this.tags = post.getTags().stream()
+                .map(Tag::getTag)
+                .collect(Collectors.toList());
+        this.imageUrl = post.getImageUrl();
+        this.poster = userInfo(post.getUser(),post.getUser().getFamily());
+        this.createdAt = post.getCreatedAt();
+        this.commentCount = post.getComments().size();
+        this.likeCount = post.getLikes().size();
     }
 
     public Map<String,Object> userInfo(User user, Family family) {

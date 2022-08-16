@@ -1,6 +1,7 @@
 package com.example.harmony.domain.community.service;
 
 import com.example.harmony.domain.community.dto.PostCommentResponse;
+import com.example.harmony.domain.community.dto.PostListResponse;
 import com.example.harmony.domain.community.dto.PostRequest;
 import com.example.harmony.domain.community.dto.PostResponse;
 import com.example.harmony.domain.community.entity.Post;
@@ -81,7 +82,7 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public Slice<PostResponse> getPosts(String category, int page, int size) {
+    public Slice<PostListResponse> getPosts(String category, int page, int size) {
         // 카테고리 유효성 검사
         Set<String> categories = new HashSet<>(Arrays.asList("아빠","엄마","첫째","둘째","N째","막내","외동","동거인"));
         if(!categories.contains(category)) {
@@ -91,7 +92,7 @@ public class PostService {
         Pageable pageable = PageRequest.of(page,size);
         Slice<Post> posts = postRepository.findAllByCategoryContainingOrderByCreatedAtDesc(category, pageable);
 
-        return posts.map(PostResponse::new);
+        return posts.map(PostListResponse::new);
     }
 
     // 게시글 수정
