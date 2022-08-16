@@ -23,11 +23,9 @@ public class Family {
 
     private String familyCode;
 
-    private int score;
+    private int totalScore;
 
     private int monthlyScore;
-
-    private int totalScore;
 
     private boolean flower;
 
@@ -40,10 +38,12 @@ public class Family {
     }
 
     public void plusScore(int score) {
-        this.score += score;
+        this.totalScore += score;
+        this.monthlyScore += score;
     }
 
     public void minusScore(int score) {
-        this.score -= score;
+        this.totalScore -= score;
+        this.monthlyScore -= score;
     }
 }
