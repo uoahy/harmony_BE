@@ -8,6 +8,7 @@ import com.example.harmony.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @RequiredArgsConstructor
@@ -30,11 +31,13 @@ public class LikeService {
             );
             isPresent.putLike(like);
             likeRepository.save(isPresent);
+        } else {
+            likeRepository.save(new Like(like, post, user));
         }
-        likeRepository.save(new Like(like, post, user));
     }
 
     // 게시글 좋아요 취소
+    @Transactional
     public void undoLike(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"게시글이 존재하지 않습니다.")
