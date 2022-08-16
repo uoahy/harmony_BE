@@ -25,11 +25,12 @@ public class Post extends TimeStamp {
 
     private String content;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     private List<Tag> tags;
 
-    @OneToMany(mappedBy="post")
+    @OneToMany(mappedBy="post", cascade = CascadeType.REMOVE)
     private List<Like> likes;
+
     private String imageUrl;
 
     private String imageFilename;
@@ -37,7 +38,7 @@ public class Post extends TimeStamp {
     @ManyToOne
     private User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE)
     List<PostComment> comments;
 
     public Post(PostRequest postRequest, UploadResponse image, User user) {
@@ -49,11 +50,24 @@ public class Post extends TimeStamp {
         this.user = user;
     }
 
-    public void savePost(PostRequest postRequest, UploadResponse image) {
+    public Post(PostRequest postRequest, User user) {
+        this.title = postRequest.getTitle();
+        this.category = postRequest.getCategory();
+        this.content = postRequest.getContent();
+        this.user = user;
+    }
+
+    public void savePostAndImage(PostRequest postRequest, UploadResponse image) {
         this.title = postRequest.getTitle();
         this.category = postRequest.getCategory();
         this.content = postRequest.getContent();
         this.imageUrl = image.getUrl();
         this.imageFilename = image.getFilename();
+    }
+
+    public void savePost(PostRequest postRequest) {
+        this.title = postRequest.getTitle();
+        this.category = postRequest.getCategory();
+        this.content = postRequest.getContent();
     }
 }
