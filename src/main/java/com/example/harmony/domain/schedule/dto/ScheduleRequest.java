@@ -2,6 +2,7 @@ package com.example.harmony.domain.schedule.dto;
 
 import com.example.harmony.domain.schedule.model.Category;
 import com.example.harmony.global.validator.ValueOfEnum;
+import lombok.Builder;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Length;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
+@Builder
 @Getter
 public class ScheduleRequest {
 
