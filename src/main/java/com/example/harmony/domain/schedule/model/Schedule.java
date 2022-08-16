@@ -4,6 +4,8 @@ import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.user.entity.Family;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,8 @@ import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class Schedule {

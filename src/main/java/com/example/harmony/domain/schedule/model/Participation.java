@@ -1,12 +1,16 @@
 package com.example.harmony.domain.schedule.model;
 
 import com.example.harmony.domain.user.entity.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class Participation {
