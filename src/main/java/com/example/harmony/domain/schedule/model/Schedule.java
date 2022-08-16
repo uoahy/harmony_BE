@@ -1,7 +1,6 @@
 package com.example.harmony.domain.schedule.model;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
-import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.user.entity.Family;
 import lombok.AllArgsConstructor;
@@ -73,12 +72,12 @@ public class Schedule {
         }
     }
 
-    public void setDone(ScheduleDoneRequest scheduleDoneRequest) {
-        if (scheduleDoneRequest.isDone() && endDate.isAfter(LocalDate.now())) {
+    public void setDone() {
+        if (!done && endDate.isAfter(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "종료일이 현재 이전인 일정만 완료할 수 있습니다");
         }
 
-        this.done = scheduleDoneRequest.isDone();
+        done = !done;
 
         if (participations.size() >= 2) {
             if (done) {

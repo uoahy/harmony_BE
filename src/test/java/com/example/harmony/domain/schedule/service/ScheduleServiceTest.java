@@ -683,4 +683,266 @@ class ScheduleServiceTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("일정 완료여부 설정")
+    class SetScheduleDone {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 일정")
+            void schedule_not_found() {
+                // given
+                Long scheduleId = -1L;
+
+                User user = User.builder().build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.empty());
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.setScheduleDone(scheduleId, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"일정을 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 일정 완료여부 설정 시도")
+            void user_is_not_family_member() {
+                // given
+                Long scheduleId = 1L;
+
+                Family family1 = Family.builder().build();
+
+                User user = User.builder()
+                        .family(family1)
+                        .build();
+
+                Family family2 = Family.builder().build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family2)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.setScheduleDone(scheduleId, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"일정 완료여부 설정 권한이 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("종료일이 지나지않은 일정 완료 시도")
+            void endDate_is_future() {
+                // given
+                Long scheduleId = 1L;
+
+                LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+                Family family = Family.builder().build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .endDate(tomorrow)
+                        .family(family)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.setScheduleDone(scheduleId, user));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"종료일이 현재 이전인 일정만 완료할 수 있습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("참여인원이 2명 이상인 일정 완료")
+            void two_or_more_participants_and_done() {
+                // given
+                Long scheduleId = 1L;
+
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Participation participation1 = Participation.builder().build();
+
+                Participation participation2 = Participation.builder().build();
+
+                Schedule schedule = Schedule.builder()
+                        .endDate(LocalDate.of(2022, 8, 8))
+                        .family(family)
+                        .participations(Arrays.asList(participation1, participation2))
+                        .done(false)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
+
+                // then
+                assertEquals(totalScore + 10, family.getTotalScore());
+                assertEquals(monthlyScore + 10, family.getMonthlyScore());
+                assertTrue(schedule.isDone());
+            }
+
+            @Test
+            @DisplayName("참여인원이 2명 이상인 일정 완료 취소")
+            void two_or_more_participants_and_not_done() {
+                // given
+                Long scheduleId = 1L;
+
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Participation participation1 = Participation.builder().build();
+
+                Participation participation2 = Participation.builder().build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family)
+                        .participations(Arrays.asList(participation1, participation2))
+                        .done(true)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
+
+                // then
+                assertEquals(totalScore - 10, family.getTotalScore());
+                assertEquals(monthlyScore - 10, family.getMonthlyScore());
+                assertFalse(schedule.isDone());
+            }
+
+            @Test
+            @DisplayName("참여인원이 1명인 완료된 일정")
+            void one_participant_and_done() {
+                // given
+                Long scheduleId = 1L;
+
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Participation participation = Participation.builder().build();
+
+                Schedule schedule = Schedule.builder()
+                        .endDate(LocalDate.of(2022, 8, 8))
+                        .family(family)
+                        .participations(Arrays.asList(participation))
+                        .done(false)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
+
+                // then
+                assertEquals(totalScore, family.getTotalScore());
+                assertEquals(monthlyScore, family.getMonthlyScore());
+                assertTrue(schedule.isDone());
+            }
+
+            @Test
+            @DisplayName("참여인원이 1명인 완료되지않은 일정")
+            void one_participant_and_not_done() {
+                // given
+                Long scheduleId = 1L;
+
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
+                User user1 = User.builder()
+                        .family(family)
+                        .build();
+
+                Participation participation = Participation.builder().build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family)
+                        .participations(Arrays.asList(participation))
+                        .done(true)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user1));
+
+                // then
+                assertEquals(totalScore, family.getTotalScore());
+                assertEquals(monthlyScore, family.getMonthlyScore());
+                assertFalse(schedule.isDone());
+            }
+        }
+    }
 }
