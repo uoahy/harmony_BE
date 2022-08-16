@@ -23,6 +23,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -260,6 +262,199 @@ class ScheduleServiceTest {
 
                 // then
                 assertTrue(schedule.isDone());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("일정 수정")
+    class ModifySchedule {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 일정")
+            void schedule_not_found() {
+                // given
+                Long scheduleId = -1L;
+
+                ScheduleRequest scheduleRequest = ScheduleRequest.builder().build();
+
+                User user = User.builder().build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.empty());
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"일정을 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 일정 수정 시도")
+            void user_is_not_family_member() {
+                // given
+                Long scheduleId = 1L;
+
+                ScheduleRequest scheduleRequest = ScheduleRequest.builder().build();
+
+                Family family1 = Family.builder().build();
+
+                User user = User.builder()
+                        .family(family1)
+                        .build();
+
+                Family family2 = Family.builder().build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family2)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"일정 수정 권한이 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("일정 참여인원 중 가족구성원이 아닌 유저 포함")
+            void participants_are_not_family_members() {
+                // given
+                Long scheduleId = 1L;
+
+                ScheduleRequest scheduleRequest = ScheduleRequest.builder().build();
+
+                Family family1 = Family.builder().build();
+
+                User user1 = User.builder()
+                        .family(family1)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family1)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                Family family2 = Family.builder().build();
+
+                User user2 = User.builder()
+                        .family(family2)
+                        .build();
+
+                when(userRepository.findAllById(scheduleRequest.getMemberIds()))
+                        .thenReturn(new ArrayList<>(Arrays.asList(user1, user2)));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user1));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"가족 구성원만 일정에 참여할 수 있습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("종료일이 시작일보다 과거")
+            void endDate_is_before_startDate() {
+                Long scheduleId = 1L;
+
+                ScheduleRequest scheduleRequest = ScheduleRequest.builder()
+                        .category("TRIP")
+                        .startDate(LocalDate.of(2022, 8, 8))
+                        .endDate(LocalDate.of(2022, 8, 7))
+                        .build();
+
+                Family family = Family.builder().build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family)
+                        .done(false)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                when(userRepository.findAllById(scheduleRequest.getMemberIds()))
+                        .thenReturn(new ArrayList<>(Arrays.asList(user)));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"종료일은 시작일 이후여야 합니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                Long scheduleId = 1L;
+
+                LocalDate today = LocalDate.now();
+
+                ScheduleRequest scheduleRequest = ScheduleRequest.builder()
+                        .category("TRIP")
+                        .startDate(today)
+                        .endDate(today)
+                        .memberIds(Arrays.asList(1L, 2L))
+                        .build();
+
+                Family family = Family.builder().build();
+
+                User user1 = User.builder()
+                        .id(1L)
+                        .family(family)
+                        .build();
+
+                User user2 = User.builder()
+                        .id(2L)
+                        .family(family)
+                        .build();
+
+                Schedule schedule = new Schedule(scheduleRequest, user1.getFamily());
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                when(userRepository.findAllById(scheduleRequest.getMemberIds()))
+                        .thenReturn(new ArrayList<>(Arrays.asList(user1, user2)));
+
+                scheduleService = new ScheduleService(scheduleRepository, participationRepository, userRepository);
+
+                // when
+                assertDoesNotThrow(() -> scheduleService.modifySchedule(scheduleId, scheduleRequest, user1));
+
+                // then
+                assertEquals(Category.valueOf(scheduleRequest.getCategory()), schedule.getCategory());
+                assertEquals(scheduleRequest.getTitle(), schedule.getTitle());
+                assertEquals(scheduleRequest.getStartDate(), schedule.getStartDate());
+                assertEquals(scheduleRequest.getEndDate(), schedule.getEndDate());
+                assertEquals(scheduleRequest.getMemberIds(), schedule.getParticipations().stream().map(x -> x.getParticipant().getId()).collect(Collectors.toList()));
             }
         }
     }
