@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -82,23 +81,21 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public Map<String,Object> getPosts(String category, int page, int size) {
+    public Slice<PostResponse> getPosts(String category, int page, int size) {
         // 카테고리 유효성 검사
         Set<String> categories = new HashSet<>(Arrays.asList("아빠","엄마","첫째","둘째","N째","막내","외동","동거인"));
         if(!categories.contains(category)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"유효하지 않은 카테고리입니다.");
         }
 
-        Pageable pageable = PageRequest.of(page,size, Sort.Direction.DESC);
-        Slice<Post> posts = postRepository.findAllByCategory(category, pageable);
-        Map<String,Object> response = new HashMap<>();
-        response.put("posts",posts.map(PostResponse::new));
-        response.put("last",posts.isLast());
+        Pageable pageable = PageRequest.of(page,size);
+        Slice<Post> posts = postRepository.findAllByCategoryContainingOrderByCreatedAtDesc(category, pageable);
 
-        return response;
+        return posts.map(PostResponse::new);
     }
 
     // 게시글 수정
+    @Transactional
     public void putPost(Long postId, MultipartFile image, PostRequest request, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물이 존재하지 않습니다.")
@@ -107,29 +104,26 @@ public class PostService {
         // 게시글 작성자 일치여부
         getAuthority(post.getUser(),user);
 
+        // 기존 이미지 존재할 경우 삭제
+        if(post.getImageUrl()!=null) {
+            List<String> previousFile = new ArrayList<>();
+            previousFile.add(post.getImageFilename());
+            s3Service.deleteFiles(previousFile);
+        }
+
         // 이미지 존재여부
-        if(image.isEmpty()) {
+        if(image==null) {
             post.savePost(request);
             postRepository.save(post);
         } else {
-            // 기존 이미지 삭제 및 새 이미지 저장
-            String previous = post.getImageFilename();
-            List<String> previousFile = new ArrayList<>();
-            previousFile.add(previous);
-            s3Service.deleteFiles(previousFile);
             UploadResponse savedImage = s3Service.uploadFile(image);
-
-            // 게시글 수정내용 저장
             post.savePostAndImage(request, savedImage);
             postRepository.save(post);
         }
 
         // 기존 태그 삭제 및 새 태그 저장
         tagRepository.deleteAllByPost(post);
-        List<String> tags = request.getTags();
-        for (String tag : tags) {
-            tagRepository.save(new Tag(tag, post));
-        }
+        saveTag(request, post);
     }
 
     // 게시글 삭제
