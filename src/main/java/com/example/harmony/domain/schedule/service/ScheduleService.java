@@ -1,7 +1,6 @@
 package com.example.harmony.domain.schedule.service;
 
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
-import com.example.harmony.domain.schedule.dto.ScheduleDoneRequest;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.model.Participation;
 import com.example.harmony.domain.schedule.model.Schedule;
@@ -16,8 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -40,13 +39,9 @@ public class ScheduleService {
     public void registerSchedule(ScheduleRequest scheduleRequest, User user) {
         Schedule schedule = scheduleRepository.save(new Schedule(scheduleRequest, user.getFamily()));
         List<User> participants = userRepository.findAllById(scheduleRequest.getMemberIds());
-        List<Participation> participations = new ArrayList<>();
-        for (User participant : participants) {
-            if (participant.getFamily() != user.getFamily()) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가족 구성원만 일정에 참여할 수 있습니다");
-            }
-            participations.add(new Participation(schedule, participant));
-        }
+        List<Participation> participations = participants.stream()
+                .map(x -> new Participation(schedule, x))
+                .collect(Collectors.toList());
         participationRepository.saveAll(participations);
     }
 
@@ -59,13 +54,9 @@ public class ScheduleService {
         }
         if (!schedule.isDone()) {
             List<User> participants = userRepository.findAllById(scheduleRequest.getMemberIds());
-            List<Participation> participations = new ArrayList<>();
-            for (User participant : participants) {
-                if (participant.getFamily() != user.getFamily()) {
-                    throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "가족 구성원만 일정에 참여할 수 있습니다");
-                }
-                participations.add(new Participation(schedule, participant));
-            }
+            List<Participation> participations = participants.stream()
+                    .map(x -> new Participation(schedule, x))
+                    .collect(Collectors.toList());
             schedule.modify(scheduleRequest, participations);
         } else {
             schedule.modify(scheduleRequest, null);
@@ -76,7 +67,7 @@ public class ScheduleService {
     public void deleteSchedule(Long scheduleId, User user) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
-        if (schedule.getFamily() != user.getFamily()) {
+        if (!schedule.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 삭제 권한이 없습니다");
         }
         scheduleRepository.deleteById(scheduleId);
@@ -87,12 +78,12 @@ public class ScheduleService {
     }
 
     @Transactional
-    public void setScheduleDone(Long scheduleId, ScheduleDoneRequest scheduleDoneRequest, User user) {
+    public void setScheduleDone(Long scheduleId, User user) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
-        if (schedule.getFamily() != user.getFamily()) {
+        if (!schedule.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 완료여부 설정 권한이 없습니다");
         }
-        schedule.setDone(scheduleDoneRequest);
+        schedule.setDone();
     }
 }

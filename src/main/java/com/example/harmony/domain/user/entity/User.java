@@ -1,16 +1,21 @@
 package com.example.harmony.domain.user.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class User {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
@@ -47,5 +52,7 @@ public class User {
         this.family = family;
     }
 
-    public void setRole(RoleEnum role) { this.role = role; }
+    public void setRole(RoleEnum role) {
+        this.role = role;
+    }
 }
