@@ -1,5 +1,6 @@
 package com.example.harmony.domain.schedule.dto;
 
+import com.example.harmony.domain.schedule.model.Category;
 import com.example.harmony.domain.schedule.model.Schedule;
 import lombok.Getter;
 
@@ -12,7 +13,7 @@ public class ScheduleResponse {
 
     private Long scheduleId;
 
-    private String category;
+    private Category category;
 
     private String title;
 
@@ -30,7 +31,7 @@ public class ScheduleResponse {
 
     public ScheduleResponse(Schedule schedule) {
         this.scheduleId = schedule.getId();
-        this.category = schedule.getCategory().getTitle();
+        this.category = schedule.getCategory();
         this.title = schedule.getTitle();
         this.startDate = schedule.getStartDate();
         this.endDate = schedule.getEndDate();
