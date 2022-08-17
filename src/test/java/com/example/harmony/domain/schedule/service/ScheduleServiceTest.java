@@ -127,7 +127,9 @@ class ScheduleServiceTest {
                         .endDate(LocalDate.of(2022, 8, 7))
                         .build();
 
-                Family family = Family.builder().build();
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user = User.builder()
                         .family(family)
@@ -150,13 +152,17 @@ class ScheduleServiceTest {
                         .endDate(LocalDate.of(2022, 8, 8))
                         .build();
 
-                Family family1 = Family.builder().build();
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user1 = User.builder()
                         .family(family1)
                         .build();
 
-                Family family2 = Family.builder().build();
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
 
                 User user2 = User.builder()
                         .family(family2)
@@ -194,7 +200,9 @@ class ScheduleServiceTest {
                         .endDate(today)
                         .build();
 
-                Family family = Family.builder().build();
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user1 = User.builder()
                         .family(family)
@@ -231,7 +239,9 @@ class ScheduleServiceTest {
                         .endDate(yesterday)
                         .build();
 
-                Family family = Family.builder().build();
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user1 = User.builder()
                         .family(family)
@@ -294,13 +304,17 @@ class ScheduleServiceTest {
 
                 ScheduleRequest scheduleRequest = ScheduleRequest.builder().build();
 
-                Family family1 = Family.builder().build();
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user = User.builder()
                         .family(family1)
                         .build();
 
-                Family family2 = Family.builder().build();
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
 
                 Schedule schedule = Schedule.builder()
                         .family(family2)
@@ -324,7 +338,9 @@ class ScheduleServiceTest {
 
                 ScheduleRequest scheduleRequest = ScheduleRequest.builder().build();
 
-                Family family1 = Family.builder().build();
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user1 = User.builder()
                         .family(family1)
@@ -337,7 +353,9 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
-                Family family2 = Family.builder().build();
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
 
                 User user2 = User.builder()
                         .family(family2)
@@ -364,7 +382,9 @@ class ScheduleServiceTest {
                         .endDate(LocalDate.of(2022, 8, 7))
                         .build();
 
-                Family family = Family.builder().build();
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user = User.builder()
                         .family(family)
@@ -408,7 +428,9 @@ class ScheduleServiceTest {
                         .memberIds(Arrays.asList(1L, 2L))
                         .build();
 
-                Family family = Family.builder().build();
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user1 = User.builder()
                         .id(1L)
@@ -473,13 +495,17 @@ class ScheduleServiceTest {
                 // given
                 Long scheduleId = 1L;
 
-                Family family1 = Family.builder().build();
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user = User.builder()
                         .family(family1)
                         .build();
 
-                Family family2 = Family.builder().build();
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
 
                 Schedule schedule = Schedule.builder()
                         .family(family2)
@@ -510,6 +536,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
@@ -549,6 +576,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
@@ -588,6 +616,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
@@ -625,6 +654,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
@@ -686,13 +716,17 @@ class ScheduleServiceTest {
                 // given
                 Long scheduleId = 1L;
 
-                Family family1 = Family.builder().build();
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user = User.builder()
                         .family(family1)
                         .build();
 
-                Family family2 = Family.builder().build();
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
 
                 Schedule schedule = Schedule.builder()
                         .family(family2)
@@ -716,7 +750,9 @@ class ScheduleServiceTest {
 
                 LocalDate tomorrow = LocalDate.now().plusDays(1);
 
-                Family family = Family.builder().build();
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
 
                 User user = User.builder()
                         .family(family)
@@ -752,6 +788,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
@@ -793,6 +830,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
@@ -833,6 +871,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
@@ -872,6 +911,7 @@ class ScheduleServiceTest {
                 int monthlyScore = 100;
 
                 Family family = Family.builder()
+                        .id(1L)
                         .totalScore(totalScore)
                         .monthlyScore(monthlyScore)
                         .build();
