@@ -4,12 +4,16 @@ import com.example.harmony.domain.community.dto.PostRequest;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.global.common.TimeStamp;
 import com.example.harmony.global.s3.UploadResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.List;
 
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @Getter
 @Entity
