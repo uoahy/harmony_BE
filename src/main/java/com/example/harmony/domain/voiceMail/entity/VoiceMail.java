@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,11 +26,9 @@ public class VoiceMail extends TimeStamp {
 
     private String title;
 
-    @Column(name = "sender")
-    private String from;
+    private String sender;
 
-    @Column(name = "receiver")
-    private String to;
+    private String receiver;
 
     private String soundUrl;
 
@@ -49,5 +48,9 @@ public class VoiceMail extends TimeStamp {
         this.to= voiceMailRequest.getTo();
         this.soundUrl= uploadResponse.getUrl();
         this.soundFileName= uploadResponse.getFilename();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return super.getCreatedAt();
     }
 }

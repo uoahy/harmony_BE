@@ -1,9 +1,6 @@
 package com.example.harmony.domain.voiceMail.service;
 
-import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
-import com.example.harmony.domain.user.repository.FamilyRepository;
-import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.domain.voiceMail.dto.AllVoiceMailsResponse;
 import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
 import com.example.harmony.domain.voiceMail.entity.VoiceMail;
@@ -12,7 +9,6 @@ import com.example.harmony.global.s3.S3Service;
 import com.example.harmony.global.s3.UploadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -20,22 +16,20 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
 public class VoiceMailService {
 
     private final VoiceMailRepository voiceMailRepository;
-    private final UserRepository userRepository;
-    private final FamilyRepository familyRepository;
+
     private final S3Service s3Service;
 
-    public AllVoiceMailsResponse allVoiceMails(User user){
-    //소리샘 목록
-        List<VoiceMail> VoiceMails=voiceMailRepository.FindAllByFamilyIdByCreatedAtDesc(user.getFamily().getId());
-        return new AllVoiceMailsResponse((VoiceMail) VoiceMails);
+    public AllVoiceMailsResponse getAllVoiceMails(User user) {
+        List<VoiceMail> voiceMails = voiceMailRepository.findAllByFamilyIdOrderByCreatedAtDesc(user.getFamily().getId());
+        return new AllVoiceMailsResponse(voiceMails);
     }
+
     @Transactional
     public void createVoiceMail(VoiceMailRequest voiceMailRequest, MultipartFile soundFile, User user){
     //생성
