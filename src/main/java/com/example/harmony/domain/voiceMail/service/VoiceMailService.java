@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
@@ -34,23 +33,13 @@ public class VoiceMailService {
         voiceMailRepository.save(new VoiceMail(voiceMailRequest, uploadResponse, user));
     }
 
-    @Transactional
-    public void deleteVoiceMail(Long voiceMailId, User user){
-    //삭제
-        VoiceMail deleteVoiceMail= voiceMailRepository.findById(voiceMailId)
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"존재하지 않은 소리샘입니다."));
-        User userId = userRepository.findById(user.getId())
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"등록되지 않은 사용자입니다."));
-        String deleteVoiceMailSoundUrl=deleteVoiceMail.getSoundFileName();
-
-        if(!deleteVoiceMail.getUser().getId().equals(userId)) {
-            new ResponseStatusException(HttpStatus.FORBIDDEN,"소리샘 삭제 권한이 없습니다");
-        } else {
-            voiceMailRepository.deleteById(voiceMailId);
-            s3Service.deleteFiles(Collections.singletonList(deleteVoiceMailSoundUrl));
+    public void deleteVoiceMail(Long voiceMailId, User user) {
+        VoiceMail voiceMail = voiceMailRepository.findById(voiceMailId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "음성메시지를 찾을 수 없습니다"));
+        if (!voiceMail.getFamily().getId().equals(user.getFamily().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "음성메시지 삭제 권한이 없습니다");
         }
-
+        voiceMailRepository.deleteById(voiceMailId);
+        s3Service.deleteFiles(Collections.singletonList(voiceMail.getSoundFilename()));
     }
-
-
 }
