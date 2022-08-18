@@ -2,13 +2,20 @@ package com.example.harmony.domain.voiceMail.entity;
 
 import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
 import com.example.harmony.global.common.TimeStamp;
+import com.example.harmony.global.s3.UploadResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class VoiceMail extends TimeStamp {
@@ -19,9 +26,9 @@ public class VoiceMail extends TimeStamp {
 
     private String title;
 
-    private String from;
+    private String sender;
 
-    private String to;
+    private String receiver;
 
     private String soundUrl;
 
@@ -32,4 +39,18 @@ public class VoiceMail extends TimeStamp {
 
     @ManyToOne
     private Family family;
+
+    public VoiceMail(VoiceMailRequest voiceMailRequest, UploadResponse uploadResponse, User user) {
+        this.title = voiceMailRequest.getTitle();
+        this.sender = voiceMailRequest.getFrom();
+        this.receiver = voiceMailRequest.getTo();
+        this.soundUrl = uploadResponse.getUrl();
+        this.soundFilename = uploadResponse.getFilename();
+        this.user = user;
+        this.family = user.getFamily();
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return super.getCreatedAt();
+    }
 }
