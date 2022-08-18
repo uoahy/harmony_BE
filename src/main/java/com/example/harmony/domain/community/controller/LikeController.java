@@ -23,9 +23,7 @@ public class LikeController {
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody Map<String,Boolean> map ) {
-        String msg = "좋아요를 눌렀습니다.";
-        likeService.doLike(postId, userDetails.getUser(), map.get("like"));
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, likeService.doLike(postId, userDetails.getUser(), map.get("like"))));
     }
 
     // 게시글 좋아요 취소
@@ -33,8 +31,6 @@ public class LikeController {
     public ResponseEntity<?> undoLike(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails ) {
-        String msg = "좋아요를 취소하였습니다.";
-        likeService.undoLike(postId, userDetails.getUser());
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, likeService.undoLike(postId, userDetails.getUser())));
     }
 }

@@ -19,7 +19,7 @@ public class LikeService {
     private final PostRepository postRepository;
 
     // 게시글 좋아요 + 이미 누른 사람
-    public void doLike(Long postId, User user,boolean like) {
+    public String doLike(Long postId, User user,boolean like) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"게시글이 존재하지 않습니다.")
         );
@@ -34,14 +34,16 @@ public class LikeService {
         } else {
             likeRepository.save(new Like(like, post, user));
         }
+        return "좋아요를 눌렀습니다.";
     }
 
     // 게시글 좋아요 취소
     @Transactional
-    public void undoLike(Long postId, User user) {
+    public String undoLike(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"게시글이 존재하지 않습니다.")
         );
         likeRepository.deleteLikeByPostAndUser(post, user);
+        return "좋아요를 취소하였습니다.";
     }
 }
