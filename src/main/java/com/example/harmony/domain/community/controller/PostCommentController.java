@@ -22,8 +22,7 @@ public class PostCommentController {
     public ResponseEntity<?> createComment(@PathVariable Long postId,
                                            @RequestBody Map<String, String> map,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg= "댓글 작성을 성공하였습니다";
-        postCommentService.createComment(postId, map.get("content"), userDetails.getUser());
+        String msg = postCommentService.createComment(postId, map.get("content"), userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
     }
 
@@ -32,8 +31,7 @@ public class PostCommentController {
     public ResponseEntity<?> putComment(@PathVariable Long commentId,
                                         @RequestBody Map<String, String> map,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = "댓글 수정을 성공하였습니다.";
-        postCommentService.putComment(commentId, map.get("content"), userDetails.getUser());
+        String msg = postCommentService.putComment(commentId, map.get("content"), userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
     }
 
@@ -41,8 +39,7 @@ public class PostCommentController {
     @DeleteMapping("/api/posts/{postId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = "댓글 삭제를 성공하였습니다.";
-        postCommentService.deleteComment(commentId, userDetails.getUser());
+        String msg = postCommentService.deleteComment(commentId, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
     }
 }
