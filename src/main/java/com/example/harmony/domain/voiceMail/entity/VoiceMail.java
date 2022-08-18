@@ -32,7 +32,7 @@ public class VoiceMail extends TimeStamp {
 
     private String soundUrl;
 
-    private String soundFileName;
+    private String soundFilename;
 
     @ManyToOne
     private User user;
@@ -40,14 +40,14 @@ public class VoiceMail extends TimeStamp {
     @ManyToOne
     private Family family;
 
-    public VoiceMail (User user, Family family, VoiceMailRequest voiceMailRequest, UploadResponse uploadResponse){
-        this.user= user;
-        this.family= family;
-        this.title= voiceMailRequest.getTitle();
-        this.from= voiceMailRequest.getFrom();
-        this.to= voiceMailRequest.getTo();
-        this.soundUrl= uploadResponse.getUrl();
-        this.soundFileName= uploadResponse.getFilename();
+    public VoiceMail(VoiceMailRequest voiceMailRequest, UploadResponse uploadResponse, User user) {
+        this.title = voiceMailRequest.getTitle();
+        this.sender = voiceMailRequest.getFrom();
+        this.receiver = voiceMailRequest.getTo();
+        this.soundUrl = uploadResponse.getUrl();
+        this.soundFilename = uploadResponse.getFilename();
+        this.user = user;
+        this.family = user.getFamily();
     }
 
     public LocalDateTime getCreatedAt() {

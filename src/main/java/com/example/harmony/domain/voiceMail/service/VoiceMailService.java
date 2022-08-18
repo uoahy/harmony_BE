@@ -10,7 +10,6 @@ import com.example.harmony.global.s3.UploadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
@@ -30,17 +29,9 @@ public class VoiceMailService {
         return new AllVoiceMailsResponse(voiceMails);
     }
 
-    @Transactional
-    public void createVoiceMail(VoiceMailRequest voiceMailRequest, MultipartFile soundFile, User user){
-    //생성
-        User userId = userRepository.findById(user.getId())
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"등록되지 않은 사용자입니다."));
-        Family familyId= familyRepository.findById(user.getFamily().getId())
-                .orElseThrow( () -> new ResponseStatusException(HttpStatus.NOT_FOUND,"등록되지 않은 가족입니다."));
-        UploadResponse sound= s3Service.uploadFile(soundFile);
-
-        VoiceMail voiceMail=voiceMailRepository.save(new VoiceMail(userId, familyId, voiceMailRequest, sound));
-        //확실치 않음
+    public void createVoiceMail(VoiceMailRequest voiceMailRequest, User user) {
+        UploadResponse uploadResponse = s3Service.uploadFile(voiceMailRequest.getSound());
+        voiceMailRepository.save(new VoiceMail(voiceMailRequest, uploadResponse, user));
     }
 
     @Transactional

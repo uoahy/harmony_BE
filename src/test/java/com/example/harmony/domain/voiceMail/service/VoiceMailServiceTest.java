@@ -3,9 +3,11 @@ package com.example.harmony.domain.voiceMail.service;
 import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.domain.voiceMail.dto.AllVoiceMailsResponse;
+import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
 import com.example.harmony.domain.voiceMail.entity.VoiceMail;
 import com.example.harmony.domain.voiceMail.repository.VoiceMailRepository;
 import com.example.harmony.global.s3.S3Service;
+import com.example.harmony.global.s3.UploadResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -17,6 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -68,6 +71,31 @@ class VoiceMailServiceTest {
 
                 // then
                 assertEquals(2, allVoiceMailsResponse.getVoiceMails().size());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("음성메시지 추가")
+    class CreateVoiceMail {
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                VoiceMailRequest voiceMailRequest = VoiceMailRequest.builder().build();
+
+                User user = User.builder().build();
+
+                when(s3Service.uploadFile(voiceMailRequest.getSound()))
+                        .thenReturn(new UploadResponse("sound url", "sound filename"));
+
+                // when & then
+                assertDoesNotThrow(() -> voiceMailService.createVoiceMail(voiceMailRequest, user));
             }
         }
     }
