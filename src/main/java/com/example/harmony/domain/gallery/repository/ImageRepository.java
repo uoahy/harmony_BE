@@ -4,4 +4,6 @@ import com.example.harmony.domain.gallery.entity.Image;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
+
+    long countByGalleryId(Long galleryId);
 }
