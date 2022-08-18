@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@AllArgsConstructor
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
