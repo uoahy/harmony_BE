@@ -5,12 +5,16 @@ import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
 import com.example.harmony.global.common.TimeStamp;
 import com.example.harmony.global.s3.UploadResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class VoiceMail extends TimeStamp {
@@ -21,8 +25,10 @@ public class VoiceMail extends TimeStamp {
 
     private String title;
 
+    @Column(name = "sender")
     private String from;
 
+    @Column(name = "receiver")
     private String to;
 
     private String soundUrl;
