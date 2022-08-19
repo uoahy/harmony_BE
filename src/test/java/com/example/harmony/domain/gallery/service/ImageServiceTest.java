@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.service;
 
+import com.example.harmony.domain.gallery.dto.ImageAddRequest;
 import com.example.harmony.domain.gallery.dto.ImageRemoveRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.Image;
@@ -20,7 +21,10 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -54,7 +58,7 @@ class ImageServiceTest {
                 // given
                 Long galleryId = -1L;
 
-                List<MultipartFile> imageFiles = Collections.emptyList();
+                ImageAddRequest imageAddRequest = ImageAddRequest.builder().build();
 
                 User user = User.builder().build();
 
@@ -62,7 +66,7 @@ class ImageServiceTest {
                         .thenReturn(Optional.empty());
 
                 // when
-                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.addImages(galleryId, imageFiles, user));
+                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.addImages(galleryId, imageAddRequest, user));
 
                 // then
                 assertEquals("404 NOT_FOUND \"갤러리를 찾을 수 없습니다\"", exception.getMessage());
@@ -90,13 +94,13 @@ class ImageServiceTest {
                         .family(family2)
                         .build();
 
-                List<MultipartFile> imageFiles = Collections.emptyList();
+                ImageAddRequest imageAddRequest = ImageAddRequest.builder().build();
 
                 when(galleryRepository.findById(galleryId))
                         .thenReturn(Optional.of(gallery));
 
                 // when
-                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.addImages(galleryId, imageFiles, user));
+                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.addImages(galleryId, imageAddRequest, user));
 
                 // then
                 assertEquals("403 FORBIDDEN \"갤러리 사진 추가 권한이 없습니다\"", exception.getMessage());
@@ -124,6 +128,10 @@ class ImageServiceTest {
 
                 List<MultipartFile> imageFiles = Arrays.asList(imageFile);
 
+                ImageAddRequest imageAddRequest = ImageAddRequest.builder()
+                        .imageFiles(imageFiles)
+                        .build();
+
                 when(galleryRepository.findById(galleryId))
                         .thenReturn(Optional.of(gallery));
 
@@ -131,7 +139,7 @@ class ImageServiceTest {
                         .thenReturn(30L);
 
                 // when
-                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.addImages(galleryId, imageFiles, user));
+                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.addImages(galleryId, imageAddRequest, user));
 
                 // then
                 assertEquals("400 BAD_REQUEST \"이미지는 최대 30장까지 업로드할 수 있습니다\"", exception.getMessage());
@@ -165,6 +173,10 @@ class ImageServiceTest {
 
                 List<MultipartFile> imageFiles = Arrays.asList(imageFile);
 
+                ImageAddRequest imageAddRequest = ImageAddRequest.builder()
+                        .imageFiles(imageFiles)
+                        .build();
+
                 when(galleryRepository.findById(galleryId))
                         .thenReturn(Optional.of(gallery));
 
@@ -175,7 +187,7 @@ class ImageServiceTest {
                         .thenReturn(new UploadResponse("image url", "image filename"));
 
                 // when & then
-                assertDoesNotThrow(() -> imageService.addImages(galleryId, imageFiles, user));
+                assertDoesNotThrow(() -> imageService.addImages(galleryId, imageAddRequest, user));
             }
         }
     }
