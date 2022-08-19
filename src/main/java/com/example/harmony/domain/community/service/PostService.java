@@ -87,13 +87,19 @@ public class PostService {
     // 게시글 목록 조회
     public Slice<PostListResponse> getPosts(String category, int page, int size) {
         // 카테고리 유효성 검사
-        Set<String> categories = new HashSet<>(Arrays.asList("아빠","엄마","첫째","둘째","N째","막내","외동","동거인"));
+        Set<String> categories = new HashSet<>(Arrays.asList("아빠","엄마","첫째","둘째","N째","막내","외동","동거인","전체"));
         if(!categories.contains(category)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"유효하지 않은 카테고리입니다.");
         }
 
         Pageable pageable = PageRequest.of(page,size);
-        Slice<Post> posts = postRepository.findAllByCategoryContainingOrderByCreatedAtDesc(category, pageable);
+
+        Slice<Post> posts;
+        if(category.equals("전체")) {
+            posts = postRepository.findAllByOrderByCreatedAtDesc(pageable);
+        } else {
+            posts = postRepository.findAllByCategoryContainingOrderByCreatedAtDesc(category, pageable);
+        }
 
         return posts.map(PostListResponse::new);
     }

@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface PostRepository extends JpaRepository<Post, Long> {
 
     Slice<Post> findAllByCategoryContainingOrderByCreatedAtDesc(String category, Pageable pageable);
+    Slice<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
 }
