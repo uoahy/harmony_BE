@@ -1,4 +1,4 @@
-package com.example.harmony.domain.community.entity;
+package com.example.harmony.domain.community.model;
 
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.global.common.TimeStamp;

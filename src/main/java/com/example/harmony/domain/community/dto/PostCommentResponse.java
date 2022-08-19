@@ -1,6 +1,6 @@
 package com.example.harmony.domain.community.dto;
 
-import com.example.harmony.domain.community.entity.PostComment;
+import com.example.harmony.domain.community.model.PostComment;
 import lombok.Getter;
 import lombok.Setter;
 

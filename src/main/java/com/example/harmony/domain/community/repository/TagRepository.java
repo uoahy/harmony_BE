@@ -1,7 +1,7 @@
 package com.example.harmony.domain.community.repository;
 
-import com.example.harmony.domain.community.entity.Post;
-import com.example.harmony.domain.community.entity.Tag;
+import com.example.harmony.domain.community.model.Post;
+import com.example.harmony.domain.community.model.Tag;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

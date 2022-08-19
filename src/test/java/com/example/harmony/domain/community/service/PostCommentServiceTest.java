@@ -1,7 +1,7 @@
 package com.example.harmony.domain.community.service;
 
-import com.example.harmony.domain.community.entity.Post;
-import com.example.harmony.domain.community.entity.PostComment;
+import com.example.harmony.domain.community.model.Post;
+import com.example.harmony.domain.community.model.PostComment;
 import com.example.harmony.domain.community.repository.PostCommentRepository;
 import com.example.harmony.domain.community.repository.PostRepository;
 import com.example.harmony.domain.user.entity.User;

@@ -1,14 +1,11 @@
 package com.example.harmony.domain.community.dto;
 
-import com.example.harmony.domain.community.entity.Post;
-import com.example.harmony.domain.community.entity.Tag;
-import com.example.harmony.domain.user.entity.Family;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.community.model.Post;
+import com.example.harmony.domain.community.model.Tag;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

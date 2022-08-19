@@ -1,4 +1,4 @@
-package com.example.harmony.domain.community.entity;
+package com.example.harmony.domain.community.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
