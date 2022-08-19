@@ -13,12 +13,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class FamilyServiceTest {
@@ -32,6 +35,51 @@ class FamilyServiceTest {
     @Nested
     @DisplayName("가족코드 생성")
     class createFamily {
+
+        @Nested
+        @DisplayName("실패")
+        class Fails {
+
+            @Test
+            @DisplayName("가족이름이 존재하는 경우")
+            void familyNameIsExist() {
+                // given
+                User user = User.builder()
+                        .build();
+                UserDetailsImpl userDetails = new UserDetailsImpl(user);
+                String familyName = "우당탕탕 순이네";
+
+                FamilyService familyService = new FamilyService(familyRepository, userRepository);
+
+                when(familyRepository.findByFamilyName(familyName))
+                        .thenReturn(Optional.of(Family.builder().build()));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> familyService.createFamily(familyName, userDetails));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"이미 존재하는 가족이름입니다.\"",exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("이미 가족이 등록되어 있는 경우")
+            void hasFamily() {
+                // given
+                User user = User.builder()
+                        .family(Family.builder().build())
+                        .build();
+                UserDetailsImpl userDetails = new UserDetailsImpl(user);
+                String familyName = "우당탕탕 순이네";
+
+                FamilyService familyService = new FamilyService(familyRepository, userRepository);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> familyService.createFamily(familyName, userDetails));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"이미 가족이 등록된 유저입니다.\"",exception.getMessage());
+            }
+        }
 
         @Nested
         @DisplayName("성공")

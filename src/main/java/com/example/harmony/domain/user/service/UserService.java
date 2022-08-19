@@ -15,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
@@ -107,6 +109,21 @@ public class UserService {
         user.setRole(roleEnum);
         userRepository.save(user);
         return "역할 설정을 완료하였습니다.";
+    }
+
+    // 가족, 역할 설정여부
+    public Map<String, Object> getUserInfo(User user) {
+        Map<String, Object> result = new HashMap<>();
+
+        boolean isFamily;
+        isFamily = user.getFamily() != null;
+        result.put("isFamily", isFamily);
+
+        boolean hasRole;
+        hasRole = user.getRole() != null;
+        result.put("hasRole", hasRole);
+
+        return result;
     }
 
 }
