@@ -3,12 +3,16 @@ package com.example.harmony.domain.gallery.entity;
 import com.example.harmony.domain.gallery.dto.GalleryCommentRequest;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.global.common.TimeStamp;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class GalleryComment extends TimeStamp {

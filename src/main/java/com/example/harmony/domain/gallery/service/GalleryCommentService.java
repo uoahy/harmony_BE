@@ -22,7 +22,7 @@ public class GalleryCommentService {
     public void writeGalleryComment(Long galleryId, GalleryCommentRequest galleryCommentRequest, User user) {
         Gallery gallery = galleryRepository.findById(galleryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
-        if (gallery.getFamily() != user.getFamily()) {
+        if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 작성 권한이 없습니다");
         }
         GalleryComment galleryComment = new GalleryComment(galleryCommentRequest, user);
@@ -33,7 +33,7 @@ public class GalleryCommentService {
     public void editGalleryComment(Long galleryCommentId, GalleryCommentRequest galleryCommentRequest, User user) {
         GalleryComment galleryComment = galleryCommentRepository.findById(galleryCommentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리 댓글을 찾을 수 없습니다"));
-        if (galleryComment.getUser() != user) {
+        if (!galleryComment.getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 수정 권한이 없습니다");
         }
         galleryComment.edit(galleryCommentRequest);
@@ -43,7 +43,7 @@ public class GalleryCommentService {
     public void deleteGalleryComment(Long galleryCommentId, User user) {
         GalleryComment galleryComment = galleryCommentRepository.findById(galleryCommentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리 댓글을 찾을 수 없습니다"));
-        if (galleryComment.getUser() != user) {
+        if (!galleryComment.getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 삭제 권한이 없습니다");
         }
         galleryCommentRepository.deleteById(galleryCommentId);
