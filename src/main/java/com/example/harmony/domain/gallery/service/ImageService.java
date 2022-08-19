@@ -32,6 +32,9 @@ public class ImageService {
         if (gallery.getFamily() != user.getFamily()) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 사진 추가 권한이 없습니다");
         }
+        if (imageRepository.countByGalleryId(galleryId) + imageFiles.size() > 30) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미지는 최대 30장까지 업로드할 수 있습니다");
+        }
         List<Image> images = imageFiles.stream()
                 .map(x -> new Image(s3Service.uploadFile(x)))
                 .collect(Collectors.toList());
