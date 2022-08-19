@@ -37,27 +37,18 @@ public class PostResponse {
 
     private boolean like;
 
-    public PostResponse(Post post, boolean isPoster, List<PostCommentResponse> comments, boolean like) {
+    public PostResponse(Post post,Map<String,Object> poster, boolean isPoster, List<PostCommentResponse> comments, boolean like) {
       this.title = post.getTitle();
       this.content = post.getContent();
       this.tags = post.getTags().stream()
               .map(Tag::getTag)
               .collect(Collectors.toList());
       this.imageUrl = post.getImageUrl();
-      this.poster= userInfo(post.getUser(),post.getUser().getFamily());
+      this.poster= poster;
       this.isPoster = isPoster;
       this.createdAt = post.getCreatedAt();
       this.comments = comments;
       this.likeCount = post.getLikes().size();
       this.like = like;
     }
-
-    public Map<String,Object> userInfo(User user, Family family) {
-        Map<String, Object> userInfo = new HashMap<>();
-        userInfo.put("level",family.getLevel());
-        userInfo.put("flower", family.isFlower());
-        userInfo.put("nickname", user.getNickname());
-        return userInfo;
-    }
-
 }

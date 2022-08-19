@@ -14,7 +14,6 @@ import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.global.s3.S3Service;
 import com.example.harmony.global.s3.UploadResponse;
-import com.example.harmony.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,22 +36,23 @@ public class PostService {
     private final S3Service s3Service;
 
     // 게시글 작성
-    public void createPost(MultipartFile image, PostRequest request, UserDetailsImpl userDetails) {
+    public String createPost(MultipartFile image, PostRequest request,User user) {
         // 이미지 존재여부에 따른 게시글 객체 저장
         if(image==null) {
-            Post post = new Post(request,userDetails.getUser());
+            Post post = new Post(request,user);
             postRepository.save(post);
             saveTag(request, post);
         } else {
             UploadResponse savedImage = s3Service.uploadFile(image);
-            Post post = new Post(request, savedImage, userDetails.getUser());
+            Post post = new Post(request, savedImage, user);
             postRepository.save(post);
             saveTag(request, post);
         }
+        return "게시글 작성이 완료되었습니다.";
     }
 
     // 게시글 조회
-    public PostResponse getPost(Long postId, UserDetailsImpl userDetails) {
+    public PostResponse getPost(Long postId, User user) {
         // 게시글
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다.")
@@ -60,7 +60,10 @@ public class PostService {
 
         // 게시글 작성자 일치여부
         User writer = post.getUser();
-        boolean isPoster = writer.getId().equals(userDetails.getUser().getId());
+        boolean isPoster = writer.getId().equals(user.getId());
+
+        // 작성자 정보
+        Map<String, Object> poster = userInfo(writer, writer.getFamily());
 
         // 댓글
         List<PostComment> comments = post.getComments();
@@ -71,14 +74,14 @@ public class PostService {
             Map<String,Object> commenter = userInfo(cmtWriter, cmtWriter.getFamily());
 
             // 댓글 작성자 일치여부
-            boolean isCommenter = cmtWriter.getId().equals(userDetails.getUser().getId());
+            boolean isCommenter = cmtWriter.getId().equals(user.getId());
             commentResponseList.add(new PostCommentResponse(comment, commenter, isCommenter));
         }
 
         // 좋아요
-        boolean like = likeRepository.findByPostAndUser(post, userDetails.getUser()).isPresent();
+        boolean like = likeRepository.findByPostAndUser(post,user).isPresent();
 
-        return new PostResponse(post, isPoster, commentResponseList, like);
+        return new PostResponse(post, poster, isPoster, commentResponseList, like);
     }
 
     // 게시글 목록 조회
@@ -97,7 +100,7 @@ public class PostService {
 
     // 게시글 수정
     @Transactional
-    public void putPost(Long postId, MultipartFile image, PostRequest request, User user) {
+    public String putPost(Long postId, MultipartFile image, PostRequest request, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물이 존재하지 않습니다.")
         );
@@ -125,11 +128,13 @@ public class PostService {
         // 기존 태그 삭제 및 새 태그 저장
         tagRepository.deleteAllByPost(post);
         saveTag(request, post);
+
+        return "게시글 수정이 완료되었습니다.";
     }
 
     // 게시글 삭제
     @Transactional
-    public void deletePost(Long postId, User user) {
+    public String deletePost(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물이 존재하지 않습니다.")
         );
@@ -143,14 +148,30 @@ public class PostService {
             image.add(post.getImageFilename());
             s3Service.deleteFiles(image);
         }
-
         postRepository.deleteById(postId);
+
+        return "게시글 삭제가 완료되었습니다.";
     }
 
     // 작성자 공통양식
-    public Map<String,Object> userInfo(User user, Family family) {
+    public static Map<String, Object> userInfo(User user, Family family) {
+        // 레벨 측정
+        int score = family.getTotalScore();
+        int level;
+        if (score > 2999) {
+            level = 4;
+        } else if (score > 769) {
+            level = 3;
+        } else if (score > 219) {
+            level = 2;
+        } else if (score > 54) {
+            level = 1;
+        } else {
+            level = 0;
+        }
+
         Map<String, Object> userInfo = new HashMap<>();
-        userInfo.put("level",family.getLevel());
+        userInfo.put("level", level);
         userInfo.put("flower", family.isFlower());
         userInfo.put("nickname", user.getNickname());
         return userInfo;
