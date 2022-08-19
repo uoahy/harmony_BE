@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import java.util.List;
@@ -41,6 +43,11 @@ public class Gallery {
     }
 
     public void removeImages(List<Image> images) {
+        for (Image image : images) {
+            if (image.getGallery() != this) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "갤러리에 없는 이미지입니다");
+            }
+        }
         this.images.removeAll(images);
     }
 

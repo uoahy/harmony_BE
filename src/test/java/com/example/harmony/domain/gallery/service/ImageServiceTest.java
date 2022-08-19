@@ -1,6 +1,8 @@
 package com.example.harmony.domain.gallery.service;
 
+import com.example.harmony.domain.gallery.dto.ImageRemoveRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
+import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.gallery.repository.ImageRepository;
 import com.example.harmony.domain.user.entity.Family;
@@ -174,6 +176,149 @@ class ImageServiceTest {
 
                 // when & then
                 assertDoesNotThrow(() -> imageService.addImages(galleryId, imageFiles, user));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("갤러리 이미지 삭제")
+    class RemoveImages {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 갤러리")
+            void gallery_not_found() {
+                // given
+                Long galleryId = -1L;
+
+                ImageRemoveRequest imageRemoveRequest = ImageRemoveRequest.builder().build();
+
+                User user = User.builder().build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.removeImages(galleryId, imageRemoveRequest, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"갤러리를 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 갤러리 이미지 추가 시도")
+            void user_is_not_family_member() {
+                // given
+                Long galleryId = 1L;
+
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
+
+                Gallery gallery = Gallery.builder()
+                        .family(family1)
+                        .build();
+
+                ImageRemoveRequest imageRemoveRequest = ImageRemoveRequest.builder().build();
+
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family2)
+                        .build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.of(gallery));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.removeImages(galleryId, imageRemoveRequest, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"갤러리 사진 삭제 권한이 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("갤러리에 존재하지않는 이미지")
+            void image_not_exist() {
+                // given
+                Long galleryId = 1L;
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
+
+                Gallery gallery = Gallery.builder()
+                        .family(family)
+                        .build();
+
+                ImageRemoveRequest imageRemoveRequest = ImageRemoveRequest.builder().build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Image image = Image.builder().build();
+
+                List<Image> images = Arrays.asList(image);
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.of(gallery));
+
+                when(imageRepository.findAllById(imageRemoveRequest.getImageIds()))
+                        .thenReturn(images);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> imageService.removeImages(galleryId, imageRemoveRequest, user));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"갤러리에 없는 이미지입니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                Long galleryId = 1L;
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
+
+                Gallery gallery = Gallery.builder()
+                        .family(family)
+                        .images(new ArrayList<>())
+                        .build();
+
+                ImageRemoveRequest imageRemoveRequest = ImageRemoveRequest.builder().build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Image image = Image.builder()
+                        .gallery(gallery)
+                        .build();
+
+                List<Image> images = Arrays.asList(image);
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.of(gallery));
+
+                when(imageRepository.findAllById(imageRemoveRequest.getImageIds()))
+                        .thenReturn(images);
+
+                // when & then
+                assertDoesNotThrow(() -> imageService.removeImages(galleryId, imageRemoveRequest, user));
             }
         }
     }

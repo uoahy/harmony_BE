@@ -49,11 +49,6 @@ public class ImageService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 사진 삭제 권한이 없습니다");
         }
         List<Image> images = imageRepository.findAllById(imageRemoveRequest.getImageIds());
-        for (Image image : images) {
-            if (image.getGallery() != gallery) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미지가 속해있는 갤러리가 서로 다릅니다");
-            }
-        }
         gallery.removeImages(images);
         imageRepository.deleteAllById(imageRemoveRequest.getImageIds());
         s3Service.deleteFiles(images.stream()
