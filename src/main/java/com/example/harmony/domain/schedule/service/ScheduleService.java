@@ -49,7 +49,7 @@ public class ScheduleService {
     public void modifySchedule(Long scheduleId, ScheduleRequest scheduleRequest, User user) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
-        if (schedule.getFamily() != user.getFamily()) {
+        if (!schedule.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 수정 권한이 없습니다");
         }
         if (!schedule.isDone()) {
