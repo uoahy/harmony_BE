@@ -22,7 +22,7 @@ public class GalleryCommentService {
     public void writeGalleryComment(Long galleryId, GalleryCommentRequest galleryCommentRequest, User user) {
         Gallery gallery = galleryRepository.findById(galleryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
-        if (gallery.getFamily() != user.getFamily()) {
+        if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 작성 권한이 없습니다");
         }
         GalleryComment galleryComment = new GalleryComment(galleryCommentRequest, user);

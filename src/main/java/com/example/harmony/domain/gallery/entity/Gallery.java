@@ -1,6 +1,8 @@
 package com.example.harmony.domain.gallery.entity;
 
 import com.example.harmony.domain.user.entity.Family;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -8,6 +10,8 @@ import javax.persistence.*;
 import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class Gallery {
