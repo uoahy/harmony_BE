@@ -8,10 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Map;
@@ -54,6 +51,13 @@ public class UserController {
     public ResponseEntity<?> setRole(@RequestBody Map<String,String> map,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,userService.setRole(map.get("role"), userDetails)));
+    }
+
+    // 가족, 역할 설정여부
+    @GetMapping("/api/user/info")
+    public ResponseEntity<?> getUserInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String msg = "가족, 역할 설정여부를 확인해주세요.";
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, userService.getUserInfo(userDetails.getUser())));
     }
 
 }
