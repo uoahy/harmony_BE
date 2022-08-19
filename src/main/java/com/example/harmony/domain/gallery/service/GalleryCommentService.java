@@ -33,7 +33,7 @@ public class GalleryCommentService {
     public void editGalleryComment(Long galleryCommentId, GalleryCommentRequest galleryCommentRequest, User user) {
         GalleryComment galleryComment = galleryCommentRepository.findById(galleryCommentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리 댓글을 찾을 수 없습니다"));
-        if (galleryComment.getUser() != user) {
+        if (!galleryComment.getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 수정 권한이 없습니다");
         }
         galleryComment.edit(galleryCommentRequest);

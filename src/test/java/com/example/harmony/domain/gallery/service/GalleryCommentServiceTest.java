@@ -2,6 +2,7 @@ package com.example.harmony.domain.gallery.service;
 
 import com.example.harmony.domain.gallery.dto.GalleryCommentRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
+import com.example.harmony.domain.gallery.entity.GalleryComment;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.user.entity.Family;
@@ -125,6 +126,96 @@ class GalleryCommentServiceTest {
 
                 // when & then
                 assertDoesNotThrow(() -> galleryCommentService.writeGalleryComment(galleryId, galleryCommentRequest, user));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("갤러리 댓글 수정")
+    class EditGalleryComment {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 갤러리 댓글")
+            void galleryComment_not_found() {
+                // given
+                Long galleryCommentId = -1L;
+
+                GalleryCommentRequest galleryCommentRequest = GalleryCommentRequest.builder().build();
+
+                User user = User.builder().build();
+
+                when(galleryCommentRepository.findById(galleryCommentId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryCommentService.editGalleryComment(galleryCommentId, galleryCommentRequest, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"갤러리 댓글을 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("댓글 작성자가 아닌 유저가 수정 시도")
+            void user_is_not_commenter() {
+                // given
+                Long galleryCommentId = 1L;
+
+                GalleryCommentRequest galleryCommentRequest = GalleryCommentRequest.builder().build();
+
+                User user1 = User.builder()
+                        .id(1L)
+                        .build();
+
+                GalleryComment galleryComment = GalleryComment.builder()
+                        .user(user1)
+                        .build();
+
+                User user2 = User.builder()
+                        .id(2L)
+                        .build();
+
+                when(galleryCommentRepository.findById(galleryCommentId))
+                        .thenReturn(Optional.of(galleryComment));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryCommentService.editGalleryComment(galleryCommentId, galleryCommentRequest, user2));
+
+                // then
+                assertEquals("403 FORBIDDEN \"댓글 수정 권한이 없습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                Long galleryCommentId = 1L;
+
+                GalleryCommentRequest galleryCommentRequest = GalleryCommentRequest.builder().build();
+
+                User user = User.builder()
+                        .id(1L)
+                        .build();
+
+                GalleryComment galleryComment = GalleryComment.builder()
+                        .user(user)
+                        .build();
+
+                when(galleryCommentRepository.findById(galleryCommentId))
+                        .thenReturn(Optional.of(galleryComment));
+
+                // when
+                assertDoesNotThrow(() -> galleryCommentService.editGalleryComment(galleryCommentId, galleryCommentRequest, user));
+
+                // then
+                assertEquals(galleryCommentRequest.getContent(), galleryComment.getContent());
             }
         }
     }
