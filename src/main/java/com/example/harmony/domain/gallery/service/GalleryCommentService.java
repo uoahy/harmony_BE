@@ -28,6 +28,7 @@ public class GalleryCommentService {
         GalleryComment galleryComment = new GalleryComment(galleryCommentRequest, user);
         gallery.addComment(galleryComment);
         galleryCommentRepository.save(galleryComment);
+        user.getFamily().plusScore(5);
     }
 
     public void editGalleryComment(Long galleryCommentId, GalleryCommentRequest galleryCommentRequest, User user) {
@@ -47,5 +48,6 @@ public class GalleryCommentService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 삭제 권한이 없습니다");
         }
         galleryCommentRepository.deleteById(galleryCommentId);
+        user.getFamily().minusScore(5);
     }
 }

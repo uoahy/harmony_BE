@@ -106,8 +106,13 @@ class GalleryCommentServiceTest {
             void success() {
                 Long galleryId = 1L;
 
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
                 Family family = Family.builder()
                         .id(1L)
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
                         .build();
 
                 Gallery gallery = Gallery.builder()
@@ -124,8 +129,12 @@ class GalleryCommentServiceTest {
                 when(galleryRepository.findById(galleryId))
                         .thenReturn(Optional.of(gallery));
 
-                // when & then
+                // when
                 assertDoesNotThrow(() -> galleryCommentService.writeGalleryComment(galleryId, galleryCommentRequest, user));
+
+                // then
+                assertEquals(totalScore + 5, family.getTotalScore());
+                assertEquals(monthlyScore + 5, family.getMonthlyScore());
             }
         }
     }
@@ -284,8 +293,17 @@ class GalleryCommentServiceTest {
             void success() {
                 Long galleryCommentId = 1L;
 
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
                 User user = User.builder()
                         .id(1L)
+                        .family(family)
                         .build();
 
                 GalleryComment galleryComment = GalleryComment.builder()
@@ -295,8 +313,12 @@ class GalleryCommentServiceTest {
                 when(galleryCommentRepository.findById(galleryCommentId))
                         .thenReturn(Optional.of(galleryComment));
 
-                // when & then
+                // when
                 assertDoesNotThrow(() -> galleryCommentService.deleteGalleryComment(galleryCommentId, user));
+
+                // then
+                assertEquals(totalScore - 5, user.getFamily().getTotalScore());
+                assertEquals(monthlyScore - 5, user.getFamily().getMonthlyScore());
             }
         }
     }
