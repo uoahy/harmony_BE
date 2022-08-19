@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 
@@ -49,6 +51,10 @@ public class User {
     }
 
     public void setFamily(Family family) {
+        // 가족 중복체크
+        if(this.family!=null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 가족이 등록된 유저입니다.");
+        }
         this.family = family;
     }
 

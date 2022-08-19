@@ -9,7 +9,9 @@ import com.example.harmony.domain.user.repository.FamilyRepository;
 import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.util.*;
@@ -23,6 +25,11 @@ public class FamilyService {
 
     // 가족코드 생성
     public Map<String,String> createFamily(String familyName, UserDetailsImpl userDetails) {
+        // 가족이름 중복체크
+        if(familyRepository.findByFamilyName(familyName).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "이미 존재하는 가족이름입니다.");
+        }
+
         // 랜덤코드 생성
         Random random = new Random();
         String familyCode = random.ints(48,123)

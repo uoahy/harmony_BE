@@ -3,6 +3,7 @@ package com.example.harmony.domain.user.service;
 import com.example.harmony.domain.user.dto.CheckResponse;
 import com.example.harmony.domain.user.dto.SignupRequest;
 import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.entity.RoleEnum;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.domain.user.repository.FamilyRepository;
 import com.example.harmony.domain.user.repository.UserRepository;
@@ -16,6 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -353,6 +355,32 @@ class UserServiceTest {
                 // then
                 assertEquals("404 NOT_FOUND \"유효한 가족코드가 아닙니다.\"",exception.getMessage());
             }
+
+            @Test
+            @DisplayName("이미 가족이 등록되어 있는 경우")
+            void hasFamily() {
+                // given
+                User user = User.builder()
+                        .family(Family.builder().build())
+                        .build();
+                UserDetailsImpl userDetails = new UserDetailsImpl(user);
+
+                String familyCode = "AS43dg$f6GFg";
+                Family family = Family.builder()
+                        .familyCode(familyCode)
+                        .build();
+
+                when(familyRepository.findByFamilyCode(familyCode))
+                        .thenReturn(Optional.of(family));
+
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder);
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> userService.enterFamilyCode(familyCode,userDetails));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"이미 가족이 등록된 유저입니다.\"",exception.getMessage());
+            }
         }
 
         @Nested
@@ -408,6 +436,87 @@ class UserServiceTest {
 
                 // then
                 assertEquals("역할 설정을 완료하였습니다.", result);
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("가족, 역할 설정여부")
+    class getUserInfo {
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("둘 다 설정을 안한 경우")
+            void withoutAll() {
+                // given
+                User user = User.builder().build();
+
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder);
+
+                // when
+                Map<String,Object> result = userService.getUserInfo(user);
+
+                // then
+                assertEquals(false, result.get("isFamily"));
+                assertEquals(false, result.get("hasRole"));
+            }
+
+            @Test
+            @DisplayName("둘 다 설정을 한 경우")
+            void withAll() {
+                // given
+                User user = User.builder()
+                        .family(Family.builder().build())
+                        .role(RoleEnum.MOTHER)
+                        .build();
+
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder);
+
+                // when
+                Map<String,Object> result = userService.getUserInfo(user);
+
+                // then
+                assertEquals(true, result.get("isFamily"));
+                assertEquals(true, result.get("hasRole"));
+            }
+
+            @Test
+            @DisplayName("가족만 설정한 경우")
+            void withFamily() {
+                // given
+                User user = User.builder()
+                        .family(Family.builder().build())
+                        .build();
+
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder);
+
+                // when
+                Map<String,Object> result = userService.getUserInfo(user);
+
+                // then
+                assertEquals(true, result.get("isFamily"));
+                assertEquals(false, result.get("hasRole"));
+            }
+
+            @Test
+            @DisplayName("역할만 설정한 경우")
+            void withRole() {
+                // given
+                User user = User.builder()
+                        .role(RoleEnum.FATHER)
+                        .build();
+
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder);
+
+                // when
+                Map<String,Object> result = userService.getUserInfo(user);
+
+                // then
+                assertEquals(false, result.get("isFamily"));
+                assertEquals(true, result.get("hasRole"));
             }
         }
     }
