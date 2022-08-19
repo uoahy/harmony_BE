@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,11 +29,14 @@ public class VoiceMailService {
         return new AllVoiceMailsResponse(voiceMails);
     }
 
+    @Transactional
     public void createVoiceMail(VoiceMailRequest voiceMailRequest, User user) {
         UploadResponse uploadResponse = s3Service.uploadFile(voiceMailRequest.getSound());
         voiceMailRepository.save(new VoiceMail(voiceMailRequest, uploadResponse, user));
+        user.getFamily().plusScore(20);
     }
 
+    @Transactional
     public void deleteVoiceMail(Long voiceMailId, User user) {
         VoiceMail voiceMail = voiceMailRepository.findById(voiceMailId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "음성메시지를 찾을 수 없습니다"));
@@ -41,5 +45,6 @@ public class VoiceMailService {
         }
         voiceMailRepository.deleteById(voiceMailId);
         s3Service.deleteFiles(Collections.singletonList(voiceMail.getSoundFilename()));
+        user.getFamily().minusScore(20);
     }
 }

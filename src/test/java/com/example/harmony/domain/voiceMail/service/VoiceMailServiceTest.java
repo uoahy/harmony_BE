@@ -90,13 +90,27 @@ class VoiceMailServiceTest {
                 // given
                 VoiceMailRequest voiceMailRequest = VoiceMailRequest.builder().build();
 
-                User user = User.builder().build();
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
 
                 when(s3Service.uploadFile(voiceMailRequest.getSound()))
                         .thenReturn(new UploadResponse("sound url", "sound filename"));
 
-                // when & then
+                // when
                 assertDoesNotThrow(() -> voiceMailService.createVoiceMail(voiceMailRequest, user));
+
+                // then
+                assertEquals(totalScore + 20, family.getTotalScore());
+                assertEquals(monthlyScore + 20, family.getMonthlyScore());
             }
         }
     }
@@ -170,8 +184,13 @@ class VoiceMailServiceTest {
                 // given
                 Long voiceMailId = 1L;
 
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
                 Family family = Family.builder()
                         .id(1L)
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
                         .build();
 
                 VoiceMail voiceMail = VoiceMail.builder()
@@ -185,8 +204,12 @@ class VoiceMailServiceTest {
                 when(voiceMailRepository.findById(voiceMailId))
                         .thenReturn(Optional.of(voiceMail));
 
-                // when & then
+                // when
                 assertDoesNotThrow(() -> voiceMailService.deleteVoiceMail(voiceMailId, user));
+
+                // then
+                assertEquals(totalScore - 20, family.getTotalScore());
+                assertEquals(monthlyScore - 20, family.getMonthlyScore());
             }
         }
     }
