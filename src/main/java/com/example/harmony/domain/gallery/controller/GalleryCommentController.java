@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 public class GalleryCommentController {
@@ -19,7 +21,7 @@ public class GalleryCommentController {
     @PostMapping("/api/galleries/{galleryId}/comments")
     ResponseEntity<SuccessResponse> postComment(
             @PathVariable Long galleryId,
-            @RequestBody GalleryCommentRequest galleryCommentRequest,
+            @RequestBody @Valid GalleryCommentRequest galleryCommentRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         galleryCommentService.writeGalleryComment(galleryId, galleryCommentRequest, userDetails.getUser());
@@ -29,7 +31,7 @@ public class GalleryCommentController {
     @PutMapping("/api/gallery-comments/{galleryCommentId}")
     ResponseEntity<SuccessResponse> putComment(
             @PathVariable Long galleryCommentId,
-            @RequestBody GalleryCommentRequest galleryCommentRequest,
+            @RequestBody @Valid GalleryCommentRequest galleryCommentRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         galleryCommentService.editGalleryComment(galleryCommentId, galleryCommentRequest, userDetails.getUser());
