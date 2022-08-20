@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.controller;
 
+import com.example.harmony.domain.gallery.dto.ImageAddRequest;
 import com.example.harmony.domain.gallery.dto.ImageRemoveRequest;
 import com.example.harmony.domain.gallery.service.ImageService;
 import com.example.harmony.global.common.SuccessResponse;
@@ -9,9 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RestController
@@ -22,10 +22,10 @@ public class ImageController {
     @PostMapping("/api/galleries/{galleryId}/images")
     public ResponseEntity<SuccessResponse> postImages(
             @PathVariable Long galleryId,
-            @RequestPart List<MultipartFile> imageFiles,
+            @ModelAttribute @Valid ImageAddRequest imageAddRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
-        imageService.addImages(galleryId, imageFiles, userDetails.getUser());
+        imageService.addImages(galleryId, imageAddRequest, userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.CREATED, "갤러리 사진 추가 성공"), HttpStatus.CREATED);
     }
 
