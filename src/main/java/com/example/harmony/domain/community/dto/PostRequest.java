@@ -17,4 +17,11 @@ public class PostRequest {
 
     private List<String> tags;
 
+    public PostRequest(String title, String category, String content, List<String> tags) {
+        this.title = title;
+        this.category = category;
+        this.content = content;
+        this.tags = tags;
+    }
+
 }
