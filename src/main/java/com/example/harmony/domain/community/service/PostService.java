@@ -8,6 +8,7 @@ import com.example.harmony.domain.community.model.Post;
 import com.example.harmony.domain.community.model.PostComment;
 import com.example.harmony.domain.community.model.Tag;
 import com.example.harmony.domain.community.repository.LikeRepository;
+import com.example.harmony.domain.community.repository.PostCommentRepository;
 import com.example.harmony.domain.community.repository.PostRepository;
 import com.example.harmony.domain.community.repository.TagRepository;
 import com.example.harmony.domain.user.entity.Family;
@@ -31,6 +32,7 @@ import java.util.*;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostCommentRepository commentRepository;
     private final TagRepository tagRepository;
     private final LikeRepository likeRepository;
     private final S3Service s3Service;
@@ -54,9 +56,7 @@ public class PostService {
     // 게시글 조회
     public PostResponse getPost(Long postId, User user) {
         // 게시글
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 존재하지 않습니다.")
-        );
+        Post post = findByPostId(postId);
 
         // 게시글 작성자 일치여부
         User writer = post.getUser();
@@ -66,7 +66,7 @@ public class PostService {
         Map<String, Object> poster = userInfo(writer, writer.getFamily());
 
         // 댓글
-        List<PostComment> comments = post.getComments();
+        List<PostComment> comments = commentRepository.findAllByPostContainingOrderByCreatedAtDesc(post);
         List<PostCommentResponse> commentResponseList = new ArrayList<>();
         for(PostComment comment: comments) {
             // 댓글 작성자
@@ -107,9 +107,7 @@ public class PostService {
     // 게시글 수정
     @Transactional
     public String putPost(Long postId, MultipartFile image, PostRequest request, User user) {
-        Post post = postRepository.findById(postId).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물이 존재하지 않습니다.")
-        );
+        Post post = findByPostId(postId);
 
         // 게시글 작성자 일치여부
         getAuthority(post.getUser(),user);
@@ -149,7 +147,7 @@ public class PostService {
         getAuthority(post.getUser(),user);
 
         // 이미지 존재할 경우 삭제
-        if(!post.getImageUrl().isEmpty()) {
+        if(post.getImageUrl()!=null) {
             List<String> image = new ArrayList<>();
             image.add(post.getImageFilename());
             s3Service.deleteFiles(image);
@@ -196,6 +194,13 @@ public class PostService {
         if (!writer.getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "게시글에 대한 권한이 없습니다.");
         }
+    }
+
+    // 게시글 불러오기
+    public Post findByPostId(Long postId) {
+        return postRepository.findById(postId).orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물이 존재하지 않습니다.")
+        );
     }
 
 }

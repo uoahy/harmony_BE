@@ -24,8 +24,7 @@ public class PostController {
             @RequestPart(required = false) MultipartFile image,
             @RequestPart PostRequest request,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = "게시글 작성이 완료되었습니다.";
-        postService.createPost(image, request, userDetails);
+        String msg = postService.createPost(image, request, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg));
     }
 
@@ -35,7 +34,7 @@ public class PostController {
                                      @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         String msg= "게시글 조회를 성공하였습니다.";
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, postService.getPost(postId,userDetails)));
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, postService.getPost(postId,userDetails.getUser())));
     }
 
     // 게시글 목록 조회
@@ -53,8 +52,7 @@ public class PostController {
                                      @RequestPart(required = false) MultipartFile image,
                                      @RequestPart PostRequest request,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = "게시글 수정이 완료되었습니다.";
-        postService.putPost(postId, image, request, userDetails.getUser());
+        String msg = postService.putPost(postId, image, request, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
     }
 
@@ -62,8 +60,7 @@ public class PostController {
     @DeleteMapping("/api/posts/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = "게시글 삭제가 완료되었습니다.";
-        postService.deletePost(postId, userDetails.getUser());
+        String msg = postService.deletePost(postId, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
     }
 }
