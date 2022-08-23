@@ -44,4 +44,14 @@ public class GalleryService {
         imageRepository.saveAll(images);
         user.getFamily().plusScore(20);
     }
+
+    public void editGallery(Long galleryId, GalleryRequest galleryRequest, User user) {
+        Gallery gallery = galleryRepository.findById(galleryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
+        if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 수정 권한이 없습니다");
+        }
+        gallery.edit(galleryRequest);
+        galleryRepository.save(gallery);
+    }
 }

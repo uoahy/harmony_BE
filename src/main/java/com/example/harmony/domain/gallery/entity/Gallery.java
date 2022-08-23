@@ -57,6 +57,11 @@ public class Gallery {
         this.schedule = schedule;
     }
 
+    public void edit(GalleryRequest galleryRequest) {
+        this.title = galleryRequest.getTitle();
+        this.content = galleryRequest.getContent();
+    }
+
     public void addImages(List<Image> images) {
         this.images.addAll(images);
         for (Image image : images) {
