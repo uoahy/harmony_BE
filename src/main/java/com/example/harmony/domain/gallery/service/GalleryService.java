@@ -3,6 +3,7 @@ package com.example.harmony.domain.gallery.service;
 import com.example.harmony.domain.gallery.dto.GalleryRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.Image;
+import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.gallery.repository.ImageRepository;
 import com.example.harmony.domain.schedule.model.Schedule;
@@ -27,6 +28,8 @@ public class GalleryService {
     private final ScheduleRepository scheduleRepository;
 
     private final ImageRepository imageRepository;
+
+    private final GalleryCommentRepository galleryCommentRepository;
 
     private final S3Service s3Service;
 
@@ -53,5 +56,20 @@ public class GalleryService {
         }
         gallery.edit(galleryRequest);
         galleryRepository.save(gallery);
+    }
+
+    @Transactional
+    public void deleteGallery(Long galleryId, User user) {
+        Gallery gallery = galleryRepository.findById(galleryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
+        if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 삭제 권한이 없습니다");
+        }
+        List<String> imageFilenames = gallery.getImages().stream()
+                .map(Image::getFilename)
+                .collect(Collectors.toList());
+        s3Service.deleteFiles(imageFilenames);
+        galleryRepository.deleteById(galleryId);
+        user.getFamily().minusScore((int) (20 + 5 * galleryCommentRepository.countByGalleryId(galleryId)));
     }
 }

@@ -35,4 +35,13 @@ public class GalleryController {
         galleryService.editGallery(galleryId, galleryRequest, userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 수정 성공"), HttpStatus.OK);
     }
+
+    @DeleteMapping("/api/galleries/{galleryId}")
+    ResponseEntity<SuccessResponse> deleteGallery(
+            @PathVariable Long galleryId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        galleryService.deleteGallery(galleryId, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 삭제 성공"), HttpStatus.OK);
+    }
 }
