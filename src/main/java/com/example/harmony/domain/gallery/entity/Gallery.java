@@ -39,6 +39,7 @@ public class Gallery {
     private List<Image> images;
 
     @OneToMany(mappedBy = "gallery", cascade = CascadeType.REMOVE)
+    @OrderBy("createdAt asc")
     private List<GalleryComment> comments;
 
     @ManyToOne

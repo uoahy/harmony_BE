@@ -1,6 +1,7 @@
 package com.example.harmony.domain.gallery.service;
 
 import com.example.harmony.domain.gallery.dto.GalleryRequest;
+import com.example.harmony.domain.gallery.dto.ScheduleGalleryResponse;
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
@@ -32,6 +33,15 @@ public class GalleryService {
     private final GalleryCommentRepository galleryCommentRepository;
 
     private final S3Service s3Service;
+
+    public ScheduleGalleryResponse getScheduleGalleries(Long scheduleId, User user) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
+        if (!schedule.getFamily().getId().equals(user.getFamily().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정별 갤러리 조회 권한이 없습니다");
+        }
+        return new ScheduleGalleryResponse(schedule.getTitle(), schedule.getGalleries(), user);
+    }
 
     @Transactional
     public void createGallery(Long scheduleId, GalleryRequest galleryRequest, User user) {

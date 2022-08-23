@@ -43,6 +43,7 @@ public class Schedule {
     private boolean done;
 
     @OneToMany(mappedBy = "schedule")
+    @OrderBy("date asc")
     private List<Gallery> galleries;
 
     @ManyToOne
