@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.service;
 
+import com.example.harmony.domain.gallery.dto.GalleryImageResponse;
 import com.example.harmony.domain.gallery.dto.ImageAddRequest;
 import com.example.harmony.domain.gallery.dto.ImageRemoveRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
@@ -25,6 +26,15 @@ public class ImageService {
     private final GalleryRepository galleryRepository;
 
     private final S3Service s3Service;
+
+    public GalleryImageResponse getGalleryImages(Long galleryId, User user) {
+        Gallery gallery = galleryRepository.findById(galleryId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
+        if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 이미지 조회 권한이 없습니다");
+        }
+        return new GalleryImageResponse(gallery.getImages());
+    }
 
     public void addImages(Long galleryId, ImageAddRequest imageAddRequest, User user) {
         Gallery gallery = galleryRepository.findById(galleryId)
