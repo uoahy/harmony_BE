@@ -1,5 +1,7 @@
 package com.example.harmony.domain.gallery.entity;
 
+import com.example.harmony.domain.gallery.dto.GalleryRequest;
+import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.user.entity.Family;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
@@ -24,7 +27,13 @@ public class Gallery {
 
     private String title;
 
+    @Lob
     private String content;
+
+    @ManyToOne
+    private Schedule schedule;
+
+    private LocalDate date;
 
     @OneToMany(mappedBy = "gallery")
     private List<Image> images;
@@ -34,6 +43,19 @@ public class Gallery {
 
     @ManyToOne
     private Family family;
+
+    public Gallery(GalleryRequest galleryRequest, List<Image> images, Family family) {
+        this.date = galleryRequest.getDate();
+        this.title = galleryRequest.getTitle();
+        this.content = galleryRequest.getContent();
+        this.images = images;
+        this.family = family;
+        this.comments = null;
+    }
+
+    public void setSchedule(Schedule schedule) {
+        this.schedule = schedule;
+    }
 
     public void addImages(List<Image> images) {
         this.images.addAll(images);
