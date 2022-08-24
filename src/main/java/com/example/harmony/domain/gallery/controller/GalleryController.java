@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.controller;
 
+import com.example.harmony.domain.gallery.dto.GalleryListResponse;
 import com.example.harmony.domain.gallery.dto.GalleryRequest;
 import com.example.harmony.domain.gallery.dto.ScheduleGalleryResponse;
 import com.example.harmony.domain.gallery.service.GalleryService;
@@ -16,6 +17,16 @@ import org.springframework.web.bind.annotation.*;
 public class GalleryController {
 
     private final GalleryService galleryService;
+
+    @GetMapping("/api/galleries")
+    public ResponseEntity<SuccessResponse> getGalleries(
+            @RequestParam int year,
+            @RequestParam int month,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        GalleryListResponse galleryListResponse = galleryService.getGalleryList(year, month, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 조회 성공", galleryListResponse), HttpStatus.OK);
+    }
 
     @GetMapping("/api/schedules/{scheduleId}/galleries")
     ResponseEntity<SuccessResponse> getScheduleGalleries(

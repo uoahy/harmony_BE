@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.service;
 
+import com.example.harmony.domain.gallery.dto.GalleryListResponse;
 import com.example.harmony.domain.gallery.dto.GalleryRequest;
 import com.example.harmony.domain.gallery.dto.ScheduleGalleryResponse;
 import com.example.harmony.domain.gallery.entity.Gallery;
@@ -17,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,14 @@ public class GalleryService {
     private final GalleryCommentRepository galleryCommentRepository;
 
     private final S3Service s3Service;
+
+    public GalleryListResponse getGalleryList(int year, int month, User user) {
+        LocalDate from = LocalDate.of(year, month, 1).minusDays(1);
+        LocalDate to = LocalDate.of(year, month, 1).plusMonths(1);
+        List<Schedule> schedules = scheduleRepository.findAllByFamilyIdAndStartDateBeforeAndEndDateAfter(user.getFamily().getId(), to, from);
+        schedules.sort(Comparator.comparing(Schedule::getStartDate).thenComparing(Schedule::getEndDate));
+        return new GalleryListResponse(schedules);
+    }
 
     public ScheduleGalleryResponse getScheduleGalleries(Long scheduleId, User user) {
         Schedule schedule = scheduleRepository.findById(scheduleId)
