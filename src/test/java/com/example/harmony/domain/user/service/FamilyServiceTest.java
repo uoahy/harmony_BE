@@ -195,6 +195,39 @@ class FamilyServiceTest {
         }
     }
 
+    @Nested
+    @DisplayName("가족코드 조회")
+    class getFamilyCode {
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                String familyCode = "sd53GHD4f%";
+
+                Family family = Family.builder()
+                        .familyCode(familyCode)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                FamilyService familyService = new FamilyService(familyRepository, userRepository);
+
+                // when
+                Map<String, String> result = familyService.getFamilyCode(user);
+
+                // then
+                assertEquals(familyCode, result.get("familyCode"));
+            }
+        }
+    }
+
 
 
 

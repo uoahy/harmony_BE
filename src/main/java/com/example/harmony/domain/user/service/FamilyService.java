@@ -81,4 +81,13 @@ public class FamilyService {
         return new FamilyInfoResponse(familyName,memberList);
     }
 
+    // 가족코드 조회
+    public Map<String, String> getFamilyCode(User user) {
+        Map<String, String> result = new HashMap<>();
+        String familyCode = user.getFamily().getFamilyCode();
+        result.put("familyCode", familyCode);
+
+        return result;
+    }
+
 }
