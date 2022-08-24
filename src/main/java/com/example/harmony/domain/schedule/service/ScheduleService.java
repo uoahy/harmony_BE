@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.service;
 
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
+import com.example.harmony.domain.schedule.dto.ScheduleListResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.model.Participation;
 import com.example.harmony.domain.schedule.model.Schedule;
@@ -15,6 +16,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,14 @@ public class ScheduleService {
         LocalDate to = LocalDate.of(year, month, 1).plusMonths(1);
         List<Schedule> schedules = scheduleRepository.findAllByFamilyIdAndStartDateBeforeAndEndDateAfter(user.getFamily().getId(), to, from);
         return new MonthlyScheduleResponse(schedules);
+    }
+
+    public ScheduleListResponse getSchedulesDates(int year, int month, User user) {
+        LocalDate from = LocalDate.of(year, month, 1).minusDays(1);
+        LocalDate to = LocalDate.of(year, month, 1).plusMonths(1);
+        List<Schedule> schedules = scheduleRepository.findAllByFamilyIdAndStartDateBeforeAndEndDateAfter(user.getFamily().getId(), to, from);
+        schedules.sort(Comparator.comparing(Schedule::getStartDate).thenComparing(Schedule::getEndDate));
+        return new ScheduleListResponse(schedules);
     }
 
     @Transactional

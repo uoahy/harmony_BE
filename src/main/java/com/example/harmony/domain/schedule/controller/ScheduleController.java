@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.controller;
 
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
+import com.example.harmony.domain.schedule.dto.ScheduleListResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.service.ScheduleService;
 import com.example.harmony.global.common.SuccessResponse;
@@ -27,6 +28,16 @@ public class ScheduleController {
     ) {
         MonthlyScheduleResponse monthlyScheduleResponse = scheduleService.getMonthlySchedule(year, month, userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 조회 성공", monthlyScheduleResponse), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/schedules/dates")
+    public ResponseEntity<SuccessResponse> getSchedulesDates(
+            @RequestParam int year,
+            @RequestParam int month,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        ScheduleListResponse scheduleListResponse = scheduleService.getSchedulesDates(year, month, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 목록 조회 성공", scheduleListResponse), HttpStatus.OK);
     }
 
     @PostMapping("/api/schedules")
