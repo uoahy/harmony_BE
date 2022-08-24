@@ -17,6 +17,7 @@ public class CorsConfig {
         config.setAllowCredentials(true); //내 서버가 응답을 할때 json을 자바스크립트에서 처리할 수 있게 할지를 설정
         config.addAllowedOrigin("http://localhost:3000");
         config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://hwamok.shop");
         config.addAllowedHeader("*");//모든 header에 응답을 허용하겠다.
 
 
