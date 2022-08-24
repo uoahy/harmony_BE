@@ -2,6 +2,7 @@ package com.example.harmony.domain.gallery.service;
 
 import com.example.harmony.domain.gallery.dto.GalleryListResponse;
 import com.example.harmony.domain.gallery.dto.GalleryRequest;
+import com.example.harmony.domain.gallery.dto.ScheduleGalleryListResponse;
 import com.example.harmony.domain.gallery.dto.ScheduleGalleryResponse;
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.Image;
@@ -52,6 +53,15 @@ public class GalleryService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정별 갤러리 조회 권한이 없습니다");
         }
         return new ScheduleGalleryResponse(schedule.getTitle(), schedule.getGalleries(), user);
+    }
+
+    public ScheduleGalleryListResponse getScheduleGalleryList(Long scheduleId, User user) {
+        Schedule schedule = scheduleRepository.findById(scheduleId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "일정을 찾을 수 없습니다"));
+        if (!schedule.getFamily().getId().equals(user.getFamily().getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정별 갤러리 목록 조회 권한이 없습니다");
+        }
+        return new ScheduleGalleryListResponse(schedule.getGalleries());
     }
 
     @Transactional

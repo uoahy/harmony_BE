@@ -2,6 +2,7 @@ package com.example.harmony.domain.gallery.controller;
 
 import com.example.harmony.domain.gallery.dto.GalleryListResponse;
 import com.example.harmony.domain.gallery.dto.GalleryRequest;
+import com.example.harmony.domain.gallery.dto.ScheduleGalleryListResponse;
 import com.example.harmony.domain.gallery.dto.ScheduleGalleryResponse;
 import com.example.harmony.domain.gallery.service.GalleryService;
 import com.example.harmony.global.common.SuccessResponse;
@@ -35,6 +36,15 @@ public class GalleryController {
     ) {
         ScheduleGalleryResponse scheduleGalleryResponse = galleryService.getScheduleGalleries(scheduleId, userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정별 갤러리 조회 성공", scheduleGalleryResponse), HttpStatus.OK);
+    }
+
+    @GetMapping("/api/schedules/{scheduleId}/galleryList")
+    ResponseEntity<SuccessResponse> getScheduleGalleryList(
+            @PathVariable Long scheduleId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        ScheduleGalleryListResponse scheduleGalleryListResponse = galleryService.getScheduleGalleryList(scheduleId, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정별 갤러리 목록 조회 성공", scheduleGalleryListResponse), HttpStatus.OK);
     }
 
     @PostMapping("/api/schedules/{scheduleId}/galleries")
