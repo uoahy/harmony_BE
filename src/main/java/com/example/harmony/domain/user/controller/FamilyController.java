@@ -32,5 +32,12 @@ public class FamilyController {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg,familyService.getFamily(userDetails)));
     }
 
+    // 가족코드 조회
+    @GetMapping("/api/family/code")
+    public ResponseEntity<?> getFamilyCode(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String msg = "가족코드를 확인하십시오.";
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, familyService.getFamilyCode(userDetails.getUser())));
+    }
+
 
 }
