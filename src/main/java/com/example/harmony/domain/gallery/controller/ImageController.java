@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.controller;
 
+import com.example.harmony.domain.gallery.dto.GalleryImageResponse;
 import com.example.harmony.domain.gallery.dto.ImageAddRequest;
 import com.example.harmony.domain.gallery.dto.ImageRemoveRequest;
 import com.example.harmony.domain.gallery.service.ImageService;
@@ -18,6 +19,15 @@ import javax.validation.Valid;
 public class ImageController {
 
     private final ImageService imageService;
+
+    @GetMapping("/api/galleries/{galleryId}/images")
+    ResponseEntity<SuccessResponse> getGalleryImages(
+            @PathVariable Long galleryId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        GalleryImageResponse galleryImageResponse = imageService.getGalleryImages(galleryId, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 이미지 조회 성공", galleryImageResponse), HttpStatus.OK);
+    }
 
     @PostMapping("/api/galleries/{galleryId}/images")
     public ResponseEntity<SuccessResponse> postImages(

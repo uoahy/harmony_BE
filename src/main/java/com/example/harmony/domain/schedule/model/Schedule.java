@@ -42,8 +42,9 @@ public class Schedule {
 
     private boolean done;
 
-    @OneToOne
-    private Gallery gallery;
+    @OneToMany(mappedBy = "schedule")
+    @OrderBy("date asc")
+    private List<Gallery> galleries;
 
     @ManyToOne
     private Family family;
@@ -56,7 +57,7 @@ public class Schedule {
         this.endDate = scheduleRequest.getEndDate();
         this.content = scheduleRequest.getContent();
         this.done = endDate.isBefore(LocalDate.now());
-        this.gallery = null;
+        this.galleries = null;
         this.family = family;
     }
 
@@ -92,5 +93,10 @@ public class Schedule {
         if (endDate.isBefore(startDate)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "종료일은 시작일 이후여야 합니다");
         }
+    }
+
+    public void addGallery(Gallery gallery) {
+        galleries.add(gallery);
+        gallery.setSchedule(this);
     }
 }

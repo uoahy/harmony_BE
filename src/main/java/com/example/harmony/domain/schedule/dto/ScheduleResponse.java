@@ -25,7 +25,7 @@ public class ScheduleResponse {
 
     private String content;
 
-    private Long galleryId;
+    private boolean hasGallery;
 
     private boolean done;
 
@@ -39,9 +39,7 @@ public class ScheduleResponse {
                 .map((x) -> x.getParticipant().getRole().getRole())
                 .collect(Collectors.toList());
         this.content = schedule.getContent();
-        if (schedule.getGallery() != null) {
-            this.galleryId = schedule.getGallery().getId();
-        }
+        this.hasGallery = !schedule.getGalleries().isEmpty();
         this.done = schedule.isDone();
     }
 }
