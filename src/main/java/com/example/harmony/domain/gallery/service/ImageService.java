@@ -39,7 +39,7 @@ public class ImageService {
     public void addImages(Long galleryId, ImageAddRequest imageAddRequest, User user) {
         Gallery gallery = galleryRepository.findById(galleryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
-        if (gallery.getFamily() != user.getFamily()) {
+        if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 사진 추가 권한이 없습니다");
         }
         if (imageRepository.countByGalleryId(galleryId) + imageAddRequest.getImageFiles().size() > 30) {
@@ -55,7 +55,7 @@ public class ImageService {
     public void removeImages(Long galleryId, ImageRemoveRequest imageRemoveRequest, User user) {
         Gallery gallery = galleryRepository.findById(galleryId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "갤러리를 찾을 수 없습니다"));
-        if (gallery.getFamily() != user.getFamily()) {
+        if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 사진 삭제 권한이 없습니다");
         }
         List<Image> images = imageRepository.findAllById(imageRemoveRequest.getImageIds());
