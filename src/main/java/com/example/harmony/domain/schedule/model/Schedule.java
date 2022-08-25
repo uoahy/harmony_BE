@@ -64,12 +64,12 @@ public class Schedule {
     public void modify(ScheduleRequest scheduleRequest, List<Participation> participations) {
         this.category = Category.valueOf(scheduleRequest.getCategory());
         this.title = scheduleRequest.getTitle();
+        this.content = scheduleRequest.getContent();
         if (!done) {
             validateDates(scheduleRequest.getStartDate(), scheduleRequest.getEndDate());
             this.startDate = scheduleRequest.getStartDate();
             this.endDate = scheduleRequest.getEndDate();
             this.participations = participations;
-            this.content = scheduleRequest.getContent();
         }
     }
 
