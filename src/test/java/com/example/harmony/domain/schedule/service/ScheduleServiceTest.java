@@ -21,10 +21,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,6 +80,7 @@ class ScheduleServiceTest {
                         .startDate(LocalDate.of(2022, 8, 8))
                         .endDate(LocalDate.of(2022, 8, 8))
                         .participations(new ArrayList<>(Arrays.asList(participation1)))
+                        .galleries(Collections.emptyList())
                         .build();
 
                 Schedule schedule2 = Schedule.builder()
@@ -90,6 +88,7 @@ class ScheduleServiceTest {
                         .startDate(LocalDate.of(2022, 8, 8))
                         .endDate(LocalDate.of(2022, 8, 8))
                         .participations(new ArrayList<>(Arrays.asList(participation1)))
+                        .galleries(Collections.emptyList())
                         .build();
 
                 List<Schedule> schedules = new ArrayList<>(Arrays.asList(schedule1, schedule2));
