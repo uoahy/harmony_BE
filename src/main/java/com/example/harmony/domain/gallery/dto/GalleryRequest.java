@@ -1,6 +1,9 @@
 package com.example.harmony.domain.gallery.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -9,6 +12,9 @@ import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 public class GalleryRequest {
 
