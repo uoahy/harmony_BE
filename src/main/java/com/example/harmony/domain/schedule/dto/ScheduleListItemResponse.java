@@ -10,11 +10,14 @@ import java.util.List;
 @Getter
 public class ScheduleListItemResponse {
 
+    private Long id;
+
     private String title;
 
     private List<DateGalleryPossibility> dates;
 
-    public ScheduleListItemResponse(String title, List<LocalDate> dates, List<Gallery> galleries) {
+    public ScheduleListItemResponse(Long id, String title, List<LocalDate> dates, List<Gallery> galleries) {
+        this.id = id;
         this.title = title;
         this.dates = new ArrayList<>();
         int i = 0;
