@@ -20,14 +20,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -136,6 +138,97 @@ class GalleryServiceTest {
                 assertEquals(3, galleryListResponse.getGalleries().size());
                 assertEquals(Arrays.asList(3L, 2L, 1L), galleryListResponse.getGalleries().stream().map(GalleryListItemResponse::getScheduleId).collect(Collectors.toList()));
                 assertEquals(Arrays.asList(1, 2, 3), galleryListResponse.getGalleries().stream().map(GalleryListItemResponse::getCount).collect(Collectors.toList()));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("일정별 갤러리 조회")
+    class GetScheduleGalleries {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 일정")
+            void schedule_not_found() {
+                // given
+                Long scheduleId = -1L;
+
+                User user = User.builder().build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.getScheduleGalleries(scheduleId, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"일정을 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 조회 시도")
+            void user_is_not_family_member() {
+                // given
+                Long scheduleId = 1L;
+
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family1)
+                        .build();
+
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family2)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.getScheduleGalleries(scheduleId, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"일정별 갤러리 조회 권한이 없습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                Long scheduleId = 1L;
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family)
+                        .galleries(Collections.emptyList())
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                // when & then
+                assertDoesNotThrow(() -> galleryService.getScheduleGalleries(scheduleId, user));
             }
         }
     }
