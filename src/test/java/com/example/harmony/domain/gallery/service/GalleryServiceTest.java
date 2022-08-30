@@ -4,6 +4,7 @@ import com.example.harmony.domain.gallery.dto.GalleryListItemResponse;
 import com.example.harmony.domain.gallery.dto.GalleryListResponse;
 import com.example.harmony.domain.gallery.dto.GalleryRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
+import com.example.harmony.domain.gallery.entity.GalleryComment;
 import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
@@ -531,6 +532,112 @@ class GalleryServiceTest {
                 // then
                 assertEquals(galleryRequest.getTitle(), gallery.getTitle());
                 assertEquals(galleryRequest.getContent(), gallery.getContent());
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("갤러리 삭제")
+    class DeleteGallery {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 갤러리")
+            void gallery_not_found() {
+                // given
+                Long galleryId = -1L;
+
+                User user = User.builder().build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.deleteGallery(galleryId, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"갤러리를 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 삭제 시도")
+            void user_is_not_family_member() {
+                // given
+                Long galleryId = 1L;
+
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family1)
+                        .build();
+
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
+
+                Gallery gallery = Gallery.builder()
+                        .family(family2)
+                        .build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.of(gallery));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.deleteGallery(galleryId, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"갤러리 삭제 권한이 없습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                Long galleryId = 1L;
+
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                List<GalleryComment> comments = Arrays.asList(null, null, null);
+
+                Gallery gallery = Gallery.builder()
+                        .images(Collections.emptyList())
+                        .family(family)
+                        .comments(comments)
+                        .build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.of(gallery));
+
+                when(galleryCommentRepository.countByGalleryId(galleryId))
+                        .thenReturn((long) comments.size());
+
+                // when
+                assertDoesNotThrow(() -> galleryService.deleteGallery(galleryId, user));
+
+                // then
+                assertEquals(totalScore - (20 + 5 * comments.size()), family.getTotalScore());
+                assertEquals(monthlyScore - (20 + 5 * comments.size()), family.getMonthlyScore());
             }
         }
     }
