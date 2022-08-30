@@ -19,9 +19,9 @@ public class ScheduleListItemResponse {
         this.dates = new ArrayList<>();
         int i = 0;
         for (LocalDate date : dates) {
-            boolean enable = false;
+            boolean enable = true;
             if (i < galleries.size() && date.equals(galleries.get(i).getDate())) {
-                enable = true;
+                enable = false;
                 i++;
             }
             this.dates.add(new DateGalleryPossibility(date, enable));
