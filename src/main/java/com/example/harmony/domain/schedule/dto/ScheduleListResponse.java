@@ -22,7 +22,7 @@ public class ScheduleListResponse {
             List<Gallery> galleries = schedule.getGalleries();
 
             if (dates.size() != galleries.size()) {
-                this.schedules.add(new ScheduleListItemResponse(schedule.getTitle(), dates, galleries));
+                this.schedules.add(new ScheduleListItemResponse(schedule.getId(), schedule.getTitle(), dates, galleries));
             }
         }
     }

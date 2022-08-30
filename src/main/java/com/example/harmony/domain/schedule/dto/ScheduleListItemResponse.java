@@ -10,18 +10,21 @@ import java.util.List;
 @Getter
 public class ScheduleListItemResponse {
 
+    private Long id;
+
     private String title;
 
     private List<DateGalleryPossibility> dates;
 
-    public ScheduleListItemResponse(String title, List<LocalDate> dates, List<Gallery> galleries) {
+    public ScheduleListItemResponse(Long id, String title, List<LocalDate> dates, List<Gallery> galleries) {
+        this.id = id;
         this.title = title;
         this.dates = new ArrayList<>();
         int i = 0;
         for (LocalDate date : dates) {
-            boolean enable = false;
+            boolean enable = true;
             if (i < galleries.size() && date.equals(galleries.get(i).getDate())) {
-                enable = true;
+                enable = false;
                 i++;
             }
             this.dates.add(new DateGalleryPossibility(date, enable));
