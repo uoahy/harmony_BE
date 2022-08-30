@@ -232,4 +232,95 @@ class GalleryServiceTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("일정별 갤러리 목록 조회")
+    class GetScheduleGalleryList {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 일정")
+            void schedule_not_found() {
+                // given
+                Long scheduleId = -1L;
+
+                User user = User.builder().build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.getScheduleGalleryList(scheduleId, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"일정을 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 조회 시도")
+            void user_is_not_family_member() {
+                // given
+                Long scheduleId = 1L;
+
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family1)
+                        .build();
+
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family2)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.getScheduleGalleryList(scheduleId, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"일정별 갤러리 목록 조회 권한이 없습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                Long scheduleId = 1L;
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family)
+                        .galleries(Collections.emptyList())
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                // when & then
+                assertDoesNotThrow(() -> galleryService.getScheduleGalleryList(scheduleId, user));
+            }
+        }
+    }
 }
