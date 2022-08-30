@@ -100,11 +100,11 @@ class ScheduleServiceTest {
                 MonthlyScheduleResponse monthlyScheduleResponse = scheduleService.getMonthlySchedule(year, month, user);
 
                 // then
-                assertEquals(0, monthlyScheduleResponse.getEatCount());
-                assertEquals(1, monthlyScheduleResponse.getTripCount());
-                assertEquals(0, monthlyScheduleResponse.getCookCount());
-                assertEquals(0, monthlyScheduleResponse.getCleanCount());
-                assertEquals(1, monthlyScheduleResponse.getEtcCount());
+                assertEquals(null, monthlyScheduleResponse.getCounts().get(Category.EAT_OUT));
+                assertEquals(1, monthlyScheduleResponse.getCounts().get(Category.TRIP));
+                assertEquals(null, monthlyScheduleResponse.getCounts().get(Category.COOK));
+                assertEquals(null, monthlyScheduleResponse.getCounts().get(Category.CLEAN));
+                assertEquals(1, monthlyScheduleResponse.getCounts().get(Category.ETC));
             }
         }
     }
