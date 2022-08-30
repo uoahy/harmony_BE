@@ -429,4 +429,109 @@ class GalleryServiceTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("갤러리 수정")
+    class EditGallery {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 갤러리")
+            void gallery_not_found() {
+                // given
+                Long galleryId = -1L;
+
+                GalleryRequest galleryRequest = GalleryRequest.builder().build();
+
+                User user = User.builder().build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.editGallery(galleryId, galleryRequest, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"갤러리를 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 수정 시도")
+            void user_is_not_family_member() {
+                // given
+                Long galleryId = 1L;
+
+                GalleryRequest galleryRequest = GalleryRequest.builder().build();
+
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family1)
+                        .build();
+
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
+
+                Gallery gallery = Gallery.builder()
+                        .family(family2)
+                        .build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.of(gallery));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.editGallery(galleryId, galleryRequest, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"갤러리 수정 권한이 없습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                Long galleryId = 1L;
+
+                GalleryRequest galleryRequest = GalleryRequest.builder()
+                        .title("수정 후 제목")
+                        .content("수정 후 내용")
+                        .build();
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Gallery gallery = Gallery.builder()
+                        .title("수정 전 제목")
+                        .content("수정 전 내용")
+                        .family(family)
+                        .build();
+
+                when(galleryRepository.findById(galleryId))
+                        .thenReturn(Optional.of(gallery));
+
+                // when
+                assertDoesNotThrow(() -> galleryService.editGallery(galleryId, galleryRequest, user));
+
+                // then
+                assertEquals(galleryRequest.getTitle(), gallery.getTitle());
+                assertEquals(galleryRequest.getContent(), gallery.getContent());
+            }
+        }
+    }
 }
