@@ -2,6 +2,7 @@ package com.example.harmony.domain.gallery.service;
 
 import com.example.harmony.domain.gallery.dto.GalleryListItemResponse;
 import com.example.harmony.domain.gallery.dto.GalleryListResponse;
+import com.example.harmony.domain.gallery.dto.GalleryRequest;
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
@@ -23,10 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -320,6 +318,114 @@ class GalleryServiceTest {
 
                 // when & then
                 assertDoesNotThrow(() -> galleryService.getScheduleGalleryList(scheduleId, user));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("갤러리 생성")
+    class CreateGallery {
+
+        @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("존재하지않는 일정")
+            void schedule_not_found() {
+                // given
+                Long scheduleId = -1L;
+
+                GalleryRequest galleryRequest = GalleryRequest.builder().build();
+
+                User user = User.builder().build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.createGallery(scheduleId, galleryRequest, user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"일정을 찾을 수 없습니다\"", exception.getMessage());
+            }
+
+            @Test
+            @DisplayName("가족구성원이 아닌 유저가 생성 시도")
+            void user_is_not_family_member() {
+                // given
+                Long scheduleId = 1L;
+
+                GalleryRequest galleryRequest = GalleryRequest.builder().build();
+
+                Family family1 = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family1)
+                        .build();
+
+                Family family2 = Family.builder()
+                        .id(2L)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family2)
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> galleryService.createGallery(scheduleId, galleryRequest, user));
+
+                // then
+                assertEquals("403 FORBIDDEN \"갤러리 생성 권한이 없습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
+        @DisplayName("성공")
+        class Success {
+
+            @Test
+            @DisplayName("정상 케이스")
+            void success() {
+                // given
+                Long scheduleId = 1L;
+
+                GalleryRequest galleryRequest = GalleryRequest.builder()
+                        .imageFiles(Collections.emptyList())
+                        .build();
+
+                int totalScore = 1000;
+                int monthlyScore = 100;
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .totalScore(totalScore)
+                        .monthlyScore(monthlyScore)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family)
+                        .galleries(new ArrayList<>())
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                // when
+                assertDoesNotThrow(() -> galleryService.createGallery(scheduleId, galleryRequest, user));
+
+                // then
+                assertEquals(totalScore + 20, family.getTotalScore());
+                assertEquals(monthlyScore + 20, family.getMonthlyScore());
             }
         }
     }
