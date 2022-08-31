@@ -39,7 +39,7 @@ public class ImageController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.CREATED, "갤러리 사진 추가 성공"), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/api/gallery/{galleryId}/images")
+    @DeleteMapping("/api/galleries/{galleryId}/images")
     public ResponseEntity<SuccessResponse> deleteImages(
             @PathVariable Long galleryId,
             @RequestBody ImageRemoveRequest imageRemoveRequest,
