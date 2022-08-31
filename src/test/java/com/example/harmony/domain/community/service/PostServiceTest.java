@@ -1,6 +1,5 @@
 package com.example.harmony.domain.community.service;
 
-import com.amazonaws.services.s3.AmazonS3;
 import com.example.harmony.domain.community.dto.PostCommentResponse;
 import com.example.harmony.domain.community.dto.PostRequest;
 import com.example.harmony.domain.community.dto.PostResponse;
@@ -16,19 +15,15 @@ import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.global.s3.S3Config;
 import com.example.harmony.global.s3.S3Service;
+import com.example.harmony.global.s3.UploadResponse;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -55,11 +50,8 @@ class PostServiceTest {
     @Mock
     PostCommentRepository postCommentRepository;
 
-    @Autowired
+    @Mock
     S3Service s3Service;
-
-    @Autowired
-    AmazonS3 amazonS3;
 
     @Nested
     @DisplayName("커뮤니티 게시글 작성")
@@ -95,7 +87,7 @@ class PostServiceTest {
 
             @Test
             @DisplayName("이미지 첨부")
-            void withImage() throws IOException {
+            void withImage() {
                 // given
                 User user = User.builder().build();
                 String title = "게시글 제목";
@@ -105,12 +97,14 @@ class PostServiceTest {
                 tags.add("이것은");
                 tags.add("태그");
                 tags.add("입니다");
-                File file = new File("src/test/resources/images/testImage.png");
-                MultipartFile image = new MockMultipartFile("file", "testImage", "image/png", new FileInputStream(file));
+                MockMultipartFile image = new MockMultipartFile("imageFiles", (byte[]) null);
 
                 PostRequest postRequest = new PostRequest(title, category, content, tags);
 
                 PostService postService = new PostService(postRepository,postCommentRepository, tagRepository, likeRepository, s3Service);
+
+                when(s3Service.uploadFile(image))
+                        .thenReturn(new UploadResponse("imageUrl", "filename"));
 
                 // when
                 String result = postService.createPost(image, postRequest, user);
@@ -408,7 +402,7 @@ class PostServiceTest {
 
             @Test
             @DisplayName("이미지 미첨부 → 첨부")
-            void withoutToWith() throws IOException {
+            void withoutToWith() {
                 // given
                 User user = User.builder()
                         .id(1L)
@@ -429,8 +423,7 @@ class PostServiceTest {
                 tags.add("이것은");
                 tags.add("태그");
                 tags.add("입니다");
-                File file = new File("src/test/resources/images/testImage.png");
-                MultipartFile image = new MockMultipartFile("file", "testImage", "image/png", new FileInputStream(file));
+                MockMultipartFile image = new MockMultipartFile("imageFile", (byte[]) null);
 
                 PostRequest postRequest = new PostRequest(title, category, content, tags);
 
@@ -438,6 +431,9 @@ class PostServiceTest {
 
                 when(postRepository.findById(postId))
                         .thenReturn(Optional.of(post));
+
+                when(s3Service.uploadFile(image))
+                        .thenReturn(new UploadResponse("imageUrl", "filename"));
 
                 // when
                 String result = postService.putPost(postId, image, postRequest, user);
