@@ -33,7 +33,7 @@ public class ImageService {
         if (!gallery.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "갤러리 이미지 조회 권한이 없습니다");
         }
-        return new GalleryImageResponse(gallery.getImages());
+        return new GalleryImageResponse(gallery);
     }
 
     public void addImages(Long galleryId, ImageAddRequest imageAddRequest, User user) {
