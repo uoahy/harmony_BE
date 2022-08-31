@@ -1,5 +1,6 @@
 package com.example.harmony.domain.gallery.dto;
 
+import com.example.harmony.global.validator.ImageFile;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,7 +23,7 @@ public class GalleryRequest {
     private String title;
 
     @Size(max = 30, message = "이미지는 최대 30장까지 업로드할 수 있습니다")
-    private List<MultipartFile> imageFiles;
+    private List<@ImageFile MultipartFile> imageFiles;
 
     @NotBlank(message = "내용은 필수 항목입니다")
     @Length(max = 3000, message = "갤러리 내용은 최대 3000자 이하로 적어주세요")
