@@ -35,7 +35,7 @@ public class Gallery {
 
     private LocalDate date;
 
-    @OneToMany(mappedBy = "gallery")
+    @OneToMany(mappedBy = "gallery", cascade = CascadeType.REMOVE)
     private List<Image> images;
 
     @OneToMany(mappedBy = "gallery", cascade = CascadeType.REMOVE)
