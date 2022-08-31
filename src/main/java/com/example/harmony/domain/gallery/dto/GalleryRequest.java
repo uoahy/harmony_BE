@@ -1,24 +1,21 @@
 package com.example.harmony.domain.gallery.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class GalleryRequest {
 
-    private LocalDate date;
+    private String date;
 
     @NotBlank(message = "제목은 필수 항목입니다")
     @Length(max = 30, message = "갤러리 제목은 최대 30자 이하로 적어주세요")

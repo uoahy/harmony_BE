@@ -46,7 +46,7 @@ public class Gallery {
     private Family family;
 
     public Gallery(GalleryRequest galleryRequest, List<Image> images, Family family) {
-        this.date = galleryRequest.getDate();
+        this.date = LocalDate.parse(galleryRequest.getDate());
         this.title = galleryRequest.getTitle();
         this.content = galleryRequest.getContent();
         this.images = images;
