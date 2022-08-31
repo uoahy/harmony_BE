@@ -12,6 +12,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 public class PostController {
@@ -22,7 +24,7 @@ public class PostController {
     @PostMapping(value = "/api/posts", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> createPost(
             @RequestPart(required = false) MultipartFile image,
-            @RequestPart PostRequest request,
+            @RequestPart @Valid PostRequest request,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = postService.createPost(image, request, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg));
@@ -50,7 +52,7 @@ public class PostController {
     @PutMapping(value ="/api/posts/{postId}" ,consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> putPost(@PathVariable Long postId,
                                      @RequestPart(required = false) MultipartFile image,
-                                     @RequestPart PostRequest request,
+                                     @RequestPart @Valid PostRequest request,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = postService.putPost(postId, image, request, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));

@@ -39,6 +39,8 @@ public class PostService {
 
     // 게시글 작성
     public String createPost(MultipartFile image, PostRequest request,User user) {
+        validCategory(request.getCategory());
+
         // 이미지 존재여부에 따른 게시글 객체 저장
         if(image==null) {
             Post post = new Post(request,user);
@@ -87,13 +89,8 @@ public class PostService {
 
     // 게시글 목록 조회
     public Slice<PostListResponse> getPosts(String category, int page, int size) {
-        // 카테고리 유효성 검사
-        Set<String> categories = new HashSet<>(Arrays.asList("아빠","엄마","첫째","둘째","N째","막내","외동","동거인","전체"));
-        if(!categories.contains(category)) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"유효하지 않은 카테고리입니다.");
-        }
-
         Pageable pageable = PageRequest.of(page,size);
+        validCategory(category);
 
         Slice<Post> posts;
         if(category.equals("전체")) {
@@ -109,6 +106,7 @@ public class PostService {
     @Transactional
     public String putPost(Long postId, MultipartFile image, PostRequest request, User user) {
         Post post = findByPostId(postId);
+        validCategory(request.getCategory());
 
         // 게시글 작성자 일치여부
         getAuthority(post.getUser(),user);
@@ -209,6 +207,14 @@ public class PostService {
     public void isImage(MultipartFile image) {
         if(!image.getContentType().startsWith("image")) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미지 파일만 업로드 가능합니다.");
+        }
+    }
+
+    // 카테고리 유효성검사
+    public void validCategory(String category) {
+        Set<String> categories = new HashSet<>(Arrays.asList("아빠","엄마","첫째","둘째","N째","막내","외동","동거인","전체"));
+        if(!categories.contains(category)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"유효하지 않은 카테고리입니다.");
         }
     }
 
