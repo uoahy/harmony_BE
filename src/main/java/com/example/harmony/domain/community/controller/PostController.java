@@ -6,11 +6,9 @@ import com.example.harmony.global.common.SuccessResponse;
 import com.example.harmony.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -21,12 +19,11 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 작성
-    @PostMapping(value = "/api/posts", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/api/posts")
     public ResponseEntity<?> createPost(
-            @RequestPart(required = false) MultipartFile image,
-            @RequestPart @Valid PostRequest request,
+            @ModelAttribute @Valid PostRequest request,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = postService.createPost(image, request, userDetails.getUser());
+        String msg = postService.createPost(request, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg));
     }
 
@@ -49,12 +46,11 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PutMapping(value ="/api/posts/{postId}" ,consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PutMapping(value ="/api/posts/{postId}")
     public ResponseEntity<?> putPost(@PathVariable Long postId,
-                                     @RequestPart(required = false) MultipartFile image,
-                                     @RequestPart @Valid PostRequest request,
+                                     @ModelAttribute @Valid PostRequest request,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        String msg = postService.putPost(postId, image, request, userDetails.getUser());
+        String msg = postService.putPost(postId, request, userDetails.getUser());
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg));
     }
 

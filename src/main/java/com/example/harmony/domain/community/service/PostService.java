@@ -38,8 +38,9 @@ public class PostService {
     private final S3Service s3Service;
 
     // 게시글 작성
-    public String createPost(MultipartFile image, PostRequest request,User user) {
+    public String createPost(PostRequest request,User user) {
         validCategory(request.getCategory());
+        MultipartFile image = request.getImage();
 
         // 이미지 존재여부에 따른 게시글 객체 저장
         if(image==null) {
@@ -103,7 +104,7 @@ public class PostService {
 
     // 게시글 수정
     @Transactional
-    public String putPost(Long postId, MultipartFile image, PostRequest request, User user) {
+    public String putPost(Long postId, PostRequest request, User user) {
         Post post = findByPostId(postId);
         validCategory(request.getCategory());
 
@@ -118,6 +119,7 @@ public class PostService {
         }
 
         // 이미지 존재여부
+        MultipartFile image = request.getImage();
         if(image==null) {
             post.savePost(request);
             postRepository.save(post);
