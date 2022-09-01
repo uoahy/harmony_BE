@@ -441,7 +441,19 @@ class ScheduleServiceTest {
                         .family(family)
                         .build();
 
-                Schedule schedule = new Schedule(scheduleRequest, user1.getFamily());
+                LocalDate yesterday = LocalDate.now().minusDays(1);
+
+                Participation participation = Participation.builder()
+                        .participant(user1)
+                        .build();
+
+                Schedule schedule = Schedule.builder()
+                        .category(Category.TRIP)
+                        .startDate(yesterday)
+                        .endDate(yesterday)
+                        .participations(Arrays.asList(participation))
+                        .family(family)
+                        .build();
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
