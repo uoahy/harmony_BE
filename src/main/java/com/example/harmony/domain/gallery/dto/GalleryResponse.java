@@ -18,6 +18,8 @@ public class GalleryResponse {
 
     private String title;
 
+    private String content;
+
     private LocalDate date;
 
     private List<String> imageUrls;
@@ -27,6 +29,7 @@ public class GalleryResponse {
     public GalleryResponse(Gallery gallery, User user) {
         this.id = gallery.getId();
         this.title = gallery.getTitle();
+        this.content = gallery.getContent();
         this.date = gallery.getDate();
         this.imageUrls = gallery.getImages().stream()
                 .limit(5)

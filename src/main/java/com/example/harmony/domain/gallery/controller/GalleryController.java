@@ -13,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @RequiredArgsConstructor
 @RestController
 public class GalleryController {
@@ -50,7 +52,7 @@ public class GalleryController {
     @PostMapping("/api/schedules/{scheduleId}/galleries")
     ResponseEntity<SuccessResponse> postGallery(
             @PathVariable Long scheduleId,
-            @ModelAttribute GalleryRequest galleryRequest,
+            @ModelAttribute @Valid GalleryRequest galleryRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
         galleryService.createGallery(scheduleId, galleryRequest, userDetails.getUser());

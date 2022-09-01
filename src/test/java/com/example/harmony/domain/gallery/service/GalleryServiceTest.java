@@ -397,6 +397,7 @@ class GalleryServiceTest {
                 Long scheduleId = 1L;
 
                 GalleryRequest galleryRequest = GalleryRequest.builder()
+                        .date("2022-08-08")
                         .imageFiles(Collections.emptyList())
                         .build();
 
