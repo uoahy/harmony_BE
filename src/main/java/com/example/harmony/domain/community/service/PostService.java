@@ -47,7 +47,6 @@ public class PostService {
             postRepository.save(post);
             saveTag(request, post);
         } else {
-            isImage(image);
             UploadResponse savedImage = s3Service.uploadFile(image);
             Post post = new Post(request, savedImage, user);
             postRepository.save(post);
@@ -123,7 +122,6 @@ public class PostService {
             post.savePost(request);
             postRepository.save(post);
         } else {
-            isImage(image);
             UploadResponse savedImage = s3Service.uploadFile(image);
             post.savePostAndImage(request, savedImage);
             postRepository.save(post);
@@ -201,13 +199,6 @@ public class PostService {
         return postRepository.findById(postId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시물이 존재하지 않습니다.")
         );
-    }
-
-    // 이미지 유효성검사
-    public void isImage(MultipartFile image) {
-        if(!image.getContentType().startsWith("image")) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"이미지 파일만 업로드 가능합니다.");
-        }
     }
 
     // 카테고리 유효성검사
