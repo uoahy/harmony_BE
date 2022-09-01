@@ -228,7 +228,7 @@ class PostServiceTest {
                 when(likeRepository.findByPostAndUser(post, user1))
                         .thenReturn(Optional.of(like1));
 
-                when(postCommentRepository.findAllByPostContainingOrderByCreatedAtDesc(post))
+                when(postCommentRepository.findAllByPostOrderByCreatedAtDesc(post))
                         .thenReturn(commentList);
 
                 //when
