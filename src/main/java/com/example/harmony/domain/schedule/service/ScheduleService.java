@@ -57,7 +57,9 @@ public class ScheduleService {
             List<Participation> participations = participants.stream()
                     .map(x -> new Participation(schedule, x))
                     .collect(Collectors.toList());
+            participationRepository.deleteAll(schedule.getParticipations());
             schedule.modify(scheduleRequest, participations);
+            participationRepository.saveAll(participations);
         } else {
             schedule.modify(scheduleRequest, null);
         }
