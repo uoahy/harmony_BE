@@ -263,12 +263,13 @@ class PostServiceTest {
                 // given
                 String category = "반려동물";
                 int page = 0;
-                int size = 9;
+                int size = 3;
+                User user = User.builder().build();
 
                 PostService postService = new PostService(postRepository, postCommentRepository, tagRepository, likeRepository, s3Service);
 
                 // when
-                Exception exception = assertThrows(ResponseStatusException.class, () -> postService.getPosts(category, page, size));
+                Exception exception = assertThrows(ResponseStatusException.class, () -> postService.getPosts(category, page, size, user));
 
                 // then
                 assertEquals("400 BAD_REQUEST \"유효하지 않은 카테고리입니다.\"",exception.getMessage());

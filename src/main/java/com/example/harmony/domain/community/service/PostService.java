@@ -88,7 +88,7 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public Slice<PostListResponse> getPosts(String category, int page, int size) {
+    public Map<String,Object> getPosts(String category, int page, int size, User user) {
         Pageable pageable = PageRequest.of(page,size);
         validCategory(category);
 
@@ -99,7 +99,18 @@ public class PostService {
             posts = postRepository.findAllByCategoryContainingOrderByCreatedAtDesc(category, pageable);
         }
 
-        return posts.map(PostListResponse::new);
+        List<PostListResponse> postList = new ArrayList<>();
+        for(Post post: posts) {
+            boolean like = likeRepository.findByPostAndUser(post,user).isPresent();
+            postList.add(new PostListResponse(post,like));
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("content",postList);
+        result.put("last",posts.isLast());
+        result.put("numberOfElements",posts.getNumberOfElements());
+
+        return result;
     }
 
     // 게시글 수정
@@ -184,8 +195,10 @@ public class PostService {
     // 태그 저장
     public void saveTag(PostRequest request, Post post) {
         List<String> tags = request.getTags();
-        for (String tag : tags) {
-            tagRepository.save(new Tag(tag, post));
+        if(tags!=null) {
+            for (String tag : tags) {
+                tagRepository.save(new Tag(tag, post));
+            }
         }
     }
 

@@ -40,9 +40,10 @@ public class PostController {
     @GetMapping("/api/posts")
     public ResponseEntity<?> getPosts(@RequestParam String category,
                                       @RequestParam int page,
-                                      @RequestParam int size) {
+                                      @RequestParam int size,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = "게시글 목록 조회를 성공하였습니다";
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, postService.getPosts(category, page, size)));
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, postService.getPosts(category, page, size,userDetails.getUser())));
     }
 
     // 게시글 수정
