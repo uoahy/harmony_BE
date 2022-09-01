@@ -34,7 +34,9 @@ public class PostListResponse {
 
     private int likeCount;
 
-    public PostListResponse(Post post) {
+    private boolean like;
+
+    public PostListResponse(Post post, boolean like) {
         this.postId = post.getId();
         this.title = post.getTitle();
         this.content = post.getContent();
@@ -46,6 +48,7 @@ public class PostListResponse {
         this.createdAt = post.getCreatedAt();
         this.commentCount = post.getComments().size();
         this.likeCount = post.getLikes().size();
+        this.like = like;
     }
 
 }

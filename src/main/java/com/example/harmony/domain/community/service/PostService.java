@@ -38,8 +38,9 @@ public class PostService {
     private final S3Service s3Service;
 
     // 게시글 작성
-    public String createPost(MultipartFile image, PostRequest request,User user) {
+    public String createPost(PostRequest request,User user) {
         validCategory(request.getCategory());
+        MultipartFile image = request.getImage();
 
         // 이미지 존재여부에 따른 게시글 객체 저장
         if(image==null) {
@@ -68,7 +69,7 @@ public class PostService {
         Map<String, Object> poster = userInfo(writer, writer.getFamily());
 
         // 댓글
-        List<PostComment> comments = commentRepository.findAllByPostContainingOrderByCreatedAtDesc(post);
+        List<PostComment> comments = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
         List<PostCommentResponse> commentResponseList = new ArrayList<>();
         for(PostComment comment: comments) {
             // 댓글 작성자
@@ -87,7 +88,7 @@ public class PostService {
     }
 
     // 게시글 목록 조회
-    public Slice<PostListResponse> getPosts(String category, int page, int size) {
+    public Map<String,Object> getPosts(String category, int page, int size, User user) {
         Pageable pageable = PageRequest.of(page,size);
         validCategory(category);
 
@@ -98,12 +99,23 @@ public class PostService {
             posts = postRepository.findAllByCategoryContainingOrderByCreatedAtDesc(category, pageable);
         }
 
-        return posts.map(PostListResponse::new);
+        List<PostListResponse> postList = new ArrayList<>();
+        for(Post post: posts) {
+            boolean like = likeRepository.findByPostAndUser(post,user).isPresent();
+            postList.add(new PostListResponse(post,like));
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("content",postList);
+        result.put("last",posts.isLast());
+        result.put("numberOfElements",posts.getNumberOfElements());
+
+        return result;
     }
 
     // 게시글 수정
     @Transactional
-    public String putPost(Long postId, MultipartFile image, PostRequest request, User user) {
+    public String putPost(Long postId, PostRequest request, User user) {
         Post post = findByPostId(postId);
         validCategory(request.getCategory());
 
@@ -118,6 +130,7 @@ public class PostService {
         }
 
         // 이미지 존재여부
+        MultipartFile image = request.getImage();
         if(image==null) {
             post.savePost(request);
             postRepository.save(post);
@@ -182,8 +195,10 @@ public class PostService {
     // 태그 저장
     public void saveTag(PostRequest request, Post post) {
         List<String> tags = request.getTags();
-        for (String tag : tags) {
-            tagRepository.save(new Tag(tag, post));
+        if(tags!=null) {
+            for (String tag : tags) {
+                tagRepository.save(new Tag(tag, post));
+            }
         }
     }
 
