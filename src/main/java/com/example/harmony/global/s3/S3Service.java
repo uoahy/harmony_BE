@@ -26,7 +26,7 @@ public class S3Service {
 
     public UploadResponse uploadFile(MultipartFile file) {
         MimeType mimeType = MimeType.valueOf(file.getContentType());
-        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename() + "." + mimeType.getSubtype();
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename() + "." + (mimeType.getType().equals("image") ? mimeType.getSubtype() : "mp3");
         try {
             PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), null)
                     .withCannedAcl(CannedAccessControlList.PublicRead);
