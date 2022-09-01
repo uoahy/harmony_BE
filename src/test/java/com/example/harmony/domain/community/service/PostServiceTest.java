@@ -74,12 +74,12 @@ class PostServiceTest {
                 tags.add("태그");
                 tags.add("입니다");
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, null);
 
                 PostService postService = new PostService(postRepository,postCommentRepository, tagRepository, likeRepository, s3Service);
 
                 // when
-                String result = postService.createPost(null, postRequest, user);
+                String result = postService.createPost(postRequest, user);
 
                 // then
                 assertEquals("게시글 작성이 완료되었습니다.", result);
@@ -99,7 +99,7 @@ class PostServiceTest {
                 tags.add("입니다");
                 MockMultipartFile image = new MockMultipartFile("imageFiles", (byte[]) null);
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, image);
 
                 PostService postService = new PostService(postRepository,postCommentRepository, tagRepository, likeRepository, s3Service);
 
@@ -107,7 +107,7 @@ class PostServiceTest {
                         .thenReturn(new UploadResponse("imageUrl", "filename"));
 
                 // when
-                String result = postService.createPost(image, postRequest, user);
+                String result = postService.createPost(postRequest, user);
 
                 // then
                 assertEquals("게시글 작성이 완료되었습니다.", result);
@@ -300,7 +300,7 @@ class PostServiceTest {
                 tags.add("이것은");
                 tags.add("태그");
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, null);
 
                 PostService postService = new PostService(postRepository, postCommentRepository, tagRepository, likeRepository, s3Service);
 
@@ -308,7 +308,7 @@ class PostServiceTest {
                         .thenReturn(Optional.empty());
 
                 // when
-                Exception exception = assertThrows(ResponseStatusException.class, () -> postService.putPost(postId, null, postRequest, user));
+                Exception exception = assertThrows(ResponseStatusException.class, () -> postService.putPost(postId, postRequest, user));
 
                 // then
                 assertEquals("404 NOT_FOUND \"게시물이 존재하지 않습니다.\"",exception.getMessage());
@@ -337,7 +337,7 @@ class PostServiceTest {
                 tags.add("이것은");
                 tags.add("태그");
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, null);
 
                 PostService postService = new PostService(postRepository, postCommentRepository, tagRepository, likeRepository, s3Service);
 
@@ -345,7 +345,7 @@ class PostServiceTest {
                         .thenReturn(Optional.of(post));
 
                 // when
-                Exception exception = assertThrows(ResponseStatusException.class, () -> postService.putPost(postId, null, postRequest, user));
+                Exception exception = assertThrows(ResponseStatusException.class, () -> postService.putPost(postId, postRequest, user));
 
                 // then
                 assertEquals("403 FORBIDDEN \"게시글에 대한 권한이 없습니다.\"",exception.getMessage());
@@ -380,7 +380,7 @@ class PostServiceTest {
                 tags.add("태그");
                 tags.add("입니다");
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, null);
 
                 PostService postService = new PostService(postRepository, postCommentRepository, tagRepository, likeRepository, s3Service);
 
@@ -388,7 +388,7 @@ class PostServiceTest {
                         .thenReturn(Optional.of(post));
 
                 // when
-                String result = postService.putPost(postId, null, postRequest, user);
+                String result = postService.putPost(postId,postRequest, user);
 
                 // then
                 assertEquals("게시글 수정이 완료되었습니다.", result);
@@ -425,7 +425,7 @@ class PostServiceTest {
                 tags.add("입니다");
                 MockMultipartFile image = new MockMultipartFile("imageFile", (byte[]) null);
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, image);
 
                 PostService postService = new PostService(postRepository, postCommentRepository, tagRepository, likeRepository, s3Service);
 
@@ -436,7 +436,7 @@ class PostServiceTest {
                         .thenReturn(new UploadResponse("imageUrl", "filename"));
 
                 // when
-                String result = postService.putPost(postId, image, postRequest, user);
+                String result = postService.putPost(postId,postRequest, user);
 
                 // then
                 assertEquals("게시글 수정이 완료되었습니다.", result);
