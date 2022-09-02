@@ -63,13 +63,13 @@ public class PostService {
 
         // 게시글 작성자 일치여부
         User writer = post.getUser();
-        boolean isPoster = writer.getId().equals(user.getId());
+        boolean isPoster = isWriter(writer.getId(), user.getId());
 
         // 작성자 정보
         Map<String, Object> poster = userInfo(writer, writer.getFamily());
 
         // 댓글
-        List<PostComment> comments = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
+        List<PostComment> comments = commentRepository.findAllByPostOrderByCreatedAtAsc(post);
         List<PostCommentResponse> commentResponseList = new ArrayList<>();
         for(PostComment comment: comments) {
             // 댓글 작성자
@@ -77,7 +77,7 @@ public class PostService {
             Map<String,Object> commenter = userInfo(cmtWriter, cmtWriter.getFamily());
 
             // 댓글 작성자 일치여부
-            boolean isCommenter = cmtWriter.getId().equals(user.getId());
+            boolean isCommenter = isWriter(cmtWriter.getId(), user.getId());
             commentResponseList.add(new PostCommentResponse(comment, commenter, isCommenter));
         }
 
@@ -202,7 +202,7 @@ public class PostService {
         }
     }
 
-    // 작성자 일치여부
+    // 본인확인 유효성검사
     public void getAuthority(User writer, User user) {
         if (!writer.getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "게시글에 대한 권한이 없습니다.");
@@ -222,6 +222,11 @@ public class PostService {
         if(!categories.contains(category)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"유효하지 않은 카테고리입니다.");
         }
+    }
+
+    // 작성자 일치여부
+    public boolean isWriter(Long writerId, Long userId) {
+        return writerId.equals(userId);
     }
 
 }

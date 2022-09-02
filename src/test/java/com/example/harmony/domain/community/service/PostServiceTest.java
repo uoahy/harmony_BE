@@ -228,7 +228,7 @@ class PostServiceTest {
                 when(likeRepository.findByPostAndUser(post, user1))
                         .thenReturn(Optional.of(like1));
 
-                when(postCommentRepository.findAllByPostOrderByCreatedAtDesc(post))
+                when(postCommentRepository.findAllByPostOrderByCreatedAtAsc(post))
                         .thenReturn(commentList);
 
                 //when
@@ -244,6 +244,8 @@ class PostServiceTest {
                 assertEquals(3,postCommentList.get(0).getCommenter().get("level"));
                 assertEquals(1, postResponse.getLikeCount());
                 assertTrue(postResponse.isLike());
+                assertTrue(postResponse.isIamPoster());
+                assertFalse(postCommentList.get(1).isIamCommenter());
             }
         }
 

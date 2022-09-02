@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface PostCommentRepository extends JpaRepository<PostComment, Long> {
 
     Optional<PostComment> findById(Long id);
-    List<PostComment> findAllByPostOrderByCreatedAtDesc(Post post);
+    List<PostComment> findAllByPostOrderByCreatedAtAsc(Post post);
 }
