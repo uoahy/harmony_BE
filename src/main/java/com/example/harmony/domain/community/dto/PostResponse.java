@@ -16,6 +16,8 @@ public class PostResponse {
 
     private String title;
 
+    private String category;
+
     private String content;
 
     private List<String> tags;
@@ -36,6 +38,7 @@ public class PostResponse {
 
     public PostResponse(Post post,Map<String,Object> poster, boolean isPoster, List<PostCommentResponse> comments, boolean like) {
       this.title = post.getTitle();
+      this.category = post.getCategory();
       this.content = post.getContent();
       this.tags = post.getTags().stream()
               .map(Tag::getTag)
