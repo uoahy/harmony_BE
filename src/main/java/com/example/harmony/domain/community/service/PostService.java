@@ -69,7 +69,7 @@ public class PostService {
         Map<String, Object> poster = userInfo(writer, writer.getFamily());
 
         // 댓글
-        List<PostComment> comments = commentRepository.findAllByPostOrderByCreatedAtDesc(post);
+        List<PostComment> comments = commentRepository.findAllByPostOrderByCreatedAtAsc(post);
         List<PostCommentResponse> commentResponseList = new ArrayList<>();
         for(PostComment comment: comments) {
             // 댓글 작성자
