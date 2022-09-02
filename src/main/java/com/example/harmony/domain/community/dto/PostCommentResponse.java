@@ -11,6 +11,8 @@ import java.util.Map;
 @Setter
 public class PostCommentResponse {
 
+    private Long commentId;
+
     private String content;
 
     private LocalDateTime createdAt;
@@ -20,6 +22,7 @@ public class PostCommentResponse {
     private boolean isCommenter;
 
     public PostCommentResponse(PostComment postComment, Map<String, Object> commenter, boolean isCommenter) {
+        this.commentId = postComment.getId();
         this.content = postComment.getContent();
         this.createdAt = postComment.getCreatedAt();
         this.commenter = commenter;
