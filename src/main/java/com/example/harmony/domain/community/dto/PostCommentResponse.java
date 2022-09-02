@@ -19,13 +19,13 @@ public class PostCommentResponse {
 
     private Map<String,Object> commenter;
 
-    private boolean isCommenter;
+    private boolean iamCommenter;
 
     public PostCommentResponse(PostComment postComment, Map<String, Object> commenter, boolean isCommenter) {
         this.commentId = postComment.getId();
         this.content = postComment.getContent();
         this.createdAt = postComment.getCreatedAt();
         this.commenter = commenter;
-        this.isCommenter = isCommenter;
+        this.iamCommenter = isCommenter;
     }
 }

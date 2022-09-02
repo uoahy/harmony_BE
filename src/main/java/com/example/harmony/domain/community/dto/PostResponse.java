@@ -26,7 +26,7 @@ public class PostResponse {
 
     private Map<String,Object> poster;
 
-    private boolean isPoster;
+    private boolean iamPoster;
 
     private LocalDateTime createdAt;
 
@@ -36,7 +36,7 @@ public class PostResponse {
 
     private boolean like;
 
-    public PostResponse(Post post,Map<String,Object> poster, boolean isPoster, List<PostCommentResponse> comments, boolean like) {
+    public PostResponse(Post post,Map<String,Object> poster, boolean iamPoster, List<PostCommentResponse> comments, boolean like) {
       this.title = post.getTitle();
       this.category = post.getCategory();
       this.content = post.getContent();
@@ -45,7 +45,7 @@ public class PostResponse {
               .collect(Collectors.toList());
       this.imageUrl = post.getImageUrl();
       this.poster= poster;
-      this.isPoster = isPoster;
+      this.iamPoster = iamPoster;
       this.createdAt = post.getCreatedAt();
       this.comments = comments;
       this.likeCount = post.getLikes().size();
