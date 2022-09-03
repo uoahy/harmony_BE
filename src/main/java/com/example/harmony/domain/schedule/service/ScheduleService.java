@@ -82,6 +82,9 @@ public class ScheduleService {
         if (!schedule.getFamily().getId().equals(user.getFamily().getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 삭제 권한이 없습니다");
         }
+        if (schedule.getGalleries().size() > 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "일정에 연동된 갤러리가 있습니다");
+        }
         scheduleRepository.deleteById(scheduleId);
 
         if (schedule.isDone() && schedule.getParticipations().size() >= 2) {
