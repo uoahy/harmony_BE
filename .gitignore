@@ -41,3 +41,6 @@ spring.datasource.properties
 
 ### cloud.aws.properties ###
 cloud.aws.properties
+
+### kakao.properties ###
+kakao.properties

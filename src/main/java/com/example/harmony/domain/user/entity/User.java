@@ -33,10 +33,11 @@ public class User {
     @Column(unique = true)
     private String nickname;
 
-    @Column(nullable = false)
+    // 카카오 사용자의 경우 password 값 null
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String gender;
 
     @Enumerated(value = EnumType.STRING)
@@ -48,6 +49,11 @@ public class User {
         this.nickname = nickname;
         this.password = password;
         this.gender = gender;
+    }
+
+    public User(String email, String name) {
+        this.email = email;
+        this.name = name;
     }
 
     public void setFamily(Family family) {

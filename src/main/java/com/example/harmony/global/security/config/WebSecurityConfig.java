@@ -62,7 +62,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers("/favicon.ico")
                 .antMatchers("/configuration/ui","/configuration/security", "/webjars/**")
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**")
+                .antMatchers("/v2/**","/oauth/**");
     }
 
     @Override
@@ -80,6 +81,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/signup").permitAll()
+                .antMatchers("/login/oauth2/kakao").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -135,6 +137,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/basic.js");
         skipPathList.add("GET,/webjars/**");
         skipPathList.add("GET,/favicon.ico");
+        // 카카오 로그인 허용
+        skipPathList.add("POST,https://kauth.kakao.com/oauth/token");
+        skipPathList.add("POST,https://kapi.kakao.com/v2/user/me");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
