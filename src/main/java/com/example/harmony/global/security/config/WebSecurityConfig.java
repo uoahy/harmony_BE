@@ -1,6 +1,7 @@
 package com.example.harmony.global.security.config;
 
 import com.example.harmony.global.security.FilterSkipMatcher;
+import com.example.harmony.global.security.handler.FormLoginFailureHandler;
 import com.example.harmony.global.security.handler.FormLoginSuccessHandler;
 import com.example.harmony.global.security.filter.FormLoginFilter;
 import com.example.harmony.global.security.filter.JwtAuthFilter;
@@ -101,6 +102,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
         formLoginFilter.setFilterProcessesUrl("/api/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.setAuthenticationFailureHandler(formLoginFailureHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
     }
@@ -109,6 +111,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public FormLoginSuccessHandler formLoginSuccessHandler() {
         return new FormLoginSuccessHandler();
     }
+
+    @Bean
+    public FormLoginFailureHandler formLoginFailureHandler() { return new FormLoginFailureHandler(); }
 
     @Bean
     public FormLoginAuthProvider formLoginAuthProvider() {
