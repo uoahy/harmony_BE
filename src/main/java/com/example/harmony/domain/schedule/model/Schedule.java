@@ -12,7 +12,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.List;
 
 @NoArgsConstructor
@@ -75,7 +74,7 @@ public class Schedule {
     }
 
     public void setDone() {
-        if (!done && endDate.isAfter(LocalDate.now(ZoneId.of("Asia/Seoul")))) {
+        if (!done && endDate.isAfter(LocalDate.now())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "종료일이 현재 이전인 일정만 완료할 수 있습니다");
         }
 
