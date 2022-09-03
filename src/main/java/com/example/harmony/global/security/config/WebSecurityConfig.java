@@ -1,7 +1,7 @@
 package com.example.harmony.global.security.config;
 
 import com.example.harmony.global.security.FilterSkipMatcher;
-import com.example.harmony.global.security.FormLoginSuccessHandler;
+import com.example.harmony.global.security.handler.FormLoginSuccessHandler;
 import com.example.harmony.global.security.filter.FormLoginFilter;
 import com.example.harmony.global.security.filter.JwtAuthFilter;
 import com.example.harmony.global.security.jwt.HeaderTokenExtractor;

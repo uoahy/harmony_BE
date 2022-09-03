@@ -1,5 +1,6 @@
-package com.example.harmony.global.security;
+package com.example.harmony.global.security.handler;
 
+import com.example.harmony.global.security.UserDetailsImpl;
 import com.example.harmony.global.security.jwt.JwtTokenUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
