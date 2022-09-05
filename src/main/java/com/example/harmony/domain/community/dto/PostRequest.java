@@ -35,12 +35,23 @@ public class PostRequest {
     @Nullable
     private MultipartFile image;
 
+    private boolean change;
+
     public PostRequest(String title, String category, String content, List<String> tags, MultipartFile image) {
         this.title = title;
         this.category = category;
         this.content = content;
         this.tags = tags;
         this.image = image;
+    }
+
+    public PostRequest(String title, String category, String content, List<String> tags, MultipartFile image, boolean change) {
+        this.title = title;
+        this.category = category;
+        this.content = content;
+        this.tags = tags;
+        this.image = image;
+        this.change = change;
     }
 
 }
