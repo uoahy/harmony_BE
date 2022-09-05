@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.util.Map;
 
@@ -66,8 +65,8 @@ public class UserController {
 
     //카카오 소셜 로그인 구현
     @GetMapping("/login/oauth2/kakao")
-    public ResponseEntity<?> loginByKakao(@RequestParam String code, HttpServletResponse response) throws JsonProcessingException {
-        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,kakaoUserService.loginByKakao(code, response)));
+    public ResponseEntity<?> loginByKakao(@RequestParam String code) throws JsonProcessingException {
+        return ResponseEntity.ok().headers(kakaoUserService.loginByKakao(code)).body(new SuccessResponse<>(HttpStatus.OK,"카카오 로그인을 성공하였습니다."));
     }
 
 }

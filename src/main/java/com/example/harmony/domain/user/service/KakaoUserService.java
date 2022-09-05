@@ -21,8 +21,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.servlet.http.HttpServletResponse;
-
 @Service
 @RequiredArgsConstructor
 public class KakaoUserService {
@@ -38,7 +36,7 @@ public class KakaoUserService {
     @Value("${kakao.redirect-uri}")
     private String redirectUri;
 
-    public String loginByKakao(String code, HttpServletResponse response) throws JsonProcessingException {
+    public HttpHeaders loginByKakao(String code) throws JsonProcessingException {
         // 1. 액세스 토큰 요청
         String accessToken = getAccessToken(code);
 
@@ -51,10 +49,8 @@ public class KakaoUserService {
         // 4. 강제 로그인 처리
         Authentication authentication = forceLogin(kakaoUser);
 
-        // 5. response Header에 JWT 토큰 추가
-        sendJWT(authentication, response);
-
-        return "카카오 로그인을 성공하였습니다";
+        // 5. JWT 토큰 Header에 담아서 보내기
+        return sendJWT(authentication);
     }
 
     private String getAccessToken(String code) throws JsonProcessingException {
@@ -144,11 +140,15 @@ public class KakaoUserService {
         return authentication;
     }
 
-    private void sendJWT(Authentication authentication, HttpServletResponse response) {
+    private HttpHeaders sendJWT(Authentication authentication) {
         // response header에 token 추가
         UserDetailsImpl userDetailsImpl = ((UserDetailsImpl) authentication.getPrincipal());
         String token = JwtTokenUtils.generateJwtToken(userDetailsImpl);
-        response.addHeader("Authorization", "BEARER" + " " + token);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", "BEARER" + " " + token);
+
+        return headers;
     }
 
 }
