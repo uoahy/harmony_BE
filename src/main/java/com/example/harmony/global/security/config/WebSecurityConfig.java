@@ -82,7 +82,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.authorizeRequests()
                 .antMatchers("/api/signup").permitAll()
-                .antMatchers("/login/oauth2/kakao").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
@@ -145,6 +144,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 카카오 로그인 허용
         skipPathList.add("POST,https://kauth.kakao.com/oauth/token");
         skipPathList.add("POST,https://kapi.kakao.com/v2/user/me");
+        skipPathList.add("GET,/login/oauth2/kakao");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
