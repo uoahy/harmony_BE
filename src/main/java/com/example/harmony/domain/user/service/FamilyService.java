@@ -57,9 +57,6 @@ public class FamilyService {
         User user = userDetails.getUser();
         Family family = user.getFamily();
 
-        // 가족 이름
-        String familyName = family.getFamilyName();
-
         // 가족 리스트
         List<User> members = family.getMembers();
         List<MembersResponse> memberList = new ArrayList<>();
@@ -78,7 +75,7 @@ public class FamilyService {
             memberList.add(dto);
         }
 
-        return new FamilyInfoResponse(familyName,memberList);
+        return new FamilyInfoResponse(family,memberList);
     }
 
     // 가족코드 조회
