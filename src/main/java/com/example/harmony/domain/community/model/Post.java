@@ -71,9 +71,12 @@ public class Post extends TimeStamp {
 
     public void savePost(PostRequest postRequest) {
         this.title = postRequest.getTitle();
-        this.imageUrl = null;
-        this.imageFilename = null;
         this.category = postRequest.getCategory();
         this.content = postRequest.getContent();
+    }
+
+    public void deleteImage() {
+        this.imageFilename = null;
+        this.imageUrl = null;
     }
 }

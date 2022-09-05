@@ -122,22 +122,29 @@ public class PostService {
         // 게시글 작성자 일치여부
         getAuthority(post.getUser(),user);
 
-        // 기존 이미지 존재할 경우 삭제
-        if(post.getImageUrl()!=null) {
-            List<String> previousFile = new ArrayList<>();
-            previousFile.add(post.getImageFilename());
-            s3Service.deleteFiles(previousFile);
-        }
-
-        // 이미지 존재여부
-        MultipartFile image = request.getImage();
-        if(image==null) {
+        // 이미지 변경여부
+        if(!request.isChange()) {
             post.savePost(request);
             postRepository.save(post);
         } else {
-            UploadResponse savedImage = s3Service.uploadFile(image);
-            post.savePostAndImage(request, savedImage);
-            postRepository.save(post);
+            // 기존 이미지 존재할 경우 삭제
+            if(post.getImageUrl()!=null) {
+                List<String> previousFile = new ArrayList<>();
+                previousFile.add(post.getImageFilename());
+                s3Service.deleteFiles(previousFile);
+                post.deleteImage();
+            }
+
+            // 이미지 존재여부
+            MultipartFile image = request.getImage();
+            if(image==null) {
+                post.savePost(request);
+                postRepository.save(post);
+            } else {
+                UploadResponse savedImage = s3Service.uploadFile(image);
+                post.savePostAndImage(request, savedImage);
+                postRepository.save(post);
+            }
         }
 
         // 기존 태그 삭제 및 새 태그 저장

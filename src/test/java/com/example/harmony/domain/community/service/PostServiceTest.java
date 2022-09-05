@@ -378,12 +378,13 @@ class PostServiceTest {
                 String title = "게시글 제목";
                 String category = "아빠";
                 String content = "이것은 수정한 게시글의 내용입니다.";
+                boolean change = false;
                 List<String> tags = new ArrayList<>();
                 tags.add("이것은");
                 tags.add("태그");
                 tags.add("입니다");
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags, null);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, null, change);
 
                 PostService postService = new PostService(postRepository, postCommentRepository, tagRepository, likeRepository, s3Service);
 
@@ -422,13 +423,14 @@ class PostServiceTest {
                 String title = "게시글 제목";
                 String category = "아빠";
                 String content = "이것은 수정한 게시글의 내용입니다.";
+                boolean change = true;
                 List<String> tags = new ArrayList<>();
                 tags.add("이것은");
                 tags.add("태그");
                 tags.add("입니다");
                 MockMultipartFile image = new MockMultipartFile("imageFile", (byte[]) null);
 
-                PostRequest postRequest = new PostRequest(title, category, content, tags, image);
+                PostRequest postRequest = new PostRequest(title, category, content, tags, image, change);
 
                 PostService postService = new PostService(postRepository, postCommentRepository, tagRepository, likeRepository, s3Service);
 
