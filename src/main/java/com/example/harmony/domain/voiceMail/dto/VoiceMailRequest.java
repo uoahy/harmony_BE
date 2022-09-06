@@ -1,11 +1,13 @@
 package com.example.harmony.domain.voiceMail.dto;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Getter
+@Setter
 public class VoiceMailRequest {
 
     private String title;

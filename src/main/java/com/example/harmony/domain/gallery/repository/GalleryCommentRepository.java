@@ -4,4 +4,6 @@ import com.example.harmony.domain.gallery.entity.GalleryComment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface GalleryCommentRepository extends JpaRepository<GalleryComment, Long> {
+
+    long countByGalleryId(Long galleryId);
 }

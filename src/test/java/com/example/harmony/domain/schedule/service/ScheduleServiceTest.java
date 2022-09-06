@@ -1,5 +1,6 @@
 package com.example.harmony.domain.schedule.service;
 
+import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.model.Category;
@@ -21,10 +22,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,6 +81,7 @@ class ScheduleServiceTest {
                         .startDate(LocalDate.of(2022, 8, 8))
                         .endDate(LocalDate.of(2022, 8, 8))
                         .participations(new ArrayList<>(Arrays.asList(participation1)))
+                        .galleries(Collections.emptyList())
                         .build();
 
                 Schedule schedule2 = Schedule.builder()
@@ -90,6 +89,7 @@ class ScheduleServiceTest {
                         .startDate(LocalDate.of(2022, 8, 8))
                         .endDate(LocalDate.of(2022, 8, 8))
                         .participations(new ArrayList<>(Arrays.asList(participation1)))
+                        .galleries(Collections.emptyList())
                         .build();
 
                 List<Schedule> schedules = new ArrayList<>(Arrays.asList(schedule1, schedule2));
@@ -101,11 +101,11 @@ class ScheduleServiceTest {
                 MonthlyScheduleResponse monthlyScheduleResponse = scheduleService.getMonthlySchedule(year, month, user);
 
                 // then
-                assertEquals(0, monthlyScheduleResponse.getEatCount());
-                assertEquals(1, monthlyScheduleResponse.getTripCount());
-                assertEquals(0, monthlyScheduleResponse.getCookCount());
-                assertEquals(0, monthlyScheduleResponse.getCleanCount());
-                assertEquals(1, monthlyScheduleResponse.getEtcCount());
+                assertEquals(null, monthlyScheduleResponse.getCounts().get(Category.EAT_OUT));
+                assertEquals(1, monthlyScheduleResponse.getCounts().get(Category.TRIP));
+                assertEquals(null, monthlyScheduleResponse.getCounts().get(Category.COOK));
+                assertEquals(null, monthlyScheduleResponse.getCounts().get(Category.CLEAN));
+                assertEquals(1, monthlyScheduleResponse.getCounts().get(Category.ETC));
             }
         }
     }
@@ -532,6 +532,37 @@ class ScheduleServiceTest {
                 // then
                 assertEquals("403 FORBIDDEN \"일정 삭제 권한이 없습니다\"", exception.getMessage());
             }
+
+            @Test
+            @DisplayName("연동된 갤러리가 존재")
+            void gallery_exists() {
+                // given
+                Long scheduleId = 1L;
+
+                Family family = Family.builder()
+                        .id(1L)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                Gallery gallery = Gallery.builder().build();
+
+                Schedule schedule = Schedule.builder()
+                        .family(family)
+                        .galleries(Arrays.asList(gallery))
+                        .build();
+
+                when(scheduleRepository.findById(scheduleId))
+                        .thenReturn(Optional.of(schedule));
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> scheduleService.deleteSchedule(scheduleId, user));
+
+                // then
+                assertEquals("400 BAD_REQUEST \"일정에 연동된 갤러리가 있습니다\"", exception.getMessage());
+            }
         }
 
         @Nested
@@ -565,6 +596,7 @@ class ScheduleServiceTest {
                         .family(family)
                         .participations(Arrays.asList(participation1, participation2))
                         .done(true)
+                        .galleries(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))
@@ -605,6 +637,7 @@ class ScheduleServiceTest {
                         .family(family)
                         .participations(Arrays.asList(participation1, participation2))
                         .done(false)
+                        .galleries(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))
@@ -643,6 +676,7 @@ class ScheduleServiceTest {
                         .family(family)
                         .participations(Arrays.asList(participation))
                         .done(true)
+                        .galleries(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))
@@ -681,6 +715,7 @@ class ScheduleServiceTest {
                         .family(family)
                         .participations(Arrays.asList(participation))
                         .done(false)
+                        .galleries(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))

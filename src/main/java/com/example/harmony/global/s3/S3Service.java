@@ -3,12 +3,12 @@ package com.example.harmony.global.s3;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.DeleteObjectsRequest;
-import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MimeType;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -25,11 +25,10 @@ public class S3Service {
     private String bucket;
 
     public UploadResponse uploadFile(MultipartFile file) {
-        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(file.getContentType());
+        MimeType mimeType = MimeType.valueOf(file.getContentType());
+        String filename = UUID.randomUUID() + "_" + file.getOriginalFilename() + "." + (mimeType.getType().equals("image") ? mimeType.getSubtype() : "mp3");
         try {
-            PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), metadata)
+            PutObjectRequest por = new PutObjectRequest(bucket, filename, file.getInputStream(), null)
                     .withCannedAcl(CannedAccessControlList.PublicRead);
             amazonS3.putObject(por);
         } catch (Exception e) {

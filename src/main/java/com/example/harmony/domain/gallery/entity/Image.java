@@ -1,11 +1,16 @@
 package com.example.harmony.domain.gallery.entity;
 
+import com.example.harmony.global.s3.UploadResponse;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Getter
 @Entity
 public class Image {
@@ -20,4 +25,13 @@ public class Image {
 
     @ManyToOne
     private Gallery gallery;
+
+    public Image(UploadResponse uploadResponse) {
+        this.url = uploadResponse.getUrl();
+        this.filename = uploadResponse.getFilename();
+    }
+
+    public void setGallery(Gallery gallery) {
+        this.gallery = gallery;
+    }
 }
