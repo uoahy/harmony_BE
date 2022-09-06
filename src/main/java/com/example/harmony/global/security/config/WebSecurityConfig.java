@@ -1,7 +1,8 @@
 package com.example.harmony.global.security.config;
 
 import com.example.harmony.global.security.FilterSkipMatcher;
-import com.example.harmony.global.security.FormLoginSuccessHandler;
+import com.example.harmony.global.security.handler.FormLoginFailureHandler;
+import com.example.harmony.global.security.handler.FormLoginSuccessHandler;
 import com.example.harmony.global.security.filter.FormLoginFilter;
 import com.example.harmony.global.security.filter.JwtAuthFilter;
 import com.example.harmony.global.security.jwt.HeaderTokenExtractor;
@@ -62,7 +63,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers("/favicon.ico")
                 .antMatchers("/configuration/ui","/configuration/security", "/webjars/**")
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**")
+                .antMatchers("/v2/**","/oauth/**");
     }
 
     @Override
@@ -99,6 +101,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
         formLoginFilter.setFilterProcessesUrl("/api/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.setAuthenticationFailureHandler(formLoginFailureHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
     }
@@ -107,6 +110,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public FormLoginSuccessHandler formLoginSuccessHandler() {
         return new FormLoginSuccessHandler();
     }
+
+    @Bean
+    public FormLoginFailureHandler formLoginFailureHandler() { return new FormLoginFailureHandler(); }
 
     @Bean
     public FormLoginAuthProvider formLoginAuthProvider() {
@@ -135,6 +141,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/basic.js");
         skipPathList.add("GET,/webjars/**");
         skipPathList.add("GET,/favicon.ico");
+        // 카카오 로그인 허용
+        skipPathList.add("POST,https://kauth.kakao.com/oauth/token");
+        skipPathList.add("POST,https://kapi.kakao.com/v2/user/me");
+        skipPathList.add("GET,/login/oauth2/kakao");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,

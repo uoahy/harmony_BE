@@ -25,6 +25,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final PasswordEncoder passwordEncoder;
+//    private final PostRepository postRepository;
+//    private final PostCommentRepository commentRepository;
+//    private final LikeRepository likeRepository;
 
     // 회원가입
     @Transactional
@@ -124,6 +127,23 @@ public class UserService {
         result.put("hasRole", hasRole);
 
         return result;
+    }
+
+    // 회원탈퇴
+    public String withdrawal(String password, User user) {
+        if(!passwordEncoder.matches(password, user.getPassword())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        } else {
+            // 게시글, 댓글, 좋아요 삭제
+//            postRepository.deleteAllByUser(user);
+//            commentRepository.deleteAllByUser(user);
+//            likeRepository.deleteAllByUser(user);
+            // 일정, 갤러리 등 가족탭도 삭제 구현 필요
+
+            userRepository.delete(user);
+
+            return "회원탈퇴가 완료되었습니다.";
+        }
     }
 
 }
