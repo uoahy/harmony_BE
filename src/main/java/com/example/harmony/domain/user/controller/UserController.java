@@ -69,4 +69,11 @@ public class UserController {
         return ResponseEntity.ok().headers(kakaoUserService.loginByKakao(code)).body(new SuccessResponse<>(HttpStatus.OK,"카카오 로그인을 성공하였습니다."));
     }
 
+    // 회원탈퇴
+    @DeleteMapping("/api/withdrawal")
+    public ResponseEntity<?> withdrawal(@RequestBody Map<String, String> password,
+                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.withdrawal(password.get("password"), userDetails.getUser())));
+    }
+
 }
