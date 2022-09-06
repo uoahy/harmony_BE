@@ -15,7 +15,7 @@ public class CommentResponse {
 
     private String commenter;
 
-    private boolean isCommenter;
+    private Boolean isCommenter;
 
     private LocalDate createdAt;
 
