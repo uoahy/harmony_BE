@@ -2,9 +2,11 @@ package com.example.harmony.domain.user.service;
 
 import com.example.harmony.domain.user.dto.*;
 import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.Feedback;
 import com.example.harmony.domain.user.model.RoleEnum;
 import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.FamilyRepository;
+import com.example.harmony.domain.user.repository.FeedbackRepository;
 import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.global.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final PasswordEncoder passwordEncoder;
+    private final FeedbackRepository feedbackRepository;
 //    private final PostRepository postRepository;
 //    private final PostCommentRepository commentRepository;
 //    private final LikeRepository likeRepository;
@@ -152,6 +155,23 @@ public class UserService {
 
         return "회원탈퇴가 완료되었습니다.";
 
+    }
+
+    // 탈퇴고객 피드백
+    public String getFeedback(String feedback) {
+        // 빈 값 금지
+        if (feedback.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "피드백을 작성해주세요.");
+        }
+
+        // 길이 15자 이상
+        if (feedback.length() < 15) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "피드백을 15자 이상 입력해주세요.");
+        }
+
+        feedbackRepository.save(new Feedback(feedback));
+
+        return "피드백을 성공적으로 받았습니다.";
     }
 
     // 마이페이지 조회
