@@ -76,4 +76,8 @@ public class User {
         this.gender = request.getGender();
     }
 
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
 }

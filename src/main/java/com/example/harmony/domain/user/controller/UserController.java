@@ -2,6 +2,7 @@ package com.example.harmony.domain.user.controller;
 
 import com.example.harmony.domain.user.dto.SignupRequest;
 import com.example.harmony.domain.user.dto.UpdateInfoRequest;
+import com.example.harmony.domain.user.dto.UpdatePasswordRequest;
 import com.example.harmony.domain.user.service.KakaoUserService;
 import com.example.harmony.domain.user.service.UserService;
 import com.example.harmony.global.common.SuccessResponse;
@@ -89,6 +90,13 @@ public class UserController {
     public ResponseEntity<?> updateInfo(@RequestBody UpdateInfoRequest request,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.updateInfo(request, userDetails.getUser())));
+    }
+
+    // 마이페이지 비밀번호 수정
+    @PutMapping("/api/mypage/password")
+    public ResponseEntity<?> updatePassword(@RequestBody @Valid UpdatePasswordRequest request,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.updatePassword(request, userDetails.getUser())));
     }
 
 
