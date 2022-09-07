@@ -12,11 +12,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
-
-
-/*import static org.graalvm.compiler.debug.TTY.print;???? 이게 뭐임 언제 생긴거임??*/
 
 
 @RequiredArgsConstructor
@@ -27,7 +23,7 @@ public class RankingService {
     private final FamilyRepository familyRepository;
 
 
-    List<Family> familyList = new ArrayList<>(familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore")));
+    List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
 
     long familyCount = familyRepository.count();//총 가족 수
     int top = (int) (familyCount * (1 / 10));//몇가족수가 나오겠지
@@ -41,6 +37,15 @@ public class RankingService {
         return rk;
     }
 
+    @Scheduled(cron = "* * 5 1 * *")
+    List top10List(List List) {
+        for (int i = 0; i < 10; i++) {
+            List.add(familyList.get(i));
+        }
+        return List;
+    }
+
+
     public RankingResponse getFamilyScore(User user) {
         Family family = familyRepository.findById(user.getFamily().getId())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "가족 찾을 수가 없어"));
@@ -49,7 +54,9 @@ public class RankingService {
         int totalScore = family.getTotalScore();
 
         int level;
-        int ranking = 0;//임시방편
+        int ranking = 0;
+        List topList = null;//임시방편
+
 
         ranking = RankingMethod(ranking, familyId);
 
@@ -57,6 +64,7 @@ public class RankingService {
         if (ranking < top) {
             family.setFlower();
         }
+        topList = top10List(topList);
 
         if (totalScore >= 3000) {
             level = 4;
@@ -69,7 +77,8 @@ public class RankingService {
         } else {
             level = 0;
         }
-        return new RankingResponse(family, ranking, level);
+
+        return new RankingResponse(family, ranking, level, topList);
     }
 
 }
