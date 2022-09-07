@@ -1,5 +1,6 @@
 package com.example.harmony.domain.user.model;
 
+import com.example.harmony.domain.user.dto.UpdateInfoRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -67,4 +68,12 @@ public class User {
     public void setRole(RoleEnum role) {
         this.role = role;
     }
+
+    public void updateMyPage(String nickname) { this.nickname = nickname; }
+
+    public void updateKakao(UpdateInfoRequest request) {
+        this.nickname = request.getNickname();
+        this.gender = request.getGender();
+    }
+
 }
