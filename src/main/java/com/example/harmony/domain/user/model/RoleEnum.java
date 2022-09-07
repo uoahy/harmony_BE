@@ -7,6 +7,7 @@ public enum RoleEnum {
 
     FATHER("아빠"),
     MOTHER("엄마"),
+    ONLYCHILD("외동"),
     FIRST("첫째"),
     SECOND("둘째"),
     NTH("N째"),

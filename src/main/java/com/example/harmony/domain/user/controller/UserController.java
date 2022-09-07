@@ -2,6 +2,7 @@ package com.example.harmony.domain.user.controller;
 
 import com.example.harmony.domain.user.dto.SignupRequest;
 import com.example.harmony.domain.user.dto.UpdateInfoRequest;
+import com.example.harmony.domain.user.dto.UpdatePasswordRequest;
 import com.example.harmony.domain.user.service.KakaoUserService;
 import com.example.harmony.domain.user.service.UserService;
 import com.example.harmony.global.common.SuccessResponse;
@@ -77,6 +78,12 @@ public class UserController {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.withdrawal(password.get("password"), userDetails.getUser())));
     }
 
+    // 탈퇴고객 피드백
+    @PostMapping("/api/withdrawal")
+    public ResponseEntity<?> getFeedback(@RequestBody Map<String, String> feedback) {
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.getFeedback(feedback.get("feedback")) ));
+    }
+
     // 마이페이지 조회
     @GetMapping("/api/mypage")
     public ResponseEntity<?> getMyPageInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -89,6 +96,13 @@ public class UserController {
     public ResponseEntity<?> updateInfo(@RequestBody UpdateInfoRequest request,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.updateInfo(request, userDetails.getUser())));
+    }
+
+    // 마이페이지 비밀번호 수정
+    @PutMapping("/api/mypage/password")
+    public ResponseEntity<?> updatePassword(@RequestBody @Valid UpdatePasswordRequest request,
+                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.updatePassword(request, userDetails.getUser())));
     }
 
 
