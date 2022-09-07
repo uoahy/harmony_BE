@@ -1,7 +1,7 @@
 package com.example.harmony.domain.user.service;
 
 import com.example.harmony.domain.user.dto.KakaoUserInfo;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.global.security.UserDetailsImpl;
 import com.example.harmony.global.security.jwt.JwtTokenUtils;

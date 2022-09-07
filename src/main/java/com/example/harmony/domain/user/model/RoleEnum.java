@@ -1,4 +1,4 @@
-package com.example.harmony.domain.user.entity;
+package com.example.harmony.domain.user.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

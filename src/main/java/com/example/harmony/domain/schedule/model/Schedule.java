@@ -2,7 +2,7 @@ package com.example.harmony.domain.schedule.model;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
-import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.model.Family;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

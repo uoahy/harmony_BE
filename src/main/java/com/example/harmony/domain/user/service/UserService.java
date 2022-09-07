@@ -2,9 +2,9 @@ package com.example.harmony.domain.user.service;
 
 import com.example.harmony.domain.user.dto.CheckResponse;
 import com.example.harmony.domain.user.dto.SignupRequest;
-import com.example.harmony.domain.user.entity.Family;
-import com.example.harmony.domain.user.entity.RoleEnum;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.RoleEnum;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.FamilyRepository;
 import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.global.security.UserDetailsImpl;

@@ -1,7 +1,7 @@
 package com.example.harmony.domain.gallery.controller;
 
 import com.example.harmony.domain.gallery.service.GalleryService;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.global.security.UserDetailsImpl;
 import com.example.harmony.global.security.config.WebSecurityConfig;
 import org.junit.jupiter.api.DisplayName;

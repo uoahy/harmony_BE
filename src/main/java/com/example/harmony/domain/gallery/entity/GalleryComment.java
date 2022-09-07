@@ -1,7 +1,7 @@
 package com.example.harmony.domain.gallery.entity;
 
 import com.example.harmony.domain.gallery.dto.GalleryCommentRequest;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.global.common.TimeStamp;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

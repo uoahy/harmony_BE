@@ -1,6 +1,6 @@
 package com.example.harmony.domain.schedule.model;
 
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

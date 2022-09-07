@@ -1,6 +1,6 @@
 package com.example.harmony.domain.user.dto;
 
-import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.model.Family;
 import lombok.Getter;
 import lombok.Setter;
 

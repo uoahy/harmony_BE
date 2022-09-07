@@ -1,6 +1,6 @@
 package com.example.harmony.global.security;
 
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

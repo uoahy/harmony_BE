@@ -2,7 +2,7 @@ package com.example.harmony.domain.community.repository;
 
 import com.example.harmony.domain.community.model.Like;
 import com.example.harmony.domain.community.model.Post;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
