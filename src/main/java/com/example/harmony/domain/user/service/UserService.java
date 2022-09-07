@@ -114,7 +114,7 @@ public class UserService {
         return "역할 설정을 완료하였습니다.";
     }
 
-    // 가족, 역할 설정여부
+    // 카카오유저 및 가족, 역할, 추가정보 설정여부
     public Map<String, Object> getUserInfo(User user) {
         Map<String, Object> result = new HashMap<>();
 
@@ -125,6 +125,15 @@ public class UserService {
         boolean hasRole;
         hasRole = user.getRole() != null;
         result.put("hasRole", hasRole);
+
+        boolean kakaoUser;
+        kakaoUser = user.getPassword() == null;
+        result.put("kakaoUser", kakaoUser);
+
+        boolean hasAllInfo;
+        hasAllInfo = user.getNickname() != null;
+        result.put("hasAllInfo",hasAllInfo);
+
 
         return result;
     }
