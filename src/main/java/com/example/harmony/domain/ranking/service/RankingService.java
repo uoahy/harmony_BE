@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -32,14 +33,17 @@ public class RankingService {
         return rk;
     }
 
-    @Scheduled(cron = "* * 5 1 * *")
-    List top10List(List List) {
-        List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
-        for (int i = 0; i < 10; i++) {
 
-            List.add(familyList.get(i));
+    @Scheduled(cron = "* * 5 1 * *")
+    List top10List() {
+        List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
+        List<Family> list = new ArrayList<>();
+
+        for (int i = 0; i < 10; i++) {
+            list.add(familyList.get(i));
+
         }
-        return List;
+        return list;
     }
 
 
@@ -53,9 +57,9 @@ public class RankingService {
         int top = (int) (familyCount * (1 / 10));//상위 10%에 속하는 가족수
 
         int totalScore = family.getTotalScore();
+
         int level;
         int ranking = 0;
-        List topList = null;
 
 
         ranking = RankingMethod(ranking, familyId);
@@ -64,7 +68,9 @@ public class RankingService {
         if (ranking < top) {
             family.setFlower();
         }
-        topList = top10List(topList);
+
+        List topList = top10List();
+
 
         if (totalScore >= 3000) {
             level = 4;
