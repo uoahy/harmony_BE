@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/*import static org.graalvm.compiler.debug.TTY.print;???? 이게 뭐임 언제 생긴거임??*/
+
+
 @RequiredArgsConstructor
 @EnableScheduling
 @Service
@@ -29,9 +32,9 @@ public class RankingService {
     long familyCount = familyRepository.count();//총 가족 수
     int top = (int) (familyCount * (1 / 10));//몇가족수가 나오겠지
 
-    @Scheduled(cron ="* * 5 1 * *")
-    int RankingMethod(int rk, Long fId){
-        if(true==familyList.contains(fId)) {
+    @Scheduled(cron = "* * 5 1 * *")
+    int RankingMethod(int rk, Long fId) {
+        if (true == familyList.contains(fId)) {
             rk = familyList.indexOf(fId);
             rk++;//이 값이 top보다 낮다 하면 플라워에 ture를 주는!!!! 그런식?
         }
@@ -44,15 +47,16 @@ public class RankingService {
         ;
         Long familyId = user.getFamily().getId();
         int totalScore = family.getTotalScore();
-<<<<<<< Updated upstream
+
         int level;
         int ranking = 0;//임시방편
-=======
-        int level; int ranking=0;//임시방편
-        Boolean a=true;
-        
-        ranking=RankingMethod(ranking,familyId);
->>>>>>> Stashed changes
+
+        ranking = RankingMethod(ranking, familyId);
+
+
+        if (ranking < top) {
+            family.setFlower();
+        }
 
         if (totalScore >= 3000) {
             level = 4;
