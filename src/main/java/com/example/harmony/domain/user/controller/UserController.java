@@ -1,6 +1,7 @@
 package com.example.harmony.domain.user.controller;
 
 import com.example.harmony.domain.user.dto.SignupRequest;
+import com.example.harmony.domain.user.dto.UpdateInfoRequest;
 import com.example.harmony.domain.user.service.KakaoUserService;
 import com.example.harmony.domain.user.service.UserService;
 import com.example.harmony.global.common.SuccessResponse;
@@ -82,5 +83,13 @@ public class UserController {
         String msg = "마이페이지 조회에 성공하였습니다";
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, userService.getMyPageInfo(userDetails.getUser())));
     }
+
+    // 카카오 추가입력, 마이페이지 수정
+    @PutMapping("/api/mypage/profile")
+    public ResponseEntity<?> updateInfo(@RequestBody UpdateInfoRequest request,
+                                        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.updateInfo(request, userDetails.getUser())));
+    }
+
 
 }

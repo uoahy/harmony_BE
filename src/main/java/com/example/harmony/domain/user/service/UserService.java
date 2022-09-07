@@ -3,6 +3,7 @@ package com.example.harmony.domain.user.service;
 import com.example.harmony.domain.user.dto.CheckResponse;
 import com.example.harmony.domain.user.dto.MyPageResponse;
 import com.example.harmony.domain.user.dto.SignupRequest;
+import com.example.harmony.domain.user.dto.UpdateInfoRequest;
 import com.example.harmony.domain.user.model.Family;
 import com.example.harmony.domain.user.model.RoleEnum;
 import com.example.harmony.domain.user.model.User;
@@ -159,5 +160,35 @@ public class UserService {
     public MyPageResponse getMyPageInfo(User user) {
         return new MyPageResponse(user);
     }
+
+    // 카카오 추가입력, 마이페이지 수정
+    public String updateInfo(UpdateInfoRequest request, User user) {
+        // 업데이트 용도 확인
+        String useFor = request.getUpdateFor();
+        if(useFor.equals("kakao")) {
+            String gender = request.getGender();
+            String nickname = request.getNickname();
+
+            // 유효성검사
+            nicknameChk(nickname);
+            if(gender.isEmpty()) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"성별을 선택해주세요.");
+            }
+
+            user.updateKakao(request);
+            userRepository.save(user);
+        } else if(useFor.equals("mypage")) {
+            String nickname = request.getNickname();
+            nicknameChk(nickname);
+
+            user.updateMyPage(nickname);
+            userRepository.save(user);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "설정한 용도를 확인해주십시오.");
+        }
+
+       return "정보 수정이 완료되었습니다.";
+    }
+
 
 }
