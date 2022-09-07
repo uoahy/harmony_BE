@@ -7,7 +7,7 @@ import com.example.harmony.domain.schedule.model.Participation;
 import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ParticipationRepository;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

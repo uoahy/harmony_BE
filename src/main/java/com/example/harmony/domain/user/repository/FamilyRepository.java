@@ -1,6 +1,6 @@
 package com.example.harmony.domain.user.repository;
 
-import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.model.Family;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

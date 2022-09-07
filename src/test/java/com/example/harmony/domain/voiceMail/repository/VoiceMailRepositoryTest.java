@@ -1,6 +1,6 @@
 package com.example.harmony.domain.voiceMail.repository;
 
-import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.model.Family;
 import com.example.harmony.domain.voiceMail.entity.VoiceMail;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

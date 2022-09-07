@@ -1,7 +1,7 @@
 package com.example.harmony.domain.community.model;
 
 import com.example.harmony.domain.community.dto.PostRequest;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.global.common.TimeStamp;
 import com.example.harmony.global.s3.UploadResponse;
 import lombok.AllArgsConstructor;

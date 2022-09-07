@@ -1,6 +1,6 @@
 package com.example.harmony.global.security.provider;
 
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.global.security.UserDetailsImpl;
 import com.example.harmony.global.security.jwt.JwtDecoder;

@@ -11,7 +11,7 @@ import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.gallery.repository.ImageRepository;
 import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

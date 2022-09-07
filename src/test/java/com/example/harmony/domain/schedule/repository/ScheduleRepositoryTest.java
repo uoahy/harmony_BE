@@ -1,7 +1,7 @@
 package com.example.harmony.domain.schedule.repository;
 
 import com.example.harmony.domain.schedule.model.Schedule;
-import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.model.Family;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
