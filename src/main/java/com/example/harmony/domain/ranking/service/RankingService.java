@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @RequiredArgsConstructor
@@ -23,8 +25,10 @@ public class RankingService {
     private final FamilyRepository familyRepository;
 
 
-    @Scheduled(cron = "* * 5 1 * *")
+    @Scheduled(cron = "* * 6 * * MON")
+//6시에 월요일마다
     int RankingMethod(int rk, Long fId) {
+
         List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
         if (true == familyList.contains(fId)) {
             rk = familyList.indexOf(fId);
@@ -33,14 +37,21 @@ public class RankingService {
         return rk;
     }
 
-
-    @Scheduled(cron = "* * 5 1 * *")
+    @Scheduled(cron = "* * 6 * * MON")
     List top10List() {
         List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
-        List<Family> list = new ArrayList<>();
+        List list = new ArrayList<>();
+        List fl = new ArrayList<>();
+        Map<String, Object> map = new HashMap<>();
+
+        for (Family familys : familyList) {
+            map.put("familyName", familys.getFamilyName());
+            map.put("score", familys.getMonthlyScore());
+            fl.add(map);
+        }
 
         for (int i = 0; i < 10; i++) {
-            list.add(familyList.get(i));
+            list.add(fl.get(i));
 
         }
         return list;

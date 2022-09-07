@@ -48,7 +48,7 @@ public class Family {
         this.monthlyScore -= score;
     }
 
-    @Scheduled(cron ="* * 5 1 * *")
+    @Scheduled(cron ="* * 6 * * MON")
     public void setFlower(){
         flower= true;
         plusScore(50);
