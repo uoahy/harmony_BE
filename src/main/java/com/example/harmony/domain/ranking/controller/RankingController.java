@@ -21,7 +21,8 @@ public class RankingController {
     @GetMapping("/api/rankings")
     public ResponseEntity<SuccessResponse> getRanking(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         RankingResponse rankingResponse = rankingService.getFamilyScore(userDetails.getUser());
-        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "조회 성공", rankingResponse), HttpStatus.OK);
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "랭킹 조회 성공", rankingResponse), HttpStatus.OK);
+
     }
 
 }
