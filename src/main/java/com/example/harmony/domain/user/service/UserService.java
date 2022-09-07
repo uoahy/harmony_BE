@@ -1,5 +1,8 @@
 package com.example.harmony.domain.user.service;
 
+import com.example.harmony.domain.community.repository.LikeRepository;
+import com.example.harmony.domain.community.repository.PostCommentRepository;
+import com.example.harmony.domain.community.repository.PostRepository;
 import com.example.harmony.domain.user.dto.*;
 import com.example.harmony.domain.user.model.Family;
 import com.example.harmony.domain.user.model.Feedback;
@@ -27,9 +30,9 @@ public class UserService {
     private final FamilyRepository familyRepository;
     private final PasswordEncoder passwordEncoder;
     private final FeedbackRepository feedbackRepository;
-//    private final PostRepository postRepository;
-//    private final PostCommentRepository commentRepository;
-//    private final LikeRepository likeRepository;
+    private final PostRepository postRepository;
+    private final PostCommentRepository commentRepository;
+    private final LikeRepository likeRepository;
 
     // 회원가입
     @Transactional
@@ -140,16 +143,25 @@ public class UserService {
     }
 
     // 회원탈퇴
+    @Transactional
     public String withdrawal(String password, User user) {
+        // 비밀번호 일치 여부
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
         }
 
-        // 게시글, 댓글, 좋아요 삭제
-//            postRepository.deleteAllByUser(user);
-//            commentRepository.deleteAllByUser(user);
-//            likeRepository.deleteAllByUser(user);
-        // 일정, 갤러리 등 가족탭도 삭제 구현 필요
+        // 커뮤니티 게시글, 좋아요, 댓글 삭제
+        if(postRepository.existsByUser(user)) {
+            postRepository.deleteAllByUser(user);
+        }
+
+        if(commentRepository.existsByUser(user)) {
+            commentRepository.deleteAllByUser(user);
+        }
+
+        if(likeRepository.existsByUser(user)) {
+            likeRepository.deleteAllByUser(user);
+        }
 
         userRepository.delete(user);
 

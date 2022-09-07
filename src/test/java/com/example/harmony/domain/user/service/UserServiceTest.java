@@ -1,5 +1,8 @@
 package com.example.harmony.domain.user.service;
 
+import com.example.harmony.domain.community.repository.LikeRepository;
+import com.example.harmony.domain.community.repository.PostCommentRepository;
+import com.example.harmony.domain.community.repository.PostRepository;
 import com.example.harmony.domain.user.dto.CheckResponse;
 import com.example.harmony.domain.user.dto.SignupRequest;
 import com.example.harmony.domain.user.model.Family;
@@ -39,6 +42,15 @@ class UserServiceTest {
     @Mock
     FeedbackRepository feedbackRepository;
 
+    @Mock
+    PostRepository postRepository;
+
+    @Mock
+    PostCommentRepository commentRepository;
+
+    @Mock
+    LikeRepository likeRepository;
+
     @Nested
     @DisplayName("이메일 중복체크")
     class emailCheck {
@@ -53,7 +65,7 @@ class UserServiceTest {
                 // given
                 String email = "";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> userService.emailChk(email));
@@ -68,7 +80,7 @@ class UserServiceTest {
                 // given
                 String email = "soonie";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> userService.emailChk(email));
@@ -83,7 +95,7 @@ class UserServiceTest {
                 // given
                 String email = "soonie@baegopa.com";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 when(userRepository.findByEmail(email))
                         .thenReturn(Optional.of(User.builder().build()));
@@ -106,7 +118,7 @@ class UserServiceTest {
                 // given
                 String email = "soonie@baegopa.com";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 CheckResponse checkResponse = userService.emailChk(email);
@@ -131,7 +143,7 @@ class UserServiceTest {
                 // given
                 String nickname = "";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> userService.nicknameChk(nickname));
@@ -146,7 +158,7 @@ class UserServiceTest {
                 // given
                 String nickname = "순";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> userService.nicknameChk(nickname));
@@ -161,7 +173,7 @@ class UserServiceTest {
                 // given
                 String nickname = "나는순이";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 when(userRepository.findByNickname(nickname))
                         .thenReturn(Optional.of(User.builder().build()));
@@ -184,7 +196,7 @@ class UserServiceTest {
                 // given
                 String nickname = "나는순이";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 CheckResponse checkResponse = userService.nicknameChk(nickname);
@@ -223,7 +235,7 @@ class UserServiceTest {
                         .gender(gender)
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 when(userRepository.findByEmail(email))
                         .thenReturn(Optional.of(User.builder().build()));
@@ -255,7 +267,7 @@ class UserServiceTest {
                         .gender(gender)
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 when(userRepository.findByNickname(nickname))
                         .thenReturn(Optional.of(User.builder().build()));
@@ -287,7 +299,7 @@ class UserServiceTest {
                         .gender(gender)
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> userService.signup(signupRequest));
@@ -321,7 +333,7 @@ class UserServiceTest {
                         .gender(gender)
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 String result = userService.signup(signupRequest);
@@ -348,7 +360,7 @@ class UserServiceTest {
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
                 String familyCode = "AS43dg$f6GFg";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 when(familyRepository.findByFamilyCode(familyCode))
                         .thenReturn(Optional.empty());
@@ -377,7 +389,7 @@ class UserServiceTest {
                 when(familyRepository.findByFamilyCode(familyCode))
                         .thenReturn(Optional.of(family));
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> userService.enterFamilyCode(familyCode,userDetails));
@@ -402,7 +414,7 @@ class UserServiceTest {
                         .familyCode(familyCode)
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 when(familyRepository.findByFamilyCode(familyCode))
                         .thenReturn(Optional.of(family));
@@ -433,7 +445,7 @@ class UserServiceTest {
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
                 String role = "아빠";
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 String result = userService.setRole(role, userDetails);
@@ -458,7 +470,7 @@ class UserServiceTest {
                 // given
                 User user = User.builder().build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Map<String,Object> result = userService.getUserInfo(user);
@@ -477,7 +489,7 @@ class UserServiceTest {
                         .role(RoleEnum.MOTHER)
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Map<String,Object> result = userService.getUserInfo(user);
@@ -495,7 +507,7 @@ class UserServiceTest {
                         .family(Family.builder().build())
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Map<String,Object> result = userService.getUserInfo(user);
@@ -513,7 +525,7 @@ class UserServiceTest {
                         .role(RoleEnum.FATHER)
                         .build();
 
-                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository);
+                UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
                 // when
                 Map<String,Object> result = userService.getUserInfo(user);
