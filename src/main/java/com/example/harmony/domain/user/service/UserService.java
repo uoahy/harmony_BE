@@ -1,6 +1,7 @@
 package com.example.harmony.domain.user.service;
 
 import com.example.harmony.domain.user.dto.CheckResponse;
+import com.example.harmony.domain.user.dto.MyPageResponse;
 import com.example.harmony.domain.user.dto.SignupRequest;
 import com.example.harmony.domain.user.model.Family;
 import com.example.harmony.domain.user.model.RoleEnum;
@@ -134,7 +135,6 @@ public class UserService {
         hasAllInfo = user.getNickname() != null;
         result.put("hasAllInfo",hasAllInfo);
 
-
         return result;
     }
 
@@ -153,6 +153,11 @@ public class UserService {
 
             return "회원탈퇴가 완료되었습니다.";
         }
+    }
+
+    // 마이페이지 조회
+    public MyPageResponse getMyPageInfo(User user) {
+        return new MyPageResponse(user);
     }
 
 }

@@ -76,4 +76,11 @@ public class UserController {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.withdrawal(password.get("password"), userDetails.getUser())));
     }
 
+    // 마이페이지 조회
+    @GetMapping("/api/mypage")
+    public ResponseEntity<?> getMyPageInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        String msg = "마이페이지 조회에 성공하였습니다";
+        return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, userService.getMyPageInfo(userDetails.getUser())));
+    }
+
 }
