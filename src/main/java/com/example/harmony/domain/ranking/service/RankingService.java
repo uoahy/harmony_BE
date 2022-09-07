@@ -7,7 +7,6 @@ import com.example.harmony.domain.user.repository.FamilyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,30 +15,28 @@ import java.util.List;
 
 
 @RequiredArgsConstructor
-@EnableScheduling
+//@EnableScheduling
 @Service
 public class RankingService {
 
     private final FamilyRepository familyRepository;
 
 
-    List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
-
-    long familyCount = familyRepository.count();//총 가족 수
-    int top = (int) (familyCount * (1 / 10));//몇가족수가 나오겠지
-
     @Scheduled(cron = "* * 5 1 * *")
     int RankingMethod(int rk, Long fId) {
+        List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
         if (true == familyList.contains(fId)) {
             rk = familyList.indexOf(fId);
-            rk++;//이 값이 top보다 낮다 하면 플라워에 ture를 주는!!!! 그런식?
+            rk++;
         }
         return rk;
     }
 
     @Scheduled(cron = "* * 5 1 * *")
     List top10List(List List) {
+        List<Family> familyList = familyRepository.findAll(Sort.by(Sort.Direction.ASC, "monthlyScore"));
         for (int i = 0; i < 10; i++) {
+
             List.add(familyList.get(i));
         }
         return List;
@@ -51,11 +48,14 @@ public class RankingService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "가족 찾을 수가 없어"));
         ;
         Long familyId = user.getFamily().getId();
-        int totalScore = family.getTotalScore();
 
+        long familyCount = familyRepository.count();//총 가족 수
+        int top = (int) (familyCount * (1 / 10));//상위 10%에 속하는 가족수
+
+        int totalScore = family.getTotalScore();
         int level;
         int ranking = 0;
-        List topList = null;//임시방편
+        List topList = null;
 
 
         ranking = RankingMethod(ranking, familyId);

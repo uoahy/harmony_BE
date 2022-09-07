@@ -15,20 +15,12 @@ public class RankingResponse {
     private List<Family> top10List;
 
 
-<<<<<<< Updated upstream
-    public RankingResponse(Family family, int raking, int level) {
+    public RankingResponse(Family family, int raking, int level, List top10List) {
         this.level = level;
         this.flower = family.isFlower();
         this.monthlyScore = family.getMonthlyScore();
         this.raking = raking;
-=======
-    public RankingResponse(Family family, int raking, int level, List top10List){
-        this.level=level;
-        this.flower=family.isFlower();
-        this.monthlyScore= family.getMonthlyScore();
-        this.raking= raking;
-        this.top10List= top10List;
->>>>>>> Stashed changes
+        this.top10List = top10List;
     }
 
 
