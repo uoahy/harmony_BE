@@ -18,7 +18,7 @@ public class PostCommentController {
     private final PostCommentService postCommentService;
 
     // 게시글 댓글 작성
-    @PostMapping("/api/posts/{postId}/comments")
+    @PostMapping("/posts/{postId}/comments")
     public ResponseEntity<?> createComment(@PathVariable Long postId,
                                            @RequestBody Map<String, String> map,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -27,7 +27,7 @@ public class PostCommentController {
     }
 
     // 게시글 댓글 수정
-    @PutMapping("/api/posts/{postId}/comments/{commentId}")
+    @PutMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<?> putComment(@PathVariable Long commentId,
                                         @RequestBody Map<String, String> map,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -36,7 +36,7 @@ public class PostCommentController {
     }
 
     // 게시글 댓글 삭제
-    @DeleteMapping("/api/posts/{postId}/comments/{commentId}")
+    @DeleteMapping("/posts/{postId}/comments/{commentId}")
     public ResponseEntity<?> deleteComment(@PathVariable Long commentId,
                                            @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = postCommentService.deleteComment(commentId, userDetails.getUser());

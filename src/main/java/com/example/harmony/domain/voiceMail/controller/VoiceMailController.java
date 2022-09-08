@@ -17,13 +17,13 @@ public class VoiceMailController {
 
     private final VoiceMailService voiceMailService;
 
-    @GetMapping("/api/voice-mails")
+    @GetMapping("/voice-mails")
     public ResponseEntity<SuccessResponse> getVoiceMails(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         AllVoiceMailsResponse allVoiceMailsResponse = voiceMailService.getAllVoiceMails(userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "소리샘 조회 성공", allVoiceMailsResponse), HttpStatus.OK);
     }
 
-    @PostMapping("/api/voice-mails")
+    @PostMapping("/voice-mails")
     public ResponseEntity<SuccessResponse> postVoiceMail(
             @ModelAttribute VoiceMailRequest voiceMailRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -32,7 +32,7 @@ public class VoiceMailController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.CREATED, "음성메시지 추가 성공"), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/api/voice-mails/{voiceMailId}")
+    @DeleteMapping("/voice-mails/{voiceMailId}")
     public ResponseEntity<SuccessResponse> deleteVoiceMail(
             @PathVariable Long voiceMailId,
             @AuthenticationPrincipal UserDetailsImpl userDetails

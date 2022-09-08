@@ -20,7 +20,7 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @GetMapping("/api/galleries/{galleryId}/images")
+    @GetMapping("/galleries/{galleryId}/images")
     ResponseEntity<SuccessResponse> getGalleryImages(
             @PathVariable Long galleryId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -29,7 +29,7 @@ public class ImageController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 이미지 조회 성공", galleryImageResponse), HttpStatus.OK);
     }
 
-    @PostMapping("/api/galleries/{galleryId}/images")
+    @PostMapping("/galleries/{galleryId}/images")
     public ResponseEntity<SuccessResponse> postImages(
             @PathVariable Long galleryId,
             @ModelAttribute @Valid ImageAddRequest imageAddRequest,
@@ -39,7 +39,7 @@ public class ImageController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.CREATED, "갤러리 사진 추가 성공"), HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/api/galleries/{galleryId}/images")
+    @DeleteMapping("/galleries/{galleryId}/images")
     public ResponseEntity<SuccessResponse> deleteImages(
             @PathVariable Long galleryId,
             @RequestBody ImageRemoveRequest imageRemoveRequest,
