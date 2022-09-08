@@ -82,6 +82,7 @@ public class FamilyService {
     public Map<String, String> getFamilyCode(User user) {
         Map<String, String> result = new HashMap<>();
         String familyCode = user.getFamily().getFamilyCode();
+        result.put("email",user.getEmail());
         result.put("familyCode", familyCode);
 
         return result;
