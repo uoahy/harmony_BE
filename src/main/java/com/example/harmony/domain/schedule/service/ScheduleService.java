@@ -75,6 +75,7 @@ public class ScheduleService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 수정 권한이 없습니다");
         }
         if (!schedule.isDone()) {
+            List<User> existingParticipants = schedule.getParticipants();
             List<User> participants = userRepository.findAllById(scheduleRequest.getMemberIds());
             List<Participation> participations = participants.stream()
                     .map(x -> new Participation(schedule, x))
@@ -82,8 +83,15 @@ public class ScheduleService {
             participationRepository.deleteAll(schedule.getParticipations());
             schedule.modify(scheduleRequest, participations);
             participationRepository.saveAll(participations);
+
+            existingParticipants.retainAll(participants);
+            participants.removeAll(existingParticipants);
+            notificationService.createNotification(new NotificationRequest("schedule", "update"), existingParticipants);
+            notificationService.createNotification(new NotificationRequest("schedule", "create"), participants);
         } else {
             schedule.modify(scheduleRequest, null);
+
+            notificationService.createNotification(new NotificationRequest("schedule", "update"), schedule.getParticipants());
         }
     }
 
