@@ -6,6 +6,7 @@ import com.example.harmony.domain.gallery.entity.GalleryComment;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.user.model.User;
+import com.example.harmony.domain.user.service.FamilyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ public class GalleryCommentService {
 
     private final GalleryCommentRepository galleryCommentRepository;
 
+    private final FamilyService familyService;
+
     @Transactional
     public void writeGalleryComment(Long galleryId, GalleryCommentRequest galleryCommentRequest, User user) {
         Gallery gallery = galleryRepository.findById(galleryId)
@@ -31,7 +34,7 @@ public class GalleryCommentService {
         GalleryComment galleryComment = new GalleryComment(galleryCommentRequest, user);
         gallery.addComment(galleryComment);
         galleryCommentRepository.save(galleryComment);
-        user.getFamily().plusScore(5);
+        familyService.plusScore(user.getFamily(), 5);
     }
 
     public void editGalleryComment(Long galleryCommentId, GalleryCommentRequest galleryCommentRequest, User user) {
@@ -52,6 +55,6 @@ public class GalleryCommentService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 삭제 권한이 없습니다");
         }
         galleryCommentRepository.deleteById(galleryCommentId);
-        user.getFamily().minusScore(5);
+        familyService.minusScore(user.getFamily(), 5);
     }
 }

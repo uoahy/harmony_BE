@@ -1,6 +1,7 @@
 package com.example.harmony.domain.voiceMail.service;
 
 import com.example.harmony.domain.user.model.User;
+import com.example.harmony.domain.user.service.FamilyService;
 import com.example.harmony.domain.voiceMail.dto.AllVoiceMailsResponse;
 import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
 import com.example.harmony.domain.voiceMail.entity.VoiceMail;
@@ -24,6 +25,8 @@ public class VoiceMailService {
 
     private final S3Service s3Service;
 
+    private final FamilyService familyService;
+
     public AllVoiceMailsResponse getAllVoiceMails(User user) {
         List<VoiceMail> voiceMails = voiceMailRepository.findAllByFamilyIdOrderByCreatedAtDesc(user.getFamily().getId());
         return new AllVoiceMailsResponse(voiceMails);
@@ -33,7 +36,7 @@ public class VoiceMailService {
     public void createVoiceMail(VoiceMailRequest voiceMailRequest, User user) {
         UploadResponse uploadResponse = s3Service.uploadFile(voiceMailRequest.getSound());
         voiceMailRepository.save(new VoiceMail(voiceMailRequest, uploadResponse, user));
-        user.getFamily().plusScore(20);
+        familyService.plusScore(user.getFamily(), 20);
     }
 
     @Transactional
@@ -45,6 +48,6 @@ public class VoiceMailService {
         }
         voiceMailRepository.deleteById(voiceMailId);
         s3Service.deleteFiles(Collections.singletonList(voiceMail.getSoundFilename()));
-        user.getFamily().minusScore(20);
+        familyService.minusScore(user.getFamily(), 20);
     }
 }

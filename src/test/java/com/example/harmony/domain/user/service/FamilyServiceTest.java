@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +59,7 @@ class FamilyServiceTest {
                 Exception exception = assertThrows(ResponseStatusException.class, () -> familyService.createFamily(familyName, userDetails));
 
                 // then
-                assertEquals("400 BAD_REQUEST \"이미 존재하는 가족이름입니다.\"",exception.getMessage());
+                assertEquals("400 BAD_REQUEST \"이미 존재하는 가족이름입니다.\"", exception.getMessage());
             }
 
             @Test
@@ -77,7 +78,7 @@ class FamilyServiceTest {
                 Exception exception = assertThrows(ResponseStatusException.class, () -> familyService.createFamily(familyName, userDetails));
 
                 // then
-                assertEquals("400 BAD_REQUEST \"이미 가족이 등록된 유저입니다.\"",exception.getMessage());
+                assertEquals("400 BAD_REQUEST \"이미 가족이 등록된 유저입니다.\"", exception.getMessage());
             }
         }
 
@@ -148,9 +149,9 @@ class FamilyServiceTest {
                 FamilyInfoResponse result = familyService.getFamily(userDetails);
 
                 // then
-                assertEquals(familyName,result.getFamilyName());
-                assertEquals("홍길동",result.getMembers().get(0).getName());
-                assertEquals("이영희",result.getMembers().get(1).getName());
+                assertEquals(familyName, result.getFamilyName());
+                assertEquals("홍길동", result.getMembers().get(0).getName());
+                assertEquals("이영희", result.getMembers().get(1).getName());
             }
 
             @Test
@@ -188,9 +189,9 @@ class FamilyServiceTest {
                 FamilyInfoResponse result = familyService.getFamily(userDetails);
 
                 // then
-                assertEquals(familyName,result.getFamilyName());
-                assertEquals(RoleEnum.NOBODY.getRole(),result.getMembers().get(0).getRole());
-                assertEquals(RoleEnum.MOTHER.getRole(),result.getMembers().get(1).getRole());
+                assertEquals(familyName, result.getFamilyName());
+                assertEquals(RoleEnum.NOBODY.getRole(), result.getMembers().get(0).getRole());
+                assertEquals(RoleEnum.MOTHER.getRole(), result.getMembers().get(1).getRole());
             }
         }
     }
@@ -227,8 +228,6 @@ class FamilyServiceTest {
             }
         }
     }
-
-
 
 
 }

@@ -79,14 +79,6 @@ public class Schedule {
         }
 
         done = !done;
-
-        if (participations.size() >= 2) {
-            if (done) {
-                family.plusScore(10);
-            } else {
-                family.minusScore(10);
-            }
-        }
     }
 
     public void validateDates(LocalDate startDate, LocalDate endDate) {

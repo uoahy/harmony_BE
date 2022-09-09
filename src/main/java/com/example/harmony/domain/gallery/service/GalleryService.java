@@ -12,6 +12,7 @@ import com.example.harmony.domain.gallery.repository.ImageRepository;
 import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
 import com.example.harmony.domain.user.model.User;
+import com.example.harmony.domain.user.service.FamilyService;
 import com.example.harmony.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -37,6 +38,8 @@ public class GalleryService {
     private final GalleryCommentRepository galleryCommentRepository;
 
     private final S3Service s3Service;
+
+    private final FamilyService familyService;
 
     public GalleryListResponse getGalleryList(int year, int month, User user) {
         LocalDate from = LocalDate.of(year, month, 1).minusDays(1);
@@ -79,7 +82,7 @@ public class GalleryService {
         schedule.addGallery(gallery);
         galleryRepository.save(gallery);
         imageRepository.saveAll(images);
-        user.getFamily().plusScore(20);
+        familyService.plusScore(user.getFamily(), 20);
     }
 
     public void editGallery(Long galleryId, GalleryRequest galleryRequest, User user) {
@@ -104,6 +107,6 @@ public class GalleryService {
                 .collect(Collectors.toList());
         s3Service.deleteFiles(imageFilenames);
         galleryRepository.deleteById(galleryId);
-        user.getFamily().minusScore((int) (20 + 5 * galleryCommentRepository.countByGalleryId(galleryId)));
+        familyService.minusScore(user.getFamily(), (int) (20 + 5 * galleryCommentRepository.countByGalleryId(galleryId)));
     }
 }
