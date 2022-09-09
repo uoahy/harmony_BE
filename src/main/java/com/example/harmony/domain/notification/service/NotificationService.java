@@ -6,6 +6,7 @@ import com.example.harmony.domain.notification.repository.NotificationRepository
 import com.example.harmony.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -18,5 +19,10 @@ public class NotificationService {
     public NotificationsListResponse getNotifications(User user) {
         List<Notification> notifications = notificationRepository.findAllByUserIdOrderByCreatedAtDesc(user.getId());
         return new NotificationsListResponse(notifications);
+    }
+
+    @Transactional
+    public void deleteNotifications(User user) {
+        notificationRepository.deleteAllByUserId(user.getId());
     }
 }
