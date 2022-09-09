@@ -56,7 +56,7 @@ public class ScheduleService {
                 .map(x -> new Participation(schedule, x))
                 .collect(Collectors.toList());
         participationRepository.saveAll(participations);
-        if (schedule.isDone() && participants.size() > 2) {
+        if (schedule.isDone() && participants.size() >= 2) {
             familyService.plusScore(schedule.getFamily(), 10);
         }
     }
