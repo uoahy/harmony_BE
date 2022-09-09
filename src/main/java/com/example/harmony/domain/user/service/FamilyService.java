@@ -87,4 +87,13 @@ public class FamilyService {
         return result;
     }
 
+    public void plusScore(Family family, int score) {
+        family.plusScore(score);
+        familyRepository.save(family);
+    }
+
+    public void minusScore(Family family, int score) {
+        family.minusScore(score);
+        familyRepository.save(family);
+    }
 }

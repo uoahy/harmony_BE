@@ -14,6 +14,7 @@ import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
 import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.service.FamilyService;
 import com.example.harmony.global.s3.S3Service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,6 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -51,6 +53,9 @@ class GalleryServiceTest {
 
     @Mock
     S3Service s3Service;
+
+    @Mock
+    FamilyService familyService;
 
     @Nested
     @DisplayName("갤러리 목록 조회")
@@ -422,6 +427,9 @@ class GalleryServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
+                doNothing().when(familyService).plusScore(family, 20);
+                family.plusScore(20);
+
                 // when
                 assertDoesNotThrow(() -> galleryService.createGallery(scheduleId, galleryRequest, user));
 
@@ -632,6 +640,9 @@ class GalleryServiceTest {
 
                 when(galleryCommentRepository.countByGalleryId(galleryId))
                         .thenReturn((long) comments.size());
+
+                doNothing().when(familyService).minusScore(family, (20 + 5 * comments.size()));
+                family.minusScore((20 + 5 * comments.size()));
 
                 // when
                 assertDoesNotThrow(() -> galleryService.deleteGallery(galleryId, user));

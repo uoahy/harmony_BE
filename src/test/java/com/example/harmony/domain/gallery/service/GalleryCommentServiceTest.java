@@ -7,6 +7,7 @@ import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.service.FamilyService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +35,9 @@ class GalleryCommentServiceTest {
 
     @Mock
     GalleryCommentRepository galleryCommentRepository;
+
+    @Mock
+    FamilyService familyService;
 
     @Nested
     @DisplayName("갤러리 댓글 작성")
@@ -128,6 +133,9 @@ class GalleryCommentServiceTest {
 
                 when(galleryRepository.findById(galleryId))
                         .thenReturn(Optional.of(gallery));
+
+                doNothing().when(familyService).plusScore(family, 5);
+                family.plusScore(5);
 
                 // when
                 assertDoesNotThrow(() -> galleryCommentService.writeGalleryComment(galleryId, galleryCommentRequest, user));
@@ -312,6 +320,9 @@ class GalleryCommentServiceTest {
 
                 when(galleryCommentRepository.findById(galleryCommentId))
                         .thenReturn(Optional.of(galleryComment));
+
+                doNothing().when(familyService).minusScore(family, 5);
+                family.minusScore(5);
 
                 // when
                 assertDoesNotThrow(() -> galleryCommentService.deleteGalleryComment(galleryCommentId, user));

@@ -12,6 +12,7 @@ import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.RoleEnum;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.domain.user.repository.UserRepository;
+import com.example.harmony.domain.user.service.FamilyService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,6 +45,9 @@ class ScheduleServiceTest {
 
     @Mock
     UserRepository userRepository;
+
+    @Mock
+    FamilyService familyService;
 
     @Nested
     @DisplayName("월별 일정 조회")
@@ -602,6 +607,9 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
+                doNothing().when(familyService).minusScore(family, 10);
+                family.minusScore(10);
+
                 // when
                 assertDoesNotThrow(() -> scheduleService.deleteSchedule(scheduleId, user));
 
@@ -858,6 +866,9 @@ class ScheduleServiceTest {
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
 
+                doNothing().when(familyService).plusScore(family, 10);
+                family.plusScore(10);
+
                 // when
                 assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
 
@@ -898,6 +909,9 @@ class ScheduleServiceTest {
 
                 when(scheduleRepository.findById(scheduleId))
                         .thenReturn(Optional.of(schedule));
+
+                doNothing().when(familyService).minusScore(family, 10);
+                family.minusScore(10);
 
                 // when
                 assertDoesNotThrow(() -> scheduleService.setScheduleDone(scheduleId, user));
