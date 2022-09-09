@@ -2,6 +2,7 @@ package com.example.harmony.domain.voiceMail.service;
 
 import com.example.harmony.domain.user.entity.Family;
 import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.service.FamilyService;
 import com.example.harmony.domain.voiceMail.dto.AllVoiceMailsResponse;
 import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
 import com.example.harmony.domain.voiceMail.entity.VoiceMail;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,6 +37,9 @@ class VoiceMailServiceTest {
 
     @Mock
     S3Service s3Service;
+
+    @Mock
+    FamilyService familyService;
 
     @Nested
     @DisplayName("소리샘 조회")
@@ -104,6 +109,9 @@ class VoiceMailServiceTest {
 
                 when(s3Service.uploadFile(voiceMailRequest.getSound()))
                         .thenReturn(new UploadResponse("sound url", "sound filename"));
+
+                doNothing().when(familyService).plusScore(family, 20);
+                family.plusScore(20);
 
                 // when
                 assertDoesNotThrow(() -> voiceMailService.createVoiceMail(voiceMailRequest, user));
@@ -203,6 +211,9 @@ class VoiceMailServiceTest {
 
                 when(voiceMailRepository.findById(voiceMailId))
                         .thenReturn(Optional.of(voiceMail));
+
+                doNothing().when(familyService).minusScore(family, 20);
+                family.minusScore(20);
 
                 // when
                 assertDoesNotThrow(() -> voiceMailService.deleteVoiceMail(voiceMailId, user));
