@@ -9,6 +9,7 @@ import com.example.harmony.domain.schedule.repository.ParticipationRepository;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
 import com.example.harmony.domain.user.entity.User;
 import com.example.harmony.domain.user.repository.UserRepository;
+import com.example.harmony.domain.user.service.FamilyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,8 @@ public class ScheduleService {
     private final ParticipationRepository participationRepository;
 
     private final UserRepository userRepository;
+
+    private final FamilyService familyService;
 
     public MonthlyScheduleResponse getMonthlySchedule(int year, int month, User user) {
         LocalDate from = LocalDate.of(year, month, 1).minusDays(1);
@@ -53,6 +56,9 @@ public class ScheduleService {
                 .map(x -> new Participation(schedule, x))
                 .collect(Collectors.toList());
         participationRepository.saveAll(participations);
+        if (schedule.isDone() && participants.size() > 2) {
+            familyService.plusScore(schedule.getFamily(), 10);
+        }
     }
 
     @Transactional
@@ -88,7 +94,7 @@ public class ScheduleService {
         scheduleRepository.deleteById(scheduleId);
 
         if (schedule.isDone() && schedule.getParticipations().size() >= 2) {
-            user.getFamily().minusScore(10);
+            familyService.minusScore(user.getFamily(), 10);
         }
     }
 
@@ -100,5 +106,13 @@ public class ScheduleService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 완료여부 설정 권한이 없습니다");
         }
         schedule.setDone();
+
+        if (schedule.getParticipations().size() >= 2) {
+            if (schedule.isDone()) {
+                familyService.plusScore(schedule.getFamily(), 10);
+            } else {
+                familyService.minusScore(schedule.getFamily(), 10);
+            }
+        }
     }
 }
