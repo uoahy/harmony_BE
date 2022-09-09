@@ -240,4 +240,8 @@ public class UserService {
 
         return "비밀번호 수정이 완료되었습니다.";
     }
+
+    public NicknameResponse getNickname(User user) {
+        return new NicknameResponse(user);
+    }
 }
