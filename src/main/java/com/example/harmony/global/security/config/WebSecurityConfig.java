@@ -71,6 +71,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
 
+        http.headers().frameOptions().disable();
+
         http
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -145,6 +147,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("POST,https://kauth.kakao.com/oauth/token");
         skipPathList.add("POST,https://kapi.kakao.com/v2/user/me");
         skipPathList.add("GET,/login/oauth2/kakao");
+
+        skipPathList.add("GET,/websocket/**");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,
