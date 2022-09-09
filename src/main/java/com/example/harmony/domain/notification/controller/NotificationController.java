@@ -11,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RequiredArgsConstructor
 @Controller
@@ -32,5 +33,14 @@ public class NotificationController {
     ) {
         notificationService.deleteNotifications(userDetails.getUser());
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "알림 전체 삭제 성공"), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/notifications/{notificationId}")
+    public ResponseEntity<SuccessResponse> deleteNotification(
+            @PathVariable Long notificationId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        notificationService.deleteNotification(notificationId, userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "알림 삭제 성공"), HttpStatus.OK);
     }
 }
