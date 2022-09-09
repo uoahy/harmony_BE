@@ -20,7 +20,7 @@ public class ScheduleController {
 
     private final ScheduleService scheduleService;
 
-    @GetMapping("/api/schedules")
+    @GetMapping("/schedules")
     public ResponseEntity<SuccessResponse> getSchedules(
             @RequestParam int year,
             @RequestParam int month,
@@ -30,7 +30,7 @@ public class ScheduleController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 조회 성공", monthlyScheduleResponse), HttpStatus.OK);
     }
 
-    @GetMapping("/api/schedules/dates")
+    @GetMapping("/schedules/dates")
     public ResponseEntity<SuccessResponse> getSchedulesDates(
             @RequestParam int year,
             @RequestParam int month,
@@ -40,7 +40,7 @@ public class ScheduleController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 목록 조회 성공", scheduleListResponse), HttpStatus.OK);
     }
 
-    @PostMapping("/api/schedules")
+    @PostMapping("/schedules")
     public ResponseEntity<SuccessResponse> postSchedule(
             @RequestBody @Valid ScheduleRequest scheduleRequest,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -49,7 +49,7 @@ public class ScheduleController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.CREATED, "일정 등록 성공"), HttpStatus.CREATED);
     }
 
-    @PutMapping("/api/schedules/{scheduleId}")
+    @PutMapping("/schedules/{scheduleId}")
     public ResponseEntity<SuccessResponse> putSchedule(
             @PathVariable Long scheduleId,
             @RequestBody @Valid ScheduleRequest scheduleRequest,
@@ -59,7 +59,7 @@ public class ScheduleController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 수정 성공"), HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/schedules/{scheduleId}")
+    @DeleteMapping("/schedules/{scheduleId}")
     public ResponseEntity<SuccessResponse> deleteSchedule(
             @PathVariable Long scheduleId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -68,7 +68,7 @@ public class ScheduleController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정 삭제 성공"), HttpStatus.OK);
     }
 
-    @PutMapping("/api/schedules/{scheduleId}/done")
+    @PutMapping("/schedules/{scheduleId}/done")
     public ResponseEntity<SuccessResponse> putScheduleDone(
             @PathVariable Long scheduleId,
             @AuthenticationPrincipal UserDetailsImpl userDetails

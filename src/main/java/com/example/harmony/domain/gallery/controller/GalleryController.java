@@ -21,7 +21,7 @@ public class GalleryController {
 
     private final GalleryService galleryService;
 
-    @GetMapping("/api/galleries")
+    @GetMapping("/galleries")
     public ResponseEntity<SuccessResponse> getGalleries(
             @RequestParam int year,
             @RequestParam int month,
@@ -31,7 +31,7 @@ public class GalleryController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 조회 성공", galleryListResponse), HttpStatus.OK);
     }
 
-    @GetMapping("/api/schedules/{scheduleId}/galleries")
+    @GetMapping("/schedules/{scheduleId}/galleries")
     ResponseEntity<SuccessResponse> getScheduleGalleries(
             @PathVariable Long scheduleId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -40,7 +40,7 @@ public class GalleryController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정별 갤러리 조회 성공", scheduleGalleryResponse), HttpStatus.OK);
     }
 
-    @GetMapping("/api/schedules/{scheduleId}/galleryList")
+    @GetMapping("/schedules/{scheduleId}/galleryList")
     ResponseEntity<SuccessResponse> getScheduleGalleryList(
             @PathVariable Long scheduleId,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -49,7 +49,7 @@ public class GalleryController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "일정별 갤러리 목록 조회 성공", scheduleGalleryListResponse), HttpStatus.OK);
     }
 
-    @PostMapping("/api/schedules/{scheduleId}/galleries")
+    @PostMapping("/schedules/{scheduleId}/galleries")
     ResponseEntity<SuccessResponse> postGallery(
             @PathVariable Long scheduleId,
             @ModelAttribute @Valid GalleryRequest galleryRequest,
@@ -59,7 +59,7 @@ public class GalleryController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.CREATED, "갤러리 생성 성공"), HttpStatus.CREATED);
     }
 
-    @PutMapping("/api/galleries/{galleryId}")
+    @PutMapping("/galleries/{galleryId}")
     ResponseEntity<SuccessResponse> putGallery(
             @PathVariable Long galleryId,
             @RequestBody GalleryRequest galleryRequest,
@@ -69,7 +69,7 @@ public class GalleryController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 수정 성공"), HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/galleries/{galleryId}")
+    @DeleteMapping("/galleries/{galleryId}")
     ResponseEntity<SuccessResponse> deleteGallery(
             @PathVariable Long galleryId,
             @AuthenticationPrincipal UserDetailsImpl userDetails

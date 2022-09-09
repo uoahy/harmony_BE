@@ -81,14 +81,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests()
-                .antMatchers("/api/signup").permitAll()
+                .antMatchers("/signup").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
                 // [로그아웃 기능]
                 .logout()
                 // 로그아웃 요청 처리 URL
-                .logoutUrl("/api/logout")
+                .logoutUrl("/logout")
                 .permitAll()
                 .and()
                 .exceptionHandling()
@@ -99,7 +99,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public FormLoginFilter formLoginFilter() throws Exception {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
-        formLoginFilter.setFilterProcessesUrl("/api/login");
+        formLoginFilter.setFilterProcessesUrl("/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
         formLoginFilter.setAuthenticationFailureHandler(formLoginFailureHandler());
         formLoginFilter.afterPropertiesSet();
@@ -129,12 +129,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
         // 회원가입 API 허용
-        skipPathList.add("GET,/api/signup");
-        skipPathList.add("POST,/api/email-check");
-        skipPathList.add("POST,/api/nickname-check");
-        skipPathList.add("POST,/api/signup");
+        skipPathList.add("GET,/signup");
+        skipPathList.add("POST,/email-check");
+        skipPathList.add("POST,/nickname-check");
+        skipPathList.add("POST,/signup");
         // 로그인 화면 허용
-        skipPathList.add("GET,/api/login");
+        skipPathList.add("GET,/login");
         // 에러 메세지 허용
         skipPathList.add("POST,/error");
         // 프론트 관련 허용
