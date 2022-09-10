@@ -4,6 +4,8 @@ import com.example.harmony.domain.community.model.Like;
 import com.example.harmony.domain.community.model.Post;
 import com.example.harmony.domain.community.repository.LikeRepository;
 import com.example.harmony.domain.community.repository.PostRepository;
+import com.example.harmony.domain.notification.model.NotificationRequest;
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -11,12 +13,16 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
+
 @RequiredArgsConstructor
 @Service
 public class LikeService {
 
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;
+
+    private final NotificationService notificationService;
 
     // 게시글 좋아요 + 이미 누른 사람
     public String doLike(Long postId, User user,boolean like) {
@@ -34,6 +40,8 @@ public class LikeService {
         } else {
             likeRepository.save(new Like(like, post, user));
         }
+
+        notificationService.createNotification(new NotificationRequest("like", "create"), Collections.singletonList(post.getUser()));
         return "좋아요를 눌렀습니다.";
     }
 
