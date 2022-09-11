@@ -50,11 +50,13 @@ public class User {
         this.nickname = nickname;
         this.password = password;
         this.gender = gender;
+        this.role = RoleEnum.NOBODY;
     }
 
     public User(String email, String name) {
         this.email = email;
         this.name = name;
+        this.role = RoleEnum.NOBODY;
     }
 
     public void setFamily(Family family) {
