@@ -44,6 +44,9 @@ public class User {
     @Enumerated(value = EnumType.STRING)
     private RoleEnum role;
 
+    @Column
+    private boolean active;
+
     public User(String email, String name, String nickname, String password, String gender) {
         this.email = email;
         this.name = name;
@@ -51,12 +54,14 @@ public class User {
         this.password = password;
         this.gender = gender;
         this.role = RoleEnum.NOBODY;
+        this.active = true;
     }
 
     public User(String email, String name) {
         this.email = email;
         this.name = name;
         this.role = RoleEnum.NOBODY;
+        this.active = true;
     }
 
     public void setFamily(Family family) {
@@ -81,5 +86,7 @@ public class User {
     public void updatePassword(String password) {
         this.password = password;
     }
+
+    public void deleteUser() { this.active = false; }
 
 }
