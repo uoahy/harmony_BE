@@ -12,11 +12,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,6 +36,35 @@ class RankingServiceTest {
     class GetRankings {
 
         @Nested
+        @DisplayName("실패")
+        class Fail {
+
+            @Test
+            @DisplayName("유저의 가족정보 X")
+            void family_not_found() {
+                // given
+                Long familyId = -1L;
+
+                Family family = Family.builder()
+                        .id(familyId)
+                        .build();
+
+                User user = User.builder()
+                        .family(family)
+                        .build();
+
+                when(familyRepository.findById(familyId))
+                        .thenReturn(Optional.empty());
+
+                // when
+                Exception exception = assertThrows(ResponseStatusException.class, () -> rankingService.getRankings(user));
+
+                // then
+                assertEquals("404 NOT_FOUND \"유저의 가족정보를 찾을 수 없습니다\"", exception.getMessage());
+            }
+        }
+
+        @Nested
         @DisplayName("성공")
         class Success {
 
@@ -40,8 +72,10 @@ class RankingServiceTest {
             @DisplayName("정상 케이스")
             void success() {
                 // given
+                Long familyId = 1L;
+
                 Family family1 = Family.builder()
-                        .id(1L)
+                        .id(familyId)
                         .weeklyScore(200)
                         .build();
 
@@ -65,6 +99,9 @@ class RankingServiceTest {
                         .build();
 
                 List<Family> families = Arrays.asList(family3, family4, family1, family2);
+
+                when(familyRepository.findById(familyId))
+                        .thenReturn(Optional.of(user.getFamily()));
 
                 when(familyRepository.findAllByOrderByWeeklyScoreDesc())
                         .thenReturn(families);

@@ -5,7 +5,9 @@ import com.example.harmony.domain.user.model.Family;
 import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.FamilyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +19,8 @@ public class RankingService {
     private final FamilyRepository familyRepository;
 
     public RankingListResponse getRankings(User user) {
-        Family myFamily = user.getFamily();
+        Family myFamily = familyRepository.findById(user.getFamily().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "유저의 가족정보를 찾을 수 없습니다"));
         List<Family> families = familyRepository.findAllByOrderByWeeklyScoreDesc();
         int myFamilyRanking = families.indexOf(myFamily) + 1;
 
