@@ -145,27 +145,25 @@ public class UserService {
     // 회원탈퇴
     @Transactional
     public String withdrawal(String password, User user) {
-        // 비밀번호 일치 여부
-        if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
+        if (passwordEncoder.matches(password, user.getPassword())||password.equals("kakaoUser")) {
+            // 커뮤니티 게시글, 좋아요, 댓글 삭제
+            if(postRepository.existsByUser(user)) {
+                postRepository.deleteAllByUser(user);
+            }
+
+            if(commentRepository.existsByUser(user)) {
+                commentRepository.deleteAllByUser(user);
+            }
+
+            if(likeRepository.existsByUser(user)) {
+                likeRepository.deleteAllByUser(user);
+            }
+
+            userRepository.delete(user);
+            return "회원탈퇴가 완료되었습니다.";
         }
 
-        // 커뮤니티 게시글, 좋아요, 댓글 삭제
-        if(postRepository.existsByUser(user)) {
-            postRepository.deleteAllByUser(user);
-        }
-
-        if(commentRepository.existsByUser(user)) {
-            commentRepository.deleteAllByUser(user);
-        }
-
-        if(likeRepository.existsByUser(user)) {
-            likeRepository.deleteAllByUser(user);
-        }
-
-        userRepository.delete(user);
-
-        return "회원탈퇴가 완료되었습니다.";
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다.");
 
     }
 
