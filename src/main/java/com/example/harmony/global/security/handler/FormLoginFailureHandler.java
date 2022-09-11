@@ -40,12 +40,11 @@ public class FormLoginFailureHandler implements AuthenticationFailureHandler {
         response.setCharacterEncoding("UTF-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        objectMapper.writeValue(response.getWriter(),defineError(exception,errorMessage));
+        objectMapper.writeValue(response.getWriter(),defineError(errorMessage));
     }
 
-    public Map<String,Object> defineError(Exception exception, String errorMessage) {
+    public Map<String,Object> defineError(String errorMessage) {
         Map<String, Object> result = new HashMap<>();
-        result.put("error", exception.toString());
         result.put("message",errorMessage);
         result.put("path","/api/login");
         return result;
