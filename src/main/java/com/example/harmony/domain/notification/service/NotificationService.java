@@ -45,7 +45,7 @@ public class NotificationService {
 
     public void deleteNotification(Long notificationId, User user) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "존재하지않는 알림입니다"));
         if (!notification.getUser().getId().equals(user.getId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "알림 삭제 권한이 없습니다");
         }
