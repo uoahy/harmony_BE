@@ -1,5 +1,7 @@
 package com.example.harmony.domain.schedule.service;
 
+import com.example.harmony.domain.notification.model.NotificationRequest;
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleListResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
@@ -33,6 +35,8 @@ public class ScheduleService {
 
     private final FamilyService familyService;
 
+    private final NotificationService notificationService;
+
     public MonthlyScheduleResponse getMonthlySchedule(int year, int month, User user) {
         LocalDate from = LocalDate.of(year, month, 1).minusDays(1);
         LocalDate to = LocalDate.of(year, month, 1).plusMonths(1);
@@ -59,6 +63,8 @@ public class ScheduleService {
         if (schedule.isDone() && participants.size() >= 2) {
             familyService.plusScore(schedule.getFamily(), 10);
         }
+
+        notificationService.createNotification(new NotificationRequest("schedule", "create"), participants);
     }
 
     @Transactional
@@ -69,6 +75,7 @@ public class ScheduleService {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "일정 수정 권한이 없습니다");
         }
         if (!schedule.isDone()) {
+            List<User> existingParticipants = schedule.getParticipants();
             List<User> participants = userRepository.findAllById(scheduleRequest.getMemberIds());
             List<Participation> participations = participants.stream()
                     .map(x -> new Participation(schedule, x))
@@ -76,8 +83,15 @@ public class ScheduleService {
             participationRepository.deleteAll(schedule.getParticipations());
             schedule.modify(scheduleRequest, participations);
             participationRepository.saveAll(participations);
+
+            existingParticipants.retainAll(participants);
+            participants.removeAll(existingParticipants);
+            notificationService.createNotification(new NotificationRequest("schedule", "update"), existingParticipants);
+            notificationService.createNotification(new NotificationRequest("schedule", "create"), participants);
         } else {
             schedule.modify(scheduleRequest, null);
+
+            notificationService.createNotification(new NotificationRequest("schedule", "update"), schedule.getParticipants());
         }
     }
 

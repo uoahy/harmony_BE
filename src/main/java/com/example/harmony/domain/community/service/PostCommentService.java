@@ -4,11 +4,15 @@ import com.example.harmony.domain.community.model.Post;
 import com.example.harmony.domain.community.model.PostComment;
 import com.example.harmony.domain.community.repository.PostCommentRepository;
 import com.example.harmony.domain.community.repository.PostRepository;
+import com.example.harmony.domain.notification.model.NotificationRequest;
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Collections;
 
 @RequiredArgsConstructor
 @Service
@@ -16,6 +20,8 @@ public class PostCommentService {
 
     private final PostCommentRepository postCommentRepository;
     private final PostRepository postRepository;
+
+    private final NotificationService notificationService;
 
     // 게시글 댓글 작성
     public String createComment(Long postId, String content, User user) {
@@ -25,6 +31,8 @@ public class PostCommentService {
 
         PostComment postComment = new PostComment(content, post, user);
         postCommentRepository.save(postComment);
+
+        notificationService.createNotification(new NotificationRequest("comment", "create"), Collections.singletonList(post.getUser()));
         return "댓글 작성을 성공하였습니다.";
     }
 

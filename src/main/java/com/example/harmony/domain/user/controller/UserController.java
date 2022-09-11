@@ -1,5 +1,6 @@
 package com.example.harmony.domain.user.controller;
 
+import com.example.harmony.domain.user.dto.NicknameResponse;
 import com.example.harmony.domain.user.dto.SignupRequest;
 import com.example.harmony.domain.user.dto.UpdateInfoRequest;
 import com.example.harmony.domain.user.dto.UpdatePasswordRequest;
@@ -105,5 +106,11 @@ public class UserController {
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, userService.updatePassword(request, userDetails.getUser())));
     }
 
-
+    @GetMapping("/user/nickname")
+    public ResponseEntity<SuccessResponse> getNickname(
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        NicknameResponse nicknameResponse = userService.getNickname(userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "닉네임 조회 성공", nicknameResponse), HttpStatus.OK);
+    }
 }

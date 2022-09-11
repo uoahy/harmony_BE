@@ -9,6 +9,7 @@ import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.gallery.repository.ImageRepository;
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.schedule.model.Category;
 import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
@@ -56,6 +57,9 @@ class GalleryServiceTest {
 
     @Mock
     FamilyService familyService;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("갤러리 목록 조회")
@@ -422,6 +426,7 @@ class GalleryServiceTest {
                 Schedule schedule = Schedule.builder()
                         .family(family)
                         .galleries(new ArrayList<>())
+                        .participations(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))
