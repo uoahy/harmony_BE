@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.persistence.*;
 import java.util.List;
@@ -26,7 +25,7 @@ public class Family {
 
     private int totalScore;
 
-    private int monthlyScore;
+    private int weeklyScore;
 
     private boolean flower;
 
@@ -40,17 +39,25 @@ public class Family {
 
     public void plusScore(int score) {
         this.totalScore += score;
-        this.monthlyScore += score;
+        this.weeklyScore += score;
     }
 
     public void minusScore(int score) {
         this.totalScore -= score;
-        this.monthlyScore -= score;
+        this.weeklyScore -= score;
     }
 
-    @Scheduled(cron ="* * 6 * * MON")
-    public void setFlower(){
-        flower= true;
-        plusScore(50);
+    public int getLevel() {
+        if (totalScore < 55) {
+            return 0;
+        } else if (totalScore < 220) {
+            return 1;
+        } else if (totalScore < 770) {
+            return 2;
+        } else if (totalScore < 3000) {
+            return 3;
+        } else {
+            return 4;
+        }
     }
 }
