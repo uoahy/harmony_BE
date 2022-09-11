@@ -159,7 +159,8 @@ public class UserService {
                 likeRepository.deleteAllByUser(user);
             }
 
-            userRepository.delete(user);
+            user.deleteUser();
+            userRepository.save(user);
             return "회원탈퇴가 완료되었습니다.";
         }
 
