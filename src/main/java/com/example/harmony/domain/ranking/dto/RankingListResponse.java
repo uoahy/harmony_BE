@@ -28,6 +28,7 @@ public class RankingListResponse {
             RankingResponse rankingResponse = RankingResponse.builder()
                     .ranking(rankings.get(i))
                     .level(family.getLevel())
+                    .flower(family.isFlower())
                     .familyName(family.getFamilyName())
                     .weeklyScore(family.getWeeklyScore())
                     .totalScore(family.getTotalScore())
