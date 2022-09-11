@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.service;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.model.Category;
@@ -48,6 +49,9 @@ class ScheduleServiceTest {
 
     @Mock
     FamilyService familyService;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("월별 일정 조회")
@@ -353,6 +357,7 @@ class ScheduleServiceTest {
 
                 Schedule schedule = Schedule.builder()
                         .family(family1)
+                        .participations(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))
@@ -397,6 +402,7 @@ class ScheduleServiceTest {
 
                 Schedule schedule = Schedule.builder()
                         .family(family)
+                        .participations(Collections.emptyList())
                         .done(false)
                         .build();
 

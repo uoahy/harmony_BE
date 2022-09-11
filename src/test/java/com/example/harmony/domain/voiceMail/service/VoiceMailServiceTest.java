@@ -1,5 +1,6 @@
 package com.example.harmony.domain.voiceMail.service;
 
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.user.model.Family;
 import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.service.FamilyService;
@@ -40,6 +41,9 @@ class VoiceMailServiceTest {
 
     @Mock
     FamilyService familyService;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("소리샘 조회")
