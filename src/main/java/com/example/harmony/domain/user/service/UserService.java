@@ -128,7 +128,7 @@ public class UserService {
         result.put("isFamily", isFamily);
 
         boolean hasRole;
-        hasRole = user.getRole() != null;
+        hasRole = user.getRole() != RoleEnum.NOBODY;
         result.put("hasRole", hasRole);
 
         boolean kakaoUser;
