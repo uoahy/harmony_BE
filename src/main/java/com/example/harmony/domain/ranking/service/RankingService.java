@@ -25,12 +25,13 @@ public class RankingService {
         List<Integer> rankings = new ArrayList<>();
         int ranking = 0;
         int score = Integer.MAX_VALUE;
-        for (Family family : top10) {
+        for (int i = 0; i < top10.size(); i++) {
+            Family family = top10.get(i);
             if (family.getWeeklyScore() < score) {
-                ranking++;
+                ranking = i + 1;
+                score = family.getWeeklyScore();
             }
             rankings.add(ranking);
-            score = family.getWeeklyScore();
         }
         return new RankingListResponse(myFamily, myFamilyRanking, top10, rankings);
     }

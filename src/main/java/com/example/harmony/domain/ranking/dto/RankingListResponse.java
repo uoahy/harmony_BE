@@ -23,7 +23,7 @@ public class RankingListResponse {
                 .build();
 
         this.top10 = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < families.size(); i++) {
             Family family = families.get(i);
             RankingResponse rankingResponse = RankingResponse.builder()
                     .ranking(rankings.get(i))
