@@ -468,7 +468,9 @@ class UserServiceTest {
             @DisplayName("둘 다 설정을 안한 경우")
             void withoutAll() {
                 // given
-                User user = User.builder().build();
+                User user = User.builder()
+                        .role(RoleEnum.NOBODY)
+                        .build();
 
                 UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
 
@@ -505,6 +507,7 @@ class UserServiceTest {
                 // given
                 User user = User.builder()
                         .family(Family.builder().build())
+                        .role(RoleEnum.NOBODY)
                         .build();
 
                 UserService userService = new UserService(userRepository, familyRepository, passwordEncoder, feedbackRepository, postRepository, commentRepository, likeRepository);
