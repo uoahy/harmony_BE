@@ -1,6 +1,6 @@
 package com.example.harmony.domain.ranking.controller;
 
-import com.example.harmony.domain.ranking.dto.RankingResponse;
+import com.example.harmony.domain.ranking.dto.RankingListResponse;
 import com.example.harmony.domain.ranking.service.RankingService;
 import com.example.harmony.global.common.SuccessResponse;
 import com.example.harmony.global.security.UserDetailsImpl;
@@ -17,12 +17,9 @@ public class RankingController {
 
     private final RankingService rankingService;
 
-
     @GetMapping("/rankings")
-    public ResponseEntity<SuccessResponse> getRanking(@AuthenticationPrincipal UserDetailsImpl userDetails) {
-        RankingResponse rankingResponse = rankingService.getFamilyScore(userDetails.getUser());
-        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "랭킹 조회 성공", rankingResponse), HttpStatus.OK);
-
+    public ResponseEntity<SuccessResponse> getRankings(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        RankingListResponse rankingListResponse = rankingService.getRankings(userDetails.getUser());
+        return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "랭킹 조회 성공", rankingListResponse), HttpStatus.OK);
     }
-
 }
