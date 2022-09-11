@@ -15,4 +15,6 @@ public interface FamilyRepository extends JpaRepository<Family, Long> {
     List<Family> findTop10ByOrderByWeeklyScoreDesc();
 
     List<Family> findAllByOrderByWeeklyScoreDesc();
+
+    List<Family> findAllByFlower(boolean flower);
 }

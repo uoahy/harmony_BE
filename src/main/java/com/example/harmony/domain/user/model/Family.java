@@ -60,4 +60,12 @@ public class Family {
             return 4;
         }
     }
+
+    public void setFlower(boolean flower) {
+        this.flower = flower;
+    }
+
+    public void initWeeklyScore() {
+        this.weeklyScore = 0;
+    }
 }
