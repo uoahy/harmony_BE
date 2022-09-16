@@ -65,6 +65,10 @@ public class FamilyService {
         List<User> members = family.getMembers();
         List<MembersResponse> memberList = new ArrayList<>();
         for (User member : members) {
+            if (!member.isActive()) {
+                continue;
+            }
+            
             // 가족 멤버 중 역할 미설정자
             if (member.getRole() == null) {
                 member.setRole(RoleEnum.NOBODY);
