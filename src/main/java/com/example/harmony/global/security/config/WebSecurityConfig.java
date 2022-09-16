@@ -1,7 +1,8 @@
 package com.example.harmony.global.security.config;
 
 import com.example.harmony.global.security.FilterSkipMatcher;
-import com.example.harmony.global.security.FormLoginSuccessHandler;
+import com.example.harmony.global.security.handler.FormLoginFailureHandler;
+import com.example.harmony.global.security.handler.FormLoginSuccessHandler;
 import com.example.harmony.global.security.filter.FormLoginFilter;
 import com.example.harmony.global.security.filter.JwtAuthFilter;
 import com.example.harmony.global.security.jwt.HeaderTokenExtractor;
@@ -62,12 +63,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers("/favicon.ico")
                 .antMatchers("/configuration/ui","/configuration/security", "/webjars/**")
-                .antMatchers("/h2-console/**");
+                .antMatchers("/h2-console/**")
+                .antMatchers("/v2/**","/oauth/**");
     }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
+
+        http.headers().frameOptions().disable();
 
         http
                 .sessionManagement()
@@ -79,14 +83,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(jwtFilter(), UsernamePasswordAuthenticationFilter.class);
 
         http.authorizeRequests()
-                .antMatchers("/api/signup").permitAll()
+                .antMatchers("/signup").permitAll()
                 .anyRequest()
                 .permitAll()
                 .and()
                 // [로그아웃 기능]
                 .logout()
                 // 로그아웃 요청 처리 URL
-                .logoutUrl("/api/logout")
+                .logoutUrl("/logout")
                 .permitAll()
                 .and()
                 .exceptionHandling()
@@ -97,8 +101,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public FormLoginFilter formLoginFilter() throws Exception {
         FormLoginFilter formLoginFilter = new FormLoginFilter(authenticationManager());
-        formLoginFilter.setFilterProcessesUrl("/api/login");
+        formLoginFilter.setFilterProcessesUrl("/login");
         formLoginFilter.setAuthenticationSuccessHandler(formLoginSuccessHandler());
+        formLoginFilter.setAuthenticationFailureHandler(formLoginFailureHandler());
         formLoginFilter.afterPropertiesSet();
         return formLoginFilter;
     }
@@ -107,6 +112,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public FormLoginSuccessHandler formLoginSuccessHandler() {
         return new FormLoginSuccessHandler();
     }
+
+    @Bean
+    public FormLoginFailureHandler formLoginFailureHandler() { return new FormLoginFailureHandler(); }
 
     @Bean
     public FormLoginAuthProvider formLoginAuthProvider() {
@@ -123,18 +131,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         skipPathList.add("GET,/h2-console/**");
         skipPathList.add("POST,/h2-console/**");
         // 회원가입 API 허용
-        skipPathList.add("GET,/api/signup");
-        skipPathList.add("POST,/api/email-check");
-        skipPathList.add("POST,/api/nickname-check");
-        skipPathList.add("POST,/api/signup");
+        skipPathList.add("GET,/signup");
+        skipPathList.add("POST,/email-check");
+        skipPathList.add("POST,/nickname-check");
+        skipPathList.add("POST,/signup");
         // 로그인 화면 허용
-        skipPathList.add("GET,/api/login");
+        skipPathList.add("GET,/login");
         // 에러 메세지 허용
         skipPathList.add("POST,/error");
         // 프론트 관련 허용
         skipPathList.add("GET,/basic.js");
         skipPathList.add("GET,/webjars/**");
         skipPathList.add("GET,/favicon.ico");
+        // 카카오 로그인 허용
+        skipPathList.add("POST,https://kauth.kakao.com/oauth/token");
+        skipPathList.add("POST,https://kapi.kakao.com/v2/user/me");
+        skipPathList.add("GET,/login/oauth2/kakao");
+
+        skipPathList.add("GET,/websocket/**");
 
         FilterSkipMatcher matcher = new FilterSkipMatcher(
                 skipPathList,

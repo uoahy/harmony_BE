@@ -2,7 +2,8 @@ package com.example.harmony.domain.schedule.model;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
-import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -90,5 +92,11 @@ public class Schedule {
     public void addGallery(Gallery gallery) {
         galleries.add(gallery);
         gallery.setSchedule(this);
+    }
+
+    public List<User> getParticipants() {
+        return this.participations.stream()
+                .map(Participation::getParticipant)
+                .collect(Collectors.toList());
     }
 }

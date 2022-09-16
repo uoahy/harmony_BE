@@ -2,7 +2,7 @@ package com.example.harmony.domain.schedule.controller;
 
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.service.ScheduleService;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.global.security.UserDetailsImpl;
 import com.example.harmony.global.security.config.WebSecurityConfig;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -74,7 +74,7 @@ class ScheduleControllerTest {
                 String scheduleRequestJson = objectMapper.writeValueAsString(scheduleRequest);
 
                 // when & then
-                mvc.perform(post("/api/schedules")
+                mvc.perform(post("/schedules")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(scheduleRequestJson))
@@ -103,7 +103,7 @@ class ScheduleControllerTest {
                 String scheduleRequestJson = objectMapper.writeValueAsString(scheduleRequest);
 
                 // when & then
-                mvc.perform(post("/api/schedules")
+                mvc.perform(post("/schedules")
                                 .with(csrf())
                                 .with(user(new UserDetailsImpl(new User())))
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -138,7 +138,7 @@ class ScheduleControllerTest {
                 String scheduleRequestJson = objectMapper.writeValueAsString(scheduleRequest);
 
                 // when & then
-                mvc.perform(put("/api/schedules/{scheduleId}", "1")
+                mvc.perform(put("/schedules/{scheduleId}", "1")
                                 .with(csrf())
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(scheduleRequestJson))
@@ -167,7 +167,7 @@ class ScheduleControllerTest {
                 String scheduleRequestJson = objectMapper.writeValueAsString(scheduleRequest);
 
                 // when & then
-                mvc.perform(put("/api/schedules/{scheduleId}", "1")
+                mvc.perform(put("/schedules/{scheduleId}", "1")
                                 .with(csrf())
                                 .with(user(new UserDetailsImpl(new User())))
                                 .contentType(MediaType.APPLICATION_JSON)

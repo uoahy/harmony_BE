@@ -1,6 +1,7 @@
 package com.example.harmony.domain.schedule.service;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.schedule.dto.MonthlyScheduleResponse;
 import com.example.harmony.domain.schedule.dto.ScheduleRequest;
 import com.example.harmony.domain.schedule.model.Category;
@@ -8,9 +9,9 @@ import com.example.harmony.domain.schedule.model.Participation;
 import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ParticipationRepository;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
-import com.example.harmony.domain.user.entity.Family;
-import com.example.harmony.domain.user.entity.RoleEnum;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.RoleEnum;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.domain.user.service.FamilyService;
 import org.junit.jupiter.api.DisplayName;
@@ -48,6 +49,9 @@ class ScheduleServiceTest {
 
     @Mock
     FamilyService familyService;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("월별 일정 조회")
@@ -353,6 +357,7 @@ class ScheduleServiceTest {
 
                 Schedule schedule = Schedule.builder()
                         .family(family1)
+                        .participations(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))
@@ -397,6 +402,7 @@ class ScheduleServiceTest {
 
                 Schedule schedule = Schedule.builder()
                         .family(family)
+                        .participations(Collections.emptyList())
                         .done(false)
                         .build();
 
@@ -581,12 +587,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -615,7 +621,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore - 10, family.getTotalScore());
-                assertEquals(monthlyScore - 10, family.getMonthlyScore());
+                assertEquals(weeklyScore - 10, family.getWeeklyScore());
             }
 
             @Test
@@ -625,12 +631,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -656,7 +662,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore, family.getTotalScore());
-                assertEquals(monthlyScore, family.getMonthlyScore());
+                assertEquals(weeklyScore, family.getWeeklyScore());
             }
 
             @Test
@@ -666,12 +672,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -695,7 +701,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore, family.getTotalScore());
-                assertEquals(monthlyScore, family.getMonthlyScore());
+                assertEquals(weeklyScore, family.getWeeklyScore());
             }
 
             @Test
@@ -705,12 +711,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user1 = User.builder()
@@ -734,7 +740,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore, family.getTotalScore());
-                assertEquals(monthlyScore, family.getMonthlyScore());
+                assertEquals(weeklyScore, family.getWeeklyScore());
             }
         }
     }
@@ -840,12 +846,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -874,7 +880,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore + 10, family.getTotalScore());
-                assertEquals(monthlyScore + 10, family.getMonthlyScore());
+                assertEquals(weeklyScore + 10, family.getWeeklyScore());
                 assertTrue(schedule.isDone());
             }
 
@@ -885,12 +891,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -918,7 +924,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore - 10, family.getTotalScore());
-                assertEquals(monthlyScore - 10, family.getMonthlyScore());
+                assertEquals(weeklyScore - 10, family.getWeeklyScore());
                 assertFalse(schedule.isDone());
             }
 
@@ -929,12 +935,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -958,7 +964,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore, family.getTotalScore());
-                assertEquals(monthlyScore, family.getMonthlyScore());
+                assertEquals(weeklyScore, family.getWeeklyScore());
                 assertTrue(schedule.isDone());
             }
 
@@ -969,12 +975,12 @@ class ScheduleServiceTest {
                 Long scheduleId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user1 = User.builder()
@@ -997,7 +1003,7 @@ class ScheduleServiceTest {
 
                 // then
                 assertEquals(totalScore, family.getTotalScore());
-                assertEquals(monthlyScore, family.getMonthlyScore());
+                assertEquals(weeklyScore, family.getWeeklyScore());
                 assertFalse(schedule.isDone());
             }
         }

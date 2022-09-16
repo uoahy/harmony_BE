@@ -9,11 +9,12 @@ import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.gallery.repository.ImageRepository;
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.schedule.model.Category;
 import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
-import com.example.harmony.domain.user.entity.Family;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.service.FamilyService;
 import com.example.harmony.global.s3.S3Service;
 import org.junit.jupiter.api.DisplayName;
@@ -56,6 +57,9 @@ class GalleryServiceTest {
 
     @Mock
     FamilyService familyService;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("갤러리 목록 조회")
@@ -407,12 +411,12 @@ class GalleryServiceTest {
                         .build();
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -422,6 +426,7 @@ class GalleryServiceTest {
                 Schedule schedule = Schedule.builder()
                         .family(family)
                         .galleries(new ArrayList<>())
+                        .participations(Collections.emptyList())
                         .build();
 
                 when(scheduleRepository.findById(scheduleId))
@@ -435,7 +440,7 @@ class GalleryServiceTest {
 
                 // then
                 assertEquals(totalScore + 20, family.getTotalScore());
-                assertEquals(monthlyScore + 20, family.getMonthlyScore());
+                assertEquals(weeklyScore + 20, family.getWeeklyScore());
             }
         }
     }
@@ -615,12 +620,12 @@ class GalleryServiceTest {
                 Long galleryId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -649,7 +654,7 @@ class GalleryServiceTest {
 
                 // then
                 assertEquals(totalScore - (20 + 5 * comments.size()), family.getTotalScore());
-                assertEquals(monthlyScore - (20 + 5 * comments.size()), family.getMonthlyScore());
+                assertEquals(weeklyScore - (20 + 5 * comments.size()), family.getWeeklyScore());
             }
         }
     }

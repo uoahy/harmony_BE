@@ -19,7 +19,7 @@ public class PostController {
     private final PostService postService;
 
     // 게시글 작성
-    @PostMapping(value = "/api/posts")
+    @PostMapping(value = "/posts")
     public ResponseEntity<?> createPost(
             @ModelAttribute @Valid PostRequest request,
             @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -28,7 +28,7 @@ public class PostController {
     }
 
     // 게시글 조회
-    @GetMapping("/api/posts/{postId}")
+    @GetMapping("/posts/{postId}")
     public ResponseEntity<?> getPost(@PathVariable Long postId,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails
     ) {
@@ -37,7 +37,7 @@ public class PostController {
     }
 
     // 게시글 목록 조회
-    @GetMapping("/api/posts")
+    @GetMapping("/posts")
     public ResponseEntity<?> getPosts(@RequestParam String category,
                                       @RequestParam int page,
                                       @RequestParam int size,
@@ -47,7 +47,7 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PutMapping(value ="/api/posts/{postId}")
+    @PutMapping(value = "/posts/{postId}")
     public ResponseEntity<?> putPost(@PathVariable Long postId,
                                      @ModelAttribute @Valid PostRequest request,
                                      @AuthenticationPrincipal UserDetailsImpl userDetails) {
@@ -56,7 +56,7 @@ public class PostController {
     }
 
     // 게시글 삭제
-    @DeleteMapping("/api/posts/{postId}")
+    @DeleteMapping("/posts/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId,
                                         @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = postService.deletePost(postId, userDetails.getUser());

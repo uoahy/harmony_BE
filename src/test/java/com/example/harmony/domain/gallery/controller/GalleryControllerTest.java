@@ -1,7 +1,7 @@
 package com.example.harmony.domain.gallery.controller;
 
 import com.example.harmony.domain.gallery.service.GalleryService;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.global.security.UserDetailsImpl;
 import com.example.harmony.global.security.config.WebSecurityConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -58,7 +58,7 @@ class GalleryControllerTest {
                 MockMultipartFile textFile = new MockMultipartFile("imageFiles", "텍스트파일.txt", MimeTypeUtils.TEXT_PLAIN_VALUE, (byte[]) null);
 
                 // when & then
-                mvc.perform(multipart("/api/schedules/{scheduleId}/galleries", "1")
+                mvc.perform(multipart("/schedules/{scheduleId}/galleries", "1")
                                 .file(imageFile)
                                 .file(textFile)
                                 .param("date", "2022-08-08")
@@ -82,7 +82,7 @@ class GalleryControllerTest {
                 MockMultipartFile imageFile = new MockMultipartFile("imageFiles", "텍스트파일.png", MimeTypeUtils.IMAGE_PNG_VALUE, (byte[]) null);
 
                 // when & then
-                mvc.perform(multipart("/api/schedules/{scheduleId}/galleries", "1")
+                mvc.perform(multipart("/schedules/{scheduleId}/galleries", "1")
                                 .file(imageFile)
                                 .param("date", "2022-08-08")
                                 .param("title", "갤러리 제목")

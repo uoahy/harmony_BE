@@ -1,6 +1,6 @@
 package com.example.harmony.domain.user.dto;
 
-import com.example.harmony.domain.user.entity.Family;
+import com.example.harmony.domain.user.model.Family;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -15,7 +15,7 @@ public class FamilyInfoResponse {
     private int level;
     private boolean flower;
     private int score;
-    private int monthlyScore;
+    private int weeklyScore;
 
     public FamilyInfoResponse(Family family, List<MembersResponse> members) {
         this.familyName = family.getFamilyName();
@@ -23,7 +23,7 @@ public class FamilyInfoResponse {
         this.level = setLevel(family.getTotalScore());
         this.flower = family.isFlower();
         this.score = family.getTotalScore();
-        this.monthlyScore = family.getMonthlyScore();
+        this.weeklyScore = family.getWeeklyScore();
     }
 
     public int setLevel(int score) {

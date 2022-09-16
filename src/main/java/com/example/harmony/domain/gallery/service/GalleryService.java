@@ -9,9 +9,12 @@ import com.example.harmony.domain.gallery.entity.Image;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
 import com.example.harmony.domain.gallery.repository.ImageRepository;
+import com.example.harmony.domain.notification.model.NotificationRequest;
+import com.example.harmony.domain.notification.service.NotificationService;
+import com.example.harmony.domain.schedule.model.Participation;
 import com.example.harmony.domain.schedule.model.Schedule;
 import com.example.harmony.domain.schedule.repository.ScheduleRepository;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.service.FamilyService;
 import com.example.harmony.global.s3.S3Service;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +43,8 @@ public class GalleryService {
     private final S3Service s3Service;
 
     private final FamilyService familyService;
+
+    private final NotificationService notificationService;
 
     public GalleryListResponse getGalleryList(int year, int month, User user) {
         LocalDate from = LocalDate.of(year, month, 1).minusDays(1);
@@ -83,6 +88,11 @@ public class GalleryService {
         galleryRepository.save(gallery);
         imageRepository.saveAll(images);
         familyService.plusScore(user.getFamily(), 20);
+
+        List<User> participants = gallery.getSchedule().getParticipations().stream()
+                .map(Participation::getParticipant)
+                .collect(Collectors.toList());
+        notificationService.createNotification(new NotificationRequest("gallery", "create"), participants);
     }
 
     public void editGallery(Long galleryId, GalleryRequest galleryRequest, User user) {

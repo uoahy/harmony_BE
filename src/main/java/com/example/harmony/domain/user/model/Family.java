@@ -1,4 +1,4 @@
-package com.example.harmony.domain.user.entity;
+package com.example.harmony.domain.user.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,7 @@ public class Family {
 
     private int totalScore;
 
-    private int monthlyScore;
+    private int weeklyScore;
 
     private boolean flower;
 
@@ -39,11 +39,33 @@ public class Family {
 
     public void plusScore(int score) {
         this.totalScore += score;
-        this.monthlyScore += score;
+        this.weeklyScore += score;
     }
 
     public void minusScore(int score) {
         this.totalScore -= score;
-        this.monthlyScore -= score;
+        this.weeklyScore -= score;
+    }
+
+    public int getLevel() {
+        if (totalScore < 55) {
+            return 0;
+        } else if (totalScore < 220) {
+            return 1;
+        } else if (totalScore < 770) {
+            return 2;
+        } else if (totalScore < 3000) {
+            return 3;
+        } else {
+            return 4;
+        }
+    }
+
+    public void setFlower(boolean flower) {
+        this.flower = flower;
+    }
+
+    public void initWeeklyScore() {
+        this.weeklyScore = 0;
     }
 }

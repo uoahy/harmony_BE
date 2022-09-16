@@ -18,7 +18,7 @@ public class LikeController {
     private final LikeService likeService;
 
     // 게시글 좋아요
-    @PutMapping("/api/posts/{postId}/likes")
+    @PutMapping("/posts/{postId}/likes")
     public ResponseEntity<?> doLike(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -27,7 +27,7 @@ public class LikeController {
     }
 
     // 게시글 좋아요 취소
-    @DeleteMapping("/api/posts/{postId}/likes")
+    @DeleteMapping("/posts/{postId}/likes")
     public ResponseEntity<?> undoLike(
             @PathVariable Long postId,
             @AuthenticationPrincipal UserDetailsImpl userDetails ) {

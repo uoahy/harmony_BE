@@ -4,11 +4,13 @@ import com.example.harmony.domain.community.model.Like;
 import com.example.harmony.domain.community.model.Post;
 import com.example.harmony.domain.community.repository.LikeRepository;
 import com.example.harmony.domain.community.repository.PostRepository;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.notification.service.NotificationService;
+import com.example.harmony.domain.user.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
@@ -21,11 +23,17 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class LikeServiceTest {
 
+    @InjectMocks
+    LikeService likeService;
+
     @Mock
     PostRepository postRepository;
 
     @Mock
     LikeRepository likeRepository;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("게시글 좋아요")
@@ -41,8 +49,6 @@ class LikeServiceTest {
                 // given
                 User user = User.builder().build();
                 boolean like = true;
-
-                LikeService likeService = new LikeService(likeRepository, postRepository);
 
                 when(postRepository.findById(1L))
                         .thenReturn(Optional.empty());
@@ -70,8 +76,6 @@ class LikeServiceTest {
                         .build();
                 boolean like = true;
 
-                LikeService likeService = new LikeService(likeRepository, postRepository);
-
                 when(postRepository.findById(1L))
                         .thenReturn(Optional.of(post));
 
@@ -93,16 +97,14 @@ class LikeServiceTest {
                 Like savedLike = new Like(true, post, user);
                 boolean like = false;
 
-                LikeService likeService = new LikeService(likeRepository, postRepository);
-
                 when(postRepository.findById(1L))
                         .thenReturn(Optional.of(post));
 
-                when(likeRepository.findByPostAndUser(post,user))
+                when(likeRepository.findByPostAndUser(post, user))
                         .thenReturn(Optional.of(savedLike));
 
                 // when
-                String result = likeService.doLike(1L,user,like);
+                String result = likeService.doLike(1L, user, like);
 
                 // then
                 assertEquals("좋아요를 눌렀습니다.", result);
@@ -114,7 +116,7 @@ class LikeServiceTest {
 
     @Nested
     @DisplayName("게시글 좋아요 취소")
-    class  undoLike {
+    class undoLike {
 
         @Nested
         @DisplayName("실패")
@@ -126,8 +128,6 @@ class LikeServiceTest {
                 // given
                 User user = User.builder().build();
 
-                LikeService likeService = new LikeService(likeRepository, postRepository);
-
                 when(postRepository.findById(1L))
                         .thenReturn(Optional.empty());
 
@@ -135,7 +135,7 @@ class LikeServiceTest {
                 Exception exception = assertThrows(ResponseStatusException.class, () -> likeService.undoLike(1L, user));
 
                 // then
-                assertEquals("404 NOT_FOUND \"게시글이 존재하지 않습니다.\"",exception.getMessage());
+                assertEquals("404 NOT_FOUND \"게시글이 존재하지 않습니다.\"", exception.getMessage());
             }
 
         }
@@ -152,8 +152,6 @@ class LikeServiceTest {
                 Post post = Post.builder()
                         .id(1L)
                         .build();
-
-                LikeService likeService = new LikeService(likeRepository, postRepository);
 
                 when(postRepository.findById(1L))
                         .thenReturn(Optional.of(post));

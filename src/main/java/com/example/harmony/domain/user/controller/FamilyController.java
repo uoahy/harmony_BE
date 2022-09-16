@@ -18,7 +18,7 @@ public class FamilyController {
     private final FamilyService familyService;
 
     // 가족코드 생성
-    @PostMapping("/api/families")
+    @PostMapping("/families")
     public ResponseEntity<?> createFamily(@RequestBody Map<String,String> map ,
                                           @AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = "가족코드를 생성하였습니다.";
@@ -26,14 +26,14 @@ public class FamilyController {
     }
 
     // 가족 정보 조회
-    @GetMapping("/api/family")
+    @GetMapping("/family")
     public ResponseEntity<?> getFamilyInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = "가족 조회를 성공하였습니다.";
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK,msg,familyService.getFamily(userDetails)));
     }
 
     // 가족코드 조회
-    @GetMapping("/api/family/code")
+    @GetMapping("/family/code")
     public ResponseEntity<?> getFamilyCode(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         String msg = "가족코드를 확인하십시오.";
         return ResponseEntity.ok(new SuccessResponse<>(HttpStatus.OK, msg, familyService.getFamilyCode(userDetails.getUser())));

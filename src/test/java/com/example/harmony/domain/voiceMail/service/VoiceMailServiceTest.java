@@ -1,7 +1,8 @@
 package com.example.harmony.domain.voiceMail.service;
 
-import com.example.harmony.domain.user.entity.Family;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.notification.service.NotificationService;
+import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.service.FamilyService;
 import com.example.harmony.domain.voiceMail.dto.AllVoiceMailsResponse;
 import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
@@ -40,6 +41,9 @@ class VoiceMailServiceTest {
 
     @Mock
     FamilyService familyService;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("소리샘 조회")
@@ -96,11 +100,11 @@ class VoiceMailServiceTest {
                 VoiceMailRequest voiceMailRequest = VoiceMailRequest.builder().build();
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 User user = User.builder()
@@ -118,7 +122,7 @@ class VoiceMailServiceTest {
 
                 // then
                 assertEquals(totalScore + 20, family.getTotalScore());
-                assertEquals(monthlyScore + 20, family.getMonthlyScore());
+                assertEquals(weeklyScore + 20, family.getWeeklyScore());
             }
         }
     }
@@ -193,12 +197,12 @@ class VoiceMailServiceTest {
                 Long voiceMailId = 1L;
 
                 int totalScore = 1000;
-                int monthlyScore = 100;
+                int weeklyScore = 100;
 
                 Family family = Family.builder()
                         .id(1L)
                         .totalScore(totalScore)
-                        .monthlyScore(monthlyScore)
+                        .weeklyScore(weeklyScore)
                         .build();
 
                 VoiceMail voiceMail = VoiceMail.builder()
@@ -220,7 +224,7 @@ class VoiceMailServiceTest {
 
                 // then
                 assertEquals(totalScore - 20, family.getTotalScore());
-                assertEquals(monthlyScore - 20, family.getMonthlyScore());
+                assertEquals(weeklyScore - 20, family.getWeeklyScore());
             }
         }
     }

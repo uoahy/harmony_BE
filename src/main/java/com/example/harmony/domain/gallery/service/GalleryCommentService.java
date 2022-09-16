@@ -5,7 +5,7 @@ import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.GalleryComment;
 import com.example.harmony.domain.gallery.repository.GalleryCommentRepository;
 import com.example.harmony.domain.gallery.repository.GalleryRepository;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.service.FamilyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -1,5 +1,6 @@
-package com.example.harmony.domain.user.entity;
+package com.example.harmony.domain.user.model;
 
+import com.example.harmony.domain.user.dto.UpdateInfoRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,14 +34,18 @@ public class User {
     @Column(unique = true)
     private String nickname;
 
-    @Column(nullable = false)
+    // 카카오 사용자의 경우 password 값 null
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String gender;
 
     @Enumerated(value = EnumType.STRING)
     private RoleEnum role;
+
+    @Column
+    private boolean active;
 
     public User(String email, String name, String nickname, String password, String gender) {
         this.email = email;
@@ -48,6 +53,15 @@ public class User {
         this.nickname = nickname;
         this.password = password;
         this.gender = gender;
+        this.role = RoleEnum.NOBODY;
+        this.active = true;
+    }
+
+    public User(String email, String name) {
+        this.email = email;
+        this.name = name;
+        this.role = RoleEnum.NOBODY;
+        this.active = true;
     }
 
     public void setFamily(Family family) {
@@ -61,4 +75,18 @@ public class User {
     public void setRole(RoleEnum role) {
         this.role = role;
     }
+
+    public void updateMyPage(String nickname) { this.nickname = nickname; }
+
+    public void updateKakao(UpdateInfoRequest request) {
+        this.nickname = request.getNickname();
+        this.gender = request.getGender();
+    }
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void deleteUser() { this.active = false; }
+
 }

@@ -18,7 +18,7 @@ public class GalleryCommentController {
 
     private final GalleryCommentService galleryCommentService;
 
-    @PostMapping("/api/galleries/{galleryId}/comments")
+    @PostMapping("/galleries/{galleryId}/comments")
     ResponseEntity<SuccessResponse> postComment(
             @PathVariable Long galleryId,
             @RequestBody @Valid GalleryCommentRequest galleryCommentRequest,
@@ -28,7 +28,7 @@ public class GalleryCommentController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 댓글 작성 성공"), HttpStatus.OK);
     }
 
-    @PutMapping("/api/gallery-comments/{galleryCommentId}")
+    @PutMapping("/gallery-comments/{galleryCommentId}")
     ResponseEntity<SuccessResponse> putComment(
             @PathVariable Long galleryCommentId,
             @RequestBody @Valid GalleryCommentRequest galleryCommentRequest,
@@ -38,7 +38,7 @@ public class GalleryCommentController {
         return new ResponseEntity<>(new SuccessResponse(HttpStatus.OK, "갤러리 댓글 수정 성공"), HttpStatus.OK);
     }
 
-    @DeleteMapping("/api/gallery-comments/{galleryCommentId}")
+    @DeleteMapping("/gallery-comments/{galleryCommentId}")
     ResponseEntity<SuccessResponse> deleteComment(
             @PathVariable Long galleryCommentId,
             @AuthenticationPrincipal UserDetailsImpl userDetails

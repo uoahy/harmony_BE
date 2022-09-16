@@ -1,9 +1,10 @@
 package com.example.harmony.domain.user.service;
 
+import com.example.harmony.domain.notification.service.NotificationService;
 import com.example.harmony.domain.user.dto.FamilyInfoResponse;
-import com.example.harmony.domain.user.entity.Family;
-import com.example.harmony.domain.user.entity.RoleEnum;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.RoleEnum;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.user.repository.FamilyRepository;
 import com.example.harmony.domain.user.repository.UserRepository;
 import com.example.harmony.global.security.UserDetailsImpl;
@@ -11,6 +12,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.server.ResponseStatusException;
@@ -27,11 +29,17 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class FamilyServiceTest {
 
+    @InjectMocks
+    FamilyService familyService;
+
     @Mock
     UserRepository userRepository;
 
     @Mock
     FamilyRepository familyRepository;
+
+    @Mock
+    NotificationService notificationService;
 
     @Nested
     @DisplayName("가족코드 생성")
@@ -49,8 +57,6 @@ class FamilyServiceTest {
                         .build();
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
                 String familyName = "우당탕탕 순이네";
-
-                FamilyService familyService = new FamilyService(familyRepository, userRepository);
 
                 when(familyRepository.findByFamilyName(familyName))
                         .thenReturn(Optional.of(Family.builder().build()));
@@ -72,8 +78,6 @@ class FamilyServiceTest {
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
                 String familyName = "우당탕탕 순이네";
 
-                FamilyService familyService = new FamilyService(familyRepository, userRepository);
-
                 // when
                 Exception exception = assertThrows(ResponseStatusException.class, () -> familyService.createFamily(familyName, userDetails));
 
@@ -93,8 +97,6 @@ class FamilyServiceTest {
                 User user = User.builder().build();
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
                 String familyName = "우당탕탕 순이네";
-
-                FamilyService familyService = new FamilyService(familyRepository, userRepository);
 
                 // when
                 Map<String, String> result = familyService.createFamily(familyName, userDetails);
@@ -143,8 +145,6 @@ class FamilyServiceTest {
 
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-                FamilyService familyService = new FamilyService(familyRepository, userRepository);
-
                 // when
                 FamilyInfoResponse result = familyService.getFamily(userDetails);
 
@@ -183,8 +183,6 @@ class FamilyServiceTest {
 
                 UserDetailsImpl userDetails = new UserDetailsImpl(user);
 
-                FamilyService familyService = new FamilyService(familyRepository, userRepository);
-
                 // when
                 FamilyInfoResponse result = familyService.getFamily(userDetails);
 
@@ -217,8 +215,6 @@ class FamilyServiceTest {
                 User user = User.builder()
                         .family(family)
                         .build();
-
-                FamilyService familyService = new FamilyService(familyRepository, userRepository);
 
                 // when
                 Map<String, String> result = familyService.getFamilyCode(user);

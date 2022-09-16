@@ -1,7 +1,7 @@
 package com.example.harmony.domain.voiceMail.entity;
 
-import com.example.harmony.domain.user.entity.Family;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.Family;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.domain.voiceMail.dto.VoiceMailRequest;
 import com.example.harmony.global.common.TimeStamp;
 import com.example.harmony.global.s3.UploadResponse;

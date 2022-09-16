@@ -2,7 +2,7 @@ package com.example.harmony.domain.gallery.dto;
 
 import com.example.harmony.domain.gallery.entity.Gallery;
 import com.example.harmony.domain.gallery.entity.Image;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 

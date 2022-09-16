@@ -1,7 +1,7 @@
 package com.example.harmony.domain.gallery.controller;
 
 import com.example.harmony.domain.gallery.service.ImageService;
-import com.example.harmony.domain.user.entity.User;
+import com.example.harmony.domain.user.model.User;
 import com.example.harmony.global.security.UserDetailsImpl;
 import com.example.harmony.global.security.config.WebSecurityConfig;
 import org.junit.jupiter.api.DisplayName;
@@ -58,7 +58,7 @@ class ImageControllerTest {
                 MockMultipartFile textFile = new MockMultipartFile("imageFiles", "텍스트파일.txt", MimeTypeUtils.TEXT_PLAIN_VALUE, (byte[]) null);
 
                 // when & then
-                mvc.perform(multipart("/api/galleries/{galleryId}/images", "1")
+                mvc.perform(multipart("/galleries/{galleryId}/images", "1")
                                 .file(imageFile)
                                 .file(textFile)
                                 .with(csrf())
@@ -79,7 +79,7 @@ class ImageControllerTest {
                 MockMultipartFile imageFile = new MockMultipartFile("imageFiles", "텍스트파일.png", MimeTypeUtils.IMAGE_PNG_VALUE, (byte[]) null);
 
                 // when & then
-                mvc.perform(multipart("/api/galleries/{galleryId}/images", "1")
+                mvc.perform(multipart("/galleries/{galleryId}/images", "1")
                                 .file(imageFile)
                                 .with(csrf())
                                 .with(user(new UserDetailsImpl(new User())))
